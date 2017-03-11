@@ -1,0 +1,51 @@
+{% extends "CuerpoVacio.html" %}
+
+{% block cuerpo %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Contrato</h1>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Detalle del Contrato
+            </div>
+            <div class="panel-body">
+                <div class='form-group'>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Ctto:</label>
+                            <p>{{ object.NumCtto }}</p>
+                            <label>Descripción:</label>
+                            <p>{{ object.DescCtto }}</p>
+                            <label>Centro Costo:</label>
+                            <p>{{ object.IdCecoCtto.CodCeco }}</p>
+                            <label>Fecha Inicio: </label>
+                            <p>{{ object.FechIniCtto }}</p>
+                            <label>Fecha Término: </label>
+                            <p>{{ object.FechTerCtto }}</p>
+                            <label>Moneda Ctto: </label>
+                            <p>{{ object.MonedaCtto }}</p>
+                            <label>Valor Inicial Ctto: </label>
+                            <p>{{ object.MonedaCtto }} {{object.ValorCtto}}</p>
+                            <td style="mso-number-format:'#,##0.000';">{{object.ValorCtto}}</td>
+
+
+                            <label>Mandante: </label>
+                            <p>{{ object.IdMandante.NomMandte }}</p>
+                            <label>Cordinador de Ctto: </label>
+                            <p>{{ object.CordCtto }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock cuerpo %}
