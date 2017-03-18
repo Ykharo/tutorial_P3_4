@@ -33,7 +33,7 @@ class CttoUpdateForm(forms.ModelForm):
 
         widgets = {
             'NumCtto': forms.TextInput(attrs={'class': 'form-control'}),
-            'DescCtto': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
+            'DescCtto': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':30}),
             'MonedaCtto': forms.TextInput(attrs={'class': 'form-control'}),
             'ValorCtto': forms.NumberInput(attrs={'class': 'form-control'} ),
             #'IdCtta': forms.TextInput(attrs={'class': 'form-control'}),

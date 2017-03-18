@@ -1,78 +1,85 @@
-{% extends "CuerpoVacio.html" %}
-{% block cuerpo %}
+{% extends "CuerpoVacio.html" %} {% block cuerpo %}
 
 <div class="right_col" role="main">
-  <div class="">
-    <div class="page-title">
-      <div class="title_left">
-        <h3>
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>
               Users
               <small>
                   Some examples to get you started
               </small>
           </h3>
-      </div>
+            </div>
 
-          <div class="col-md-12 col-sm-12 col-xs-12">
-            <div class="x_panel">
-              <div class="x_title">
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-
-
-                  <div class="panel-body">
-                    <div class="form-group">
-                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">First Name <span class="required">*</span>
-                      </label>
-                      <div class="col-md-6 col-sm-6 col-xs-12">
-                        <input type="text" id="first-name" required="required" class="form-control col-md-7 col-xs-12">
-                      </div>
-                    </div>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
 
 
 
-                      <form role="form" action="#" method="post">
-                          {% csrf_token %}
-                          {{ formset.management_form }}
-                           {% for form in formset %}
-                             {{ form.id }}
 
-                          <div class="form-group">
 
-                          </div>
-                          <ul>
-                            <li> Numero Ctto  {{ form.NumCtto }} </li>
-                            <li>  {{ form.DescCtto }} </li>
+                            <form role="form" action="#" method="post">
+                                {% csrf_token %}
+                              <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
 
-                          </ul>
-                          {% endfor %}
-                          <div class='form-group'>
-                              <input type="submit" class="btn btn-primary" name="submit" value="Crear Contrato">
-                              <button type="reset" class="btn btn-primary" onclick="location.href='{% url 'personas:personas' %}'">
+
+                                <div class="form-group">
+
+                                </div>
+                                <ul>
+                                    <br> Numero Ctto {{ form.NumCtto }} </br>
+                                    <br> Decripcion {{ form.DescCtto }} </br>
+                                </ul>
+                                </div>
+
+
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+
+
+                                  <div class="form-group">
+
+                                    <label for="your_name"> Numero Contrato: </label>
+                                    <input id="NumCtto" type="text" name="NumCtto" value="{{ NumCtto }}">
+                                
+
+                                    </div>
+
+
+
+
+
+                                    <label for="your_name">Your name: </label>
+                                    <input id="your_name" type="text" name="your_name" value="{{ current_name }}">
+                                    <input type="submit" value="OK">
+
+
+                                    <div class='form-group'>
+                                    <input type="submit" class="btn btn-primary" name="submit" value="Crear Contrato">
+                                    <button type="reset" class="btn btn-primary" onclick="location.href='{% url 'personas:personas' %}'">
                                   Cancelar
-                              </button>
-                          </div>
-                      </form>
-                  </div>
+                                </button>
+                                </div>
+                            </form>
 
+
+
+                    </div>
+                    <div class="clearfix"></div>
                 </div>
-                <div class="clearfix"></div>
-              </div>
                 <div class="x_content">
-                  <p class="text-muted font-13 m-b-30">
-                    Tablas de Servicios, Contratos y Convenios: <code>$().DataTable();</code>
-                  </p>
+                    <p class="text-muted font-13 m-b-30">
+                        Tablas de Servicios, Contratos y Convenios: <code>$().DataTable();</code>
+                    </p>
                 </div>
             </div>
-          </div>
+        </div>
     </div>
-  </div>
+</div>
 </div>
 
 
 
 
-{% endblock cuerpo %}
-
-{% block js %}
-
-{% endblock js %}
+{% endblock cuerpo %} {% block js %} {% endblock js %}

@@ -671,8 +671,8 @@ class ReporteODCExcel(TemplateView):
 
 
 class Bienvenida(TemplateView):
-    template_name = 'Tabla_Servicios.html'
-
+    #template_name = 'Tabla_Servicios.html'
+    template_name = 'form.html'
 # Create your views here.
 class CrearPersona(CreateView):
     model = Ctto
