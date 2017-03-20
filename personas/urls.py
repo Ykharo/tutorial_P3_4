@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^crear_persona/busqueda_ajax/$',views.BusquedaAjaxView.as_view(), name="Busqueda_ajax"),
     url(r'^crear_contratista/$',views.CrearContratista.as_view(), name="crear_contratista"),
 
-    url(r'^crear_edp/$',views.CrearEdp.as_view(), name="crear_edp"),
+    url(r'^crear_edp/(?P<id_ctto>\d+)/$',views.CrearEdp.as_view(), name="crear_edp"),
 
     url(r'^personas/$',Personas.as_view(), name="personas"),
     url(r'^editar_contrato/(?P<id_ctto>[^/]+)$',views.EditarContrato, name="EditarContrato"),

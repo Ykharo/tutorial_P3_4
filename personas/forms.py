@@ -87,8 +87,7 @@ class EdpUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         valor = kwargs.pop('valor')
         super(EdpUpdateForm, self).__init__(*args, **kwargs)
-        self.initial['NumEDP'] = valor
-        self.initial['IdCtto'] = '664'
+        self.initial['IdCtto'] = valor
 
 
 
