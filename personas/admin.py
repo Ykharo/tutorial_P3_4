@@ -60,8 +60,8 @@ class OdcInline(admin.StackedInline):
 
 
 class CttoAdmin(admin.ModelAdmin):
-    list_display = ('NumCtto','DescCtto','EstCtto','FechTerCtto','IdCecoCtto','IdCtta','ObservCtto')
-    list_editable = ('EstCtto','FechTerCtto','IdCecoCtto','ObservCtto')
+    list_display = ('NumCtto','DescCtto','EstCtto','IdMandante','FechTerCtto','IdCecoCtto','IdCtta','ObservCtto')
+    list_editable = ('EstCtto','IdMandante','FechTerCtto','IdCecoCtto','ObservCtto')
     list_per_page = 20
     list_filter = ('TipoServ', )
     inlines = [EdpInline,OdcInline]

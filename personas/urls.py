@@ -7,6 +7,9 @@ urlpatterns = [
     #url(r'^',include('seguridad.urls',namespace='seguridad')),
     url(r'^$',views.Bienvenida.as_view(), name="bienvenida"),
     url(r'^crear_persona/$',views.CrearPersona.as_view(), name="crear_persona"),
+    url(r'^crear_persona/busqueda_ajax/$',views.BusquedaAjaxView.as_view(), name="Busqueda_ajax"),
+    url(r'^crear_contratista/$',views.CrearContratista.as_view(), name="crear_contratista"),
+
     url(r'^crear_edp/$',views.CrearEdp.as_view(), name="crear_edp"),
 
     url(r'^personas/$',Personas.as_view(), name="personas"),

@@ -10,7 +10,7 @@ from django.views.generic.detail import DetailView
 
 
 from django.conf import settings
-from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm
+from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, CttaUpdateForm
 
 #Workbook nos permite crear libros en excel
 from openpyxl import Workbook
@@ -677,7 +677,7 @@ class Bienvenida(TemplateView):
 class CrearPersona(CreateView):
     model = Ctto
     #fields =['dni','nombre','apellido_paterno','apellido_materno']
-    template_name = 'crear_persona_new.html'
+    template_name = 'crear_contrato_new.html'
     form_class = CttoUpdateForm
     success_url = reverse_lazy('personas:personas')
 
@@ -761,6 +761,16 @@ class CrearEdp(CreateView):
     form_class = EdpUpdateForm
     success_url = reverse_lazy('personas:personas')
 
+    def get_context_data(self, **kwargs):
+        context = super(CrearEdp, self).get_context_data(**kwargs)
+        context['valor1'] =self.kwargs[id_ctto]
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(CrearEdp, self).get_form_kwargs()
+        kwargs.update({'valor':valor1})
+        return kwargs
+
 
 
 class BorrarEdp(DeleteView):
@@ -774,3 +784,21 @@ class BorrarEdp(DeleteView):
     #fields = ['NumCtto','DescCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','IdCecoCtto','CordCtto','IdMandante' ]
     #Con esta linea establecemos que se hara despues que la operacion de modificacion se complete correctamente
     success_url = reverse_lazy('personas:personas')
+
+from django.core import serializers
+
+class BusquedaAjaxView(TemplateView):
+
+    def get(self, request, *arg, **kwargs):
+        id_ceco =request.GET['idajx']
+        nombre_ceco = Ceco.objects.filter(id=id_ceco)
+        data = serializers.serialize('json',nombre_ceco,
+                    fields=('NomCeco'))
+        return HttpResponse(data, content_type ='application/json')
+
+class CrearContratista(CreateView):
+        model = Ctta
+        #fields =['dni','nombre','apellido_paterno','apellido_materno']
+        template_name = 'crear_ctta_new.html'
+        form_class = CttaUpdateForm
+        success_url = reverse_lazy('personas:crear_persona')

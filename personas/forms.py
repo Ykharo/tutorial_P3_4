@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Persona, Ctto, Edp
+from .models import Persona, Ctto, Edp, Ctta
 
 class PersonaCreateForm(forms.ModelForm):
 
@@ -26,15 +26,18 @@ class CttoUpdateForm(forms.ModelForm):
         fields = ['NumCtto','DescCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','FechTerCtto',
         'IdCecoCtto','CordCtto','IdMandante','TipoServ','AjusteCom', 'AjustNumEDP','AjustValEDP','AdjudicCtto',
         'LocalCtto','TerrenCtto','SeguroCtto','FechSolCtto','FechAppCtto','ObservCtto']
+
+
         labels = {
             'FechIniCtto': 'Fecha de Inicio_1',
             'IdCecoCtto': 'Centro de Costo'
         }
 
+
         widgets = {
             'NumCtto': forms.TextInput(attrs={'class': 'form-control'}),
             'DescCtto': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':30}),
-            'MonedaCtto': forms.TextInput(attrs={'class': 'form-control'}),
+            #'MonedaCtto': forms.TextInput(attrs={'class': 'form-control'}),
             'ValorCtto': forms.NumberInput(attrs={'class': 'form-control'} ),
             #'IdCtta': forms.TextInput(attrs={'class': 'form-control'}),
             'EstCtto': forms.TextInput(attrs={'class': 'form-control'}),
@@ -43,7 +46,7 @@ class CttoUpdateForm(forms.ModelForm):
             #'IdCecoCtto': forms.TextInput(attrs={'class': 'form-control'}),
             'CordCtto': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
             #'IdMandante': forms.Textarea(attrs={'class': 'form-control'}),
-            'TipoServ': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
+            #'TipoServ': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
 
 
 
@@ -55,24 +58,56 @@ class EdpUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Edp
-        fields = ['NumEDP','ValEDP','PeriodEDP','PeriodEDPTer','DevAntEDP','RetEDP','DevRet','Estado','FactEDP']
+        fields = ['IdCtto','NumEDP','ValEDP','PeriodEDP','PeriodEDPTer','DevAntEDP','RetEDP','DevRet','Estado','FactEDP'
+                    ,'PresenEDP','AprobEDP','ObservEDP']
         labels = {
             'PeriodEDP': 'Periodo Inicio',
             'PeriodEDPTer': 'Periodo Término'
         }
 
         widgets = {
+            #'IdCtto': forms.TextInput(attrs={'class': 'form-control'}),
             'NumEDP': forms.TextInput(attrs={'class': 'form-control'}),
             'ValEDP': forms.NumberInput(attrs={'class': 'form-control','localization': True}),
 
-            'PeriodEDP': forms.DateInput(format='%m/%d/%Y'),
-            'PeriodEDPTer': forms.DateInput(format='%m/%d/%Y'),
+            'PeriodEDP': forms.DateInput(format='%d/%m/%Y'),
+            'PeriodEDPTer': forms.DateInput(format='%d/%m/%Y'),
             'DevAntEDP': forms.TextInput(attrs={'class': 'form-control'}),
             'RetEDP': forms.NumberInput(attrs={'class': 'form-control'} ),
             'DevRet': forms.NumberInput(attrs={'class': 'form-control'} ),
             'Estado': forms.TextInput(attrs={'class': 'form-control'}),
 
             'FactEDP': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
+            'PresenEDP': forms.DateInput(format='%d/%m/%Y'),
+            'AprobEDP': forms.DateInput(format='%d/%m/%Y'),
+            'ObservEDP': forms.TextInput(attrs={'class': 'form-control'}),
 
+                }
+
+    def __init__(self, *args, **kwargs):
+        valor = kwargs.pop('valor')
+        super(EdpUpdateForm, self).__init__(*args, **kwargs)
+        self.initial['NumEDP'] = valor
+        self.initial['IdCtto'] = '664'
+
+
+
+
+class CttaUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = Ctta
+        fields = ['NomCtta','DirCtta','RutCtta']
+        labels = {
+            'NomCtta': 'Nombre Contratista',
+            'DirCtta': 'Dirección',
+            'RutCtta': 'Rut'
+
+        }
+
+        widgets = {
+            'NomCtta': forms.TextInput(attrs={'class': 'form-control'}),
+            'DirCtta': forms.TextInput(attrs={'class': 'form-control'}),
+            'RutCtta': forms.TextInput(attrs={'class': 'form-control'}),
 
                 }

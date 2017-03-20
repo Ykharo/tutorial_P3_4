@@ -54,11 +54,33 @@ class Ctto(models.Model):
         ("Nacional", "Nacional"),
         ("Extranjero", "Extranjero"),)
 
+    TIPOSERV = (
+        ("Contrato", "Contrato"),
+        ("Orden de Servicio", "Orden de Servicio"),
+        ("Convenio", "Convenio"),("Orden de Compra", "Orden de Compra"))
+
+    MONEDA = (
+        ("CLP", "CLP"),
+        ("USD", "USD"),
+        ("UF", "UF"),("EUR", "EUR"),("CAD", "CAD"))
+
+    ADJUDICACION = (
+        ("Directa", "Directa"),
+        ("Cotizaciones", "Cotizaciones"),
+        ("Licitación", "Licitación"))
+
+    TERRENOCONTRATO = (
+        ( "Si","Con Terreno"),
+        ( "No","Sin Terreno"))
+
+    SEGURO = (
+        ("Si","Aplica Seguro"),
+        ("No","No Aplica Seguro"))
 
     IdCtto = models.IntegerField(null=True, blank=True)
     NumCtto = models.CharField(max_length=20, null=False)
     DescCtto = models.CharField(max_length=100, null=True, blank=True)
-    MonedaCtto = models.CharField(max_length=5, null=True, blank=True)
+    MonedaCtto = models.CharField(max_length=5, choices=MONEDA, default="CLP",null=True, blank=True)
     ValorCtto = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
     IdCtta = models.ForeignKey(Ctta) # Agregar ForeignKey
     EstCtto = models.CharField(max_length=4, null=True, blank=True)
@@ -69,14 +91,14 @@ class Ctto(models.Model):
     IdMandante = models.ForeignKey(Mdte)
 
     Carpeta = models.CharField(max_length=30, null=True, blank=True)
-    TipoServ = models.CharField(max_length=25, null=True, blank=True)
+    TipoServ = models.CharField(max_length=25, choices=TIPOSERV, default="Contrato",null=True, blank=True)
     AjusteCom = models.DecimalField(decimal_places=2, max_digits=21, null=True, blank=True)
     AjustNumEDP = models.CharField( max_length=10, null=True, blank=True)
     AjustValEDP = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
-    AdjudicCtto = models.CharField( max_length=15, null=True, blank=True)
+    AdjudicCtto = models.CharField( max_length=15, choices=ADJUDICACION, default="Directa", null=True, blank=True)
     LocalCtto = models.CharField( max_length=30,choices=LOCACION, default="Nacional",null=True, blank=True)
-    TerrenCtto = models.CharField( max_length=10, null=True, blank=True)
-    SeguroCtto = models.CharField( max_length=10, null=True, blank=True)
+    TerrenCtto = models.CharField( max_length=10,choices=TERRENOCONTRATO, default="No", null=True, blank=True)
+    SeguroCtto = models.CharField( max_length=10,choices=SEGURO, default="No", null=True, blank=True)
 
     FechSolCtto = models.DateField( null=True, blank=True)# Sept, Fecha Solicitud
     FechAppCtto = models.DateField( null=True, blank=True)# Sept, Fecha Aprob
