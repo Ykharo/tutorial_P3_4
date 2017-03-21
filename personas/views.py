@@ -762,11 +762,11 @@ class CrearEdp(CreateView):
     success_url = reverse_lazy('personas:personas')
 
 
-    def get_context_data(self, **kwargs):
-        context = super(CrearEdp, self).get_context_data(**kwargs)
-        context['valor1'] = self.kwargs['id_ctto']
-        valor2 = self.kwargs['id_ctto']
-        return context
+    #def get_context_data(self, **kwargs):
+    #    context = super(CrearEdp, self).get_context_data(**kwargs)
+    #    context['valor1'] = self.kwargs['id_ctto']
+    #    valor2 = self.kwargs['id_ctto']
+    #    return context
 
     def get_form_kwargs(self):
         kwargs = super(CrearEdp, self).get_form_kwargs()

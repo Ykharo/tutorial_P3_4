@@ -54,6 +54,7 @@ class CttoUpdateForm(forms.ModelForm):
         }
 
 
+
 class EdpUpdateForm(forms.ModelForm):
 
     class Meta:
@@ -85,11 +86,12 @@ class EdpUpdateForm(forms.ModelForm):
                 }
 
     def __init__(self, *args, **kwargs):
-        valor = kwargs.pop('valor')
-        super(EdpUpdateForm, self).__init__(*args, **kwargs)
-        self.initial['IdCtto'] = valor
-
-
+            try:
+                valor = kwargs.pop('valor')
+                super(EdpUpdateForm, self).__init__(*args, **kwargs)
+                self.initial['IdCtto'] = valor
+            except:
+                    pass
 
 
 class CttaUpdateForm(forms.ModelForm):
