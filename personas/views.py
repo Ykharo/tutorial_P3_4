@@ -10,7 +10,7 @@ from django.views.generic.detail import DetailView
 
 
 from django.conf import settings
-from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, CttaUpdateForm
+from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateForm, CttaUpdateForm
 
 #Workbook nos permite crear libros en excel
 from openpyxl import Workbook
@@ -702,7 +702,7 @@ class EditarPersona(UpdateView):
     template_model = 'crear_persona.html'
     #success_url = reverse_lazy('personas:personas')
 
-    #def get(self,request,*arg,**kwargs):
+    # def get(self,request,*arg,**kwargs):
     #    id_edit = request.GET['id']
 
 class ficha(ListView):
@@ -735,7 +735,7 @@ class DetalleEdp(DetailView):
     template_name = 'detalle_Edp_new.html'
 
 
-#def sumarLista(lista):
+# def sumarLista(lista):
 #    sum=0
 #    for i in range(0,len(lista)):
 #        sum=sum+lista[i]
@@ -758,11 +758,11 @@ class CrearEdp(CreateView):
     model = Edp
     #fields =['dni','nombre','apellido_paterno','apellido_materno']
     template_name = 'crear_edp_new.html'
-    form_class = EdpUpdateForm
+    form_class = EdpCreateForm
     success_url = reverse_lazy('personas:personas')
 
 
-    #def get_context_data(self, **kwargs):
+    # def get_context_data(self, **kwargs):
     #    context = super(CrearEdp, self).get_context_data(**kwargs)
     #    context['valor1'] = self.kwargs['id_ctto']
     #    valor2 = self.kwargs['id_ctto']

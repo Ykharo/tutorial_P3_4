@@ -85,13 +85,41 @@ class EdpUpdateForm(forms.ModelForm):
 
                 }
 
+
+class EdpCreateForm(forms.ModelForm):
+
+    class Meta:
+        model = Edp
+        fields = ['IdCtto','NumEDP','ValEDP','PeriodEDP','PeriodEDPTer','DevAntEDP','RetEDP','DevRet','Estado','FactEDP'
+                    ,'PresenEDP','AprobEDP','ObservEDP']
+        labels = {
+            'PeriodEDP': 'Periodo Inicio',
+            'PeriodEDPTer': 'Periodo Término'
+        }
+
+        widgets = {
+            #'IdCtto': forms.TextInput(attrs={'class': 'form-control'}),
+            'NumEDP': forms.TextInput(attrs={'class': 'form-control'}),
+            'ValEDP': forms.NumberInput(attrs={'class': 'form-control','localization': True}),
+
+            'PeriodEDP': forms.DateInput(format='%d/%m/%Y'),
+            'PeriodEDPTer': forms.DateInput(format='%d/%m/%Y'),
+            'DevAntEDP': forms.TextInput(attrs={'class': 'form-control'}),
+            'RetEDP': forms.NumberInput(attrs={'class': 'form-control'} ),
+            'DevRet': forms.NumberInput(attrs={'class': 'form-control'} ),
+            'Estado': forms.TextInput(attrs={'class': 'form-control'}),
+
+            'FactEDP': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
+            'PresenEDP': forms.DateInput(format='%d/%m/%Y'),
+            'AprobEDP': forms.DateInput(format='%d/%m/%Y'),
+            'ObservEDP': forms.TextInput(attrs={'class': 'form-control'}),
+
+                }
+
     def __init__(self, *args, **kwargs):
-            try:
                 valor = kwargs.pop('valor')
-                super(EdpUpdateForm, self).__init__(*args, **kwargs)
+                super(EdpCreateForm, self).__init__(*args, **kwargs)
                 self.initial['IdCtto'] = valor
-            except:
-                    pass
 
 
 class CttaUpdateForm(forms.ModelForm):
