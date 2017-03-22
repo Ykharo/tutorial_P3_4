@@ -117,10 +117,11 @@ class EdpCreateForm(forms.ModelForm):
                 }
 
     def __init__(self, *args, **kwargs):
-                valor = kwargs.pop('valor')
+                valor1 = kwargs.pop('idctto')
+                valor2 = kwargs.pop('dato_aux')
                 super(EdpCreateForm, self).__init__(*args, **kwargs)
-                self.initial['IdCtto'] = valor
-
+                self.initial['IdCtto'] = valor1
+                self.initial['valor2'] = valor2
 
 class CttaUpdateForm(forms.ModelForm):
 

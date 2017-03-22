@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404, render_to_respon
 #encoding:utf-8
 # Create your views here.
 from personas.models import Persona
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.base import TemplateView, View
@@ -751,7 +751,7 @@ class ModificarEdp(UpdateView):
     #Determinamos los campos con los que se va a trabajar, esto es obligatorio sino nos saldra un error
     #fields = ['NumCtto','DescCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','IdCecoCtto','CordCtto','IdMandante' ]
     #Con esta linea establecemos que se hara despues que la operacion de modificacion se complete correctamente
-    success_url = reverse_lazy('personas:personas')
+    #success_url = reverse_lazy('personas:personas')
 
 
 class CrearEdp(CreateView):
@@ -759,19 +759,29 @@ class CrearEdp(CreateView):
     #fields =['dni','nombre','apellido_paterno','apellido_materno']
     template_name = 'crear_edp_new.html'
     form_class = EdpCreateForm
-    success_url = reverse_lazy('personas:personas')
+    success_url = reverse_lazy('personas:EditarContrato')
+    D_edp = Edp
 
-
-    # def get_context_data(self, **kwargs):
-    #    context = super(CrearEdp, self).get_context_data(**kwargs)
-    #    context['valor1'] = self.kwargs['id_ctto']
-    #    valor2 = self.kwargs['id_ctto']
-    #    return context
+    def get_context_data(self, **kwargs):
+        context = super(CrearEdp, self).get_context_data(**kwargs)
+        context['Valedp'] = Edp.objects.all()
+        context['Validctto'] = int(self.kwargs['id_ctto'])
+        print('valor de idctto =')
+        print(self.kwargs['id_ctto'])
+        return context
 
     def get_form_kwargs(self):
         kwargs = super(CrearEdp, self).get_form_kwargs()
-        kwargs.update({'valor':self.kwargs['id_ctto']})
+        kwargs.update({'idctto':self.kwargs['id_ctto'],'dato_aux':'dato2'})
+
         return kwargs
+
+    def get_success_url(self):
+
+        return reverse('personas:EditarContrato',kwargs={'id_ctto':'SC-450' })
+
+
+
 
 
 
