@@ -99,6 +99,7 @@
                                           <div class="col-md-6">
                                               <label>Ctto :&nbsp; </label>{{ Ctto.NumCtto }}
                                               <p><label>Descripción :&nbsp;</label>{{ Ctto.DescCtto }}</p>
+                                              <p><label>Contratista :&nbsp; </label>{{ Ctto.IdCtta.NomCtta }}</p>
                                               <p><label>Centro Costo :&nbsp; </label>{{ Ctto.IdCecoCtto.CodCeco }}</p>
                                               <p><label>Fecha Inicio :&nbsp; </label>{{ Ctto.FechIniCtto }}</p>
                                               <P><label>Fecha Término :&nbsp; </label>{{ Ctto.FechTerCtto }}</p>
@@ -111,6 +112,7 @@
                                           <div class="col-md-6">
                                               <label>Ctto :&nbsp; </label>{{ Ctto.NumCtto }}
                                               <p><label>Descripción :&nbsp;</label>{{ Ctto.DescCtto }}</p>
+                                              <p><label>Contratista :&nbsp; </label>{{ Ctto.IdCtta.NomCtta }}</p>
                                               <p><label>Centro Costo :&nbsp; </label>{{ Ctto.IdCecoCtto.CodCeco }}</p>
                                               <p><label>Fecha Inicio :&nbsp; </label>{{ Ctto.FechIniCtto }}</p>
                                               <P><label>Fecha Término :&nbsp; </label>{{ Ctto.FechTerCtto }}</p>
@@ -183,7 +185,7 @@
 
 
                     <div class="col-lg-1">
-                        <a id="crear_detalle" href="{% url 'personas:crear_persona' %}" class="btn btn-info btn-block">
+                        <a id="crear_detalle" href="{% url 'personas:crear_odc' id_ctto %}" class="btn btn-info btn-block">
                             <span class="glyphicon glyphicon-plus"></span>
                         </a>
                     </div>
@@ -197,13 +199,11 @@
                           <tr>
                               <th class="text-center">Nº ODC</th>
                               <th class="text-center">Descripción</th>
-                              <th class="text-center">Ceco</th>
+                              <th class="text-center">Centro de Cuenta</th>
                               <th class="text-center">F Término</th>
                               <th class="text-center">Valor</th>
-                              <th class="text-center">Aux</th>
-                              <th class="text-center">Aux2</th>
+                              <th class="text-center">Observación</th>
                               <th class="text-center">Acción</th>
-
                           </tr>
                       </thead>
                       <tbody>
@@ -216,15 +216,17 @@
                               <td>{{ odc.IdCecoODC.CodCeco }}</td>
                               <td>{{ odc.FechT_ODC }}</td>
                               <td>{{ odc.ValorODC }}</td>
-                              <td>{{ odc.IdCtto }}</td>
-                              <td>{{ id_ctto }}</td>
+                              <td>{{ odc.ObservOdc }}</td>
 
                                <td class="text-center">
                                   <a class="btn btn-xs" href="{% url 'personas:detalle_persona' odc.pk %}">
                                       <span class="glyphicon glyphicon-folder-open"></span>
                                   </a>
-                                  <a class="btn btn-xs" href="{% url 'personas:modificar_persona' odc.pk %}">
+                                  <a class="btn btn-xs" href="{% url 'personas:modificar_odc' odc.pk %}">
                                       <span class="glyphicon glyphicon-pencil"></span>
+                                  </a>
+                                  <a class="btn btn-xs" href="{% url 'personas:borrar_odc' odc.pk %}">
+                                      <span class="glyphicon glyphicon-remove"></span>
                                   </a>
                               </td>
 
@@ -334,6 +336,10 @@
                                           <a class="btn btn-xs" href="{% url 'personas:modificar_edp' edp.pk %}">
                                               <span class="glyphicon glyphicon-pencil"></span>
                                           </a>
+                                          <a class="btn btn-xs" href="{% url 'personas:borrar_edp' edp.pk %}">
+                                              <span class="glyphicon glyphicon-remove"></span>
+                                          </a>
+
                                       </td>
 
                                   </tr>

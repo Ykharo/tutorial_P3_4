@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Persona, Ctto, Edp, Ctta
+from .models import Persona, Ctto, Edp, Ctta, Odc
 
 class PersonaCreateForm(forms.ModelForm):
 
@@ -122,6 +122,71 @@ class EdpCreateForm(forms.ModelForm):
                 super(EdpCreateForm, self).__init__(*args, **kwargs)
                 self.initial['IdCtto'] = valor1
                 self.initial['valor2'] = valor2
+
+
+
+
+class OdcUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = Odc
+        fields = ['IdCtto','NumODC','IdCecoODC','FechT_ODC','ValorODC','DescripODC','FechSolOdc','FechAppOdc','ObservOdc']
+        labels = {
+            'IdCecoODC': 'Cuenta Contable',
+            'FechT_ODC': 'Fecha de Término'
+        }
+
+        widgets = {
+            #'IdCtto': forms.TextInput(attrs={'class': 'form-control'}),
+            'NumODC': forms.TextInput(attrs={'class': 'form-control'}),
+            #'IdCecoODC': forms.TextInput(attrs={'class': 'form-control'}),
+            'FechT_ODC': forms.DateInput(format='%d/%m/%Y'),
+            'ValorODC': forms.NumberInput(attrs={'class': 'form-control','localization': True}),
+            'DescripODC': forms.TextInput(attrs={'class': 'form-control'}),
+
+            'FechSolOdc': forms.DateInput(format='%d/%m/%Y'),
+            'FechAppOdc': forms.DateInput(format='%d/%m/%Y'),
+            'ObservEDP': forms.TextInput(attrs={'class': 'form-control'}),
+
+                }
+
+
+
+class OdcCreateForm(forms.ModelForm):
+
+    class Meta:
+        model = Odc
+        fields = ['IdCtto','NumODC','IdCecoODC','FechT_ODC','ValorODC','DescripODC','FechSolOdc','FechAppOdc','ObservOdc']
+        labels = {
+            'IdCecoODC': 'Cuenta Contable',
+            'FechT_ODC': 'Fecha de Término'
+        }
+
+        widgets = {
+            #'IdCtto': forms.TextInput(attrs={'class': 'form-control'}),
+            'NumODC': forms.TextInput(attrs={'class': 'form-control'}),
+            #'IdCecoODC': forms.TextInput(attrs={'class': 'form-control'}),
+            'FechT_ODC': forms.DateInput(format='%d/%m/%Y'),
+            'ValorODC': forms.NumberInput(attrs={'class': 'form-control','localization': True}),
+            'DescripODC': forms.TextInput(attrs={'class': 'form-control'}),
+
+            'FechSolOdc': forms.DateInput(format='%d/%m/%Y'),
+            'FechAppOdc': forms.DateInput(format='%d/%m/%Y'),
+            'ObservEDP': forms.TextInput(attrs={'class': 'form-control'}),
+
+                }
+
+    def __init__(self, *args, **kwargs):
+                valor1 = kwargs.pop('idctto')
+                valor2 = kwargs.pop('dato_aux')
+                super(OdcCreateForm, self).__init__(*args, **kwargs)
+                self.initial['IdCtto'] = valor1
+                self.initial['valor2'] = valor2
+
+
+
+
+
 
 class CttaUpdateForm(forms.ModelForm):
 

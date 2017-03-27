@@ -1,5 +1,6 @@
 from django.conf.urls import url
-from personas.views import Personas,EditarContrato,CrearPersona,EditarPersona, ReportePersonasExcel, Bienvenida, DetallePersona, ModificarPersona,ReporteEDPExcel,ReporteODCExcel,ficha,DetalleEdp,ModificarEdp
+from personas.views import Personas,EditarContrato,CrearPersona,EditarPersona, ReportePersonasExcel, Bienvenida, DetallePersona,\
+ModificarPersona,ReporteEDPExcel,ReporteODCExcel,ficha,DetalleEdp,ModificarEdp,BorrarEdp,ModificarOdc,BorrarOdc
 from . import models
 from . import views
 
@@ -9,8 +10,6 @@ urlpatterns = [
     url(r'^crear_persona/$',views.CrearPersona.as_view(), name="crear_persona"),
     url(r'^crear_persona/busqueda_ajax/$',views.BusquedaAjaxView.as_view(), name="Busqueda_ajax"),
     url(r'^crear_contratista/$',views.CrearContratista.as_view(), name="crear_contratista"),
-
-    url(r'^crear_edp/(?P<id_ctto>\d+)/$',views.CrearEdp.as_view(), name="crear_edp"),
 
     url(r'^personas/$',Personas.as_view(), name="personas"),
     url(r'^editar_contrato/(?P<id_ctto>[^/]+)$',views.EditarContrato, name="EditarContrato"),
@@ -27,8 +26,18 @@ urlpatterns = [
     url(r'^detalle_persona/(?P<pk>\d+)/$', DetallePersona.as_view(), name="detalle_persona"),
     url(r'^modificar_persona/(?P<pk>\d+)/$',ModificarPersona.as_view(), name="modificar_persona"),
 
+    url(r'^crear_edp/(?P<id_ctto>\d+)/$',views.CrearEdp.as_view(), name="crear_edp"),
     url(r'^detalle_edp/(?P<pk>\d+)/$', DetalleEdp.as_view(), name="detalle_edp"),
     url(r'^modificar_edp/(?P<pk>\d+)/$',ModificarEdp.as_view(), name="modificar_edp"),
+    url(r'^borrar_edp/(?P<pk>\d+)/$',BorrarEdp.as_view(), name="borrar_edp"),
+
+    url(r'^crear_odc/(?P<id_ctto>\d+)/$',views.CrearOdc.as_view(), name="crear_odc"),
+    url(r'^modificar_odc/(?P<pk>\d+)/$',ModificarOdc.as_view(), name="modificar_odc"),
+    url(r'^borrar_odc/(?P<pk>\d+)/$',BorrarOdc.as_view(), name="borrar_odc"),
+
+
+
+
 
     url(r'^polls/$', views.upload, name='uplink'),
     url(r'^polls/import/', views.import_data, name="import"),

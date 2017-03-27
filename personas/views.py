@@ -10,7 +10,7 @@ from django.views.generic.detail import DetailView
 
 
 from django.conf import settings
-from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateForm, CttaUpdateForm
+from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateForm, CttaUpdateForm, OdcUpdateForm, OdcCreateForm
 
 #Workbook nos permite crear libros en excel
 from openpyxl import Workbook
@@ -747,11 +747,18 @@ class ModificarEdp(UpdateView):
 
     model = Edp
     #Establecemos que la plantilla se llamara modificar persona
-    template_name = 'modificar_Edp_new.html'
+    template_name = 'modificar_edp_new.html'
     #Determinamos los campos con los que se va a trabajar, esto es obligatorio sino nos saldra un error
     #fields = ['NumCtto','DescCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','IdCecoCtto','CordCtto','IdMandante' ]
     #Con esta linea establecemos que se hara despues que la operacion de modificacion se complete correctamente
-    #success_url = reverse_lazy('personas:personas')
+    success_url = reverse_lazy('personas:personas')
+
+    #def get_success_url(self):
+        #Aux2 = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
+        #print("Aux3")
+        #print (edp.pk)
+        #success_url = reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
+        #success_url = reverse_lazy('personas:personas')
 
 
 class CrearEdp(CreateView):
@@ -762,10 +769,12 @@ class CrearEdp(CreateView):
     success_url = reverse_lazy('personas:EditarContrato')
     D_edp = Edp
 
+
     def get_context_data(self, **kwargs):
         context = super(CrearEdp, self).get_context_data(**kwargs)
         context['Valedp'] = Edp.objects.all()
         context['Validctto'] = int(self.kwargs['id_ctto'])
+
         print('valor de idctto =')
         print(self.kwargs['id_ctto'])
         return context
@@ -777,11 +786,9 @@ class CrearEdp(CreateView):
         return kwargs
 
     def get_success_url(self):
-
-        return reverse('personas:EditarContrato',kwargs={'id_ctto':'SC-450' })
-
-
-
+        Aux2 = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
+        #print( Ctto.objects.get(id=int(self.kwargs['id_ctto']))).NumCtto
+        return reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
 
 
 
@@ -797,7 +804,80 @@ class BorrarEdp(DeleteView):
     #Con esta linea establecemos que se hara despues que la operacion de modificacion se complete correctamente
     success_url = reverse_lazy('personas:personas')
 
+
+
+
+class ModificarOdc(UpdateView):
+    #Especificamos que el modelo a utilizar va a ser Persona
+    form_class = OdcUpdateForm
+
+    model = Odc
+    #Establecemos que la plantilla se llamara modificar persona
+    template_name = 'modificar_odc_new.html'
+    #Determinamos los campos con los que se va a trabajar, esto es obligatorio sino nos saldra un error
+    #fields = ['NumCtto','DescCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','IdCecoCtto','CordCtto','IdMandante' ]
+    #Con esta linea establecemos que se hara despues que la operacion de modificacion se complete correctamente
+    success_url = reverse_lazy('personas:personas')
+
+    #def get_success_url(self):
+        #Aux2 = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
+        #print("Aux3")
+        #print (edp.pk)
+        #success_url = reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
+        #success_url = reverse_lazy('personas:personas')
+
+
+class CrearOdc(CreateView):
+    model = Odc
+    #fields =['dni','nombre','apellido_paterno','apellido_materno']
+    template_name = 'crear_odc_new.html'
+    form_class = OdcCreateForm
+    success_url = reverse_lazy('personas:EditarContrato')
+    D_edp = Edp
+
+
+    def get_context_data(self, **kwargs):
+        context = super(CrearOdc, self).get_context_data(**kwargs)
+        context['Valodc'] = Odc.objects.all()
+        context['Validctto'] = int(self.kwargs['id_ctto'])
+
+        print('valor de idctto =')
+        print(self.kwargs['id_ctto'])
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(CrearOdc, self).get_form_kwargs()
+        kwargs.update({'idctto':self.kwargs['id_ctto'],'dato_aux':'dato2'})
+
+        return kwargs
+
+    def get_success_url(self):
+        Aux2 = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
+        #print( Ctto.objects.get(id=int(self.kwargs['id_ctto']))).NumCtto
+        return reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
+
+
+
+class BorrarOdc(DeleteView):
+    #Especificamos que el modelo a utilizar va a ser Persona
+    form_class = OdcUpdateForm
+
+    model = Odc
+    #Establecemos que la plantilla se llamara modificar persona
+    template_name = 'modificar_Odc_new.html'
+    #Determinamos los campos con los que se va a trabajar, esto es obligatorio sino nos saldra un error
+    #fields = ['NumCtto','DescCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','IdCecoCtto','CordCtto','IdMandante' ]
+    #Con esta linea establecemos que se hara despues que la operacion de modificacion se complete correctamente
+    success_url = reverse_lazy('personas:personas')
+
+
+
+
+
+
+
 from django.core import serializers
+
 
 class BusquedaAjaxView(TemplateView):
 
