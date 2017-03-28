@@ -57,7 +57,7 @@
 <div class="col-md-12 col-sm-12 col-xs-12">
   <div class="x_panel">
     <div class="x_title">
-      <h2>Estados de Pagos<small>Users</small></h2>
+      <h2>Estados de Pagos<small>Contrato :{{NumeroCtto}} : {{DescripCtto}} </small></h2>
       <ul class="nav navbar-right panel_toolbox">
         <li><a href="#"><i class="fa fa-chevron-up"></i></a>
         </li>
@@ -127,7 +127,7 @@
                           <td>{{ edp.NumEDP }}</td>
                           <td>{{ edp.PeriodEDP }}</td>
                           <td>{{ edp.PeriodEDPTer }}</td>
-                          <td>{{ edp.ValEDP }}</td>
+                          <td>{{ edp.ValEDP }} {{ edp.IdCtto.MonedaCtto}}</td>
                           <td>{{ edp.DevAntEDP }}</td>
                           <td>{{ edp.RetEDP }}</td>
                           <td>{{ edp.DevRet }}</td>

@@ -774,6 +774,8 @@ class CrearEdp(CreateView):
         context = super(CrearEdp, self).get_context_data(**kwargs)
         context['Valedp'] = Edp.objects.all()
         context['Validctto'] = int(self.kwargs['id_ctto'])
+        context['NumeroCtto'] = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
+        context['DescripCtto'] = Ctto.objects.get(id=self.kwargs['id_ctto']).DescCtto
 
         print('valor de idctto =')
         print(self.kwargs['id_ctto'])
@@ -840,6 +842,8 @@ class CrearOdc(CreateView):
         context = super(CrearOdc, self).get_context_data(**kwargs)
         context['Valodc'] = Odc.objects.all()
         context['Validctto'] = int(self.kwargs['id_ctto'])
+        context['NumeroCtto'] = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
+        context['DescripCtto'] = Ctto.objects.get(id=self.kwargs['id_ctto']).DescCtto
 
         print('valor de idctto =')
         print(self.kwargs['id_ctto'])

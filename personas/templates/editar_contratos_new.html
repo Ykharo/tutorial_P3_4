@@ -215,7 +215,7 @@
                               <td>{{ odc.DescripODC }}</td>
                               <td>{{ odc.IdCecoODC.CodCeco }}</td>
                               <td>{{ odc.FechT_ODC }}</td>
-                              <td>{{ odc.ValorODC }}</td>
+                              <td>{{ odc.ValorODC }} {{ odc.IdCtto.MonedaCtto}}</td>
                               <td>{{ odc.ObservOdc }}</td>
 
                                <td class="text-center">
@@ -323,7 +323,7 @@
                                       <td>{{ edp.NumEDP }}</td>
                                       <td>{{ edp.PeriodEDP }}</td>
                                       <td>{{ edp.PeriodEDPTer }}</td>
-                                      <td>{{ edp.ValEDP }}</td>
+                                      <td>{{ edp.ValEDP }} {{ edp.IdCtto.MonedaCtto}}</td>
                                       <td>{{ edp.DevAntEDP }}</td>
                                       <td>{{ edp.RetEDP }}</td>
                                       <td>{{ edp.DevRet }}</td>
