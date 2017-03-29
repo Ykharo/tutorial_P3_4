@@ -806,6 +806,17 @@ class BorrarEdp(DeleteView):
     #Con esta linea establecemos que se hara despues que la operacion de modificacion se complete correctamente
     success_url = reverse_lazy('personas:personas')
 
+    def get_context_data(self, **kwargs):
+        context = super(BorrarEdp, self).get_context_data(**kwargs)
+
+        context['NumeroCtto'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.NumCtto
+        return context
+
+    def get_success_url(self):
+        Aux2 = Edp.objects.get(id=self.kwargs['pk']).IdCtto.NumCtto
+        #print( Ctto.objects.get(id=int(self.kwargs['id_ctto']))).NumCtto
+        return reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
+
 
 
 
