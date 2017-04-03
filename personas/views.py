@@ -670,6 +670,102 @@ class ReporteODCExcel(TemplateView):
         return response
 
 
+
+
+class ReporteFiniquito(TemplateView):
+
+    #Usamos el metodo get para generar el archivo excel
+    def get(self, request, *args, **kwargs):
+        #Obtenemos todas las personas de nuestra base de datos
+        CTTOS = Ctto.objects.all()
+        ODC = Odc.objects.all()
+        EDP = Edp.objects.all()
+
+        #Creamos el libro de trabajo
+        wb = Workbook()
+        #Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
+        ws = wb.active
+        #En la celda B1 ponemos el texto 'REPORTE DE PERSONAS'
+        ws['B1'] = 'REPORTE DE EDP'
+        #Juntamos las celdas desde la B1 hasta la E1, formando una sola celda
+        ws.merge_cells('B1:E1')
+        #Creamos los encabezados desde la celda B3 hasta la E3
+        ws['B3'] = 'Ctto'
+        ws['C3'] = 'Ctta'
+        ws['D3'] = 'Descripción'
+        ws['E3'] = 'Nº EDP'
+        ws['F3'] = 'Moneda'
+
+        ws['G3'] = 'Valor EDP'
+        ws['H3'] = 'Dev Anticipo'
+        ws['I3'] = 'Reten EDP'
+        ws['J3'] = 'Dev Ret EDP'
+
+        ws['K3'] = 'Valor EDP [USD]'
+
+
+        ws['L3'] = 'P inicio'
+        ws['M3'] = 'P Termino'
+        ws['N3'] = 'Fecha Present EDP'
+        ws['O3'] = 'Fecha Aprob EDP'
+        ws['P3'] = 'Obs EDP'
+        ws['Q3'] = 'EstCtto'
+
+        cont=4
+        valcttoAct = 0
+        #Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
+        for ctto in CTTOS:
+            factor = fac(ctto.MonedaCtto)
+            for edp in Edp.objects.filter(IdCtto__id=ctto.id):
+
+                ws.cell(row=cont,column=2).value = ctto.NumCtto
+                ws.cell(row=cont,column=3).value = ctto.IdCtta.NomCtta
+                ws.cell(row=cont,column=4).value = ctto.DescCtto
+                ws.cell(row=cont,column=5).value = edp.NumEDP
+                ws.cell(row=cont,column=6).value = ctto.MonedaCtto
+
+                ws.cell(row=cont,column=7).value = edp.ValEDP
+                ws.cell(row=cont,column=8).value = edp.DevAntEDP
+                ws.cell(row=cont,column=9).value = edp.RetEDP
+                ws.cell(row=cont,column=10).value = edp.DevRet
+
+                ws.cell(row=cont,column=11).value = factor*edp.ValEDP
+
+                ws.cell(row=cont,column=12).value = edp.PeriodEDP
+                ws.cell(row=cont,column=13).value = edp.PeriodEDPTer
+                ws.cell(row=cont,column=14).value = edp.PresenEDP
+                ws.cell(row=cont,column=15).value = edp.AprobEDP
+                ws.cell(row=cont,column=16).value = edp.ObservEDP
+                ws.cell(row=cont,column=17).value = ctto.EstCtto
+
+                cont = cont + 1
+
+        #Establecemos el nombre del archivo
+        nombre_archivo ="ReportePersonasExcel.xlsx"
+        #Definimos que el tipo de respuesta a devolver es un archivo de microsoft excel
+        #response = HttpResponse(content_type="application/ms-excel")
+        #contenido = "attachment; filename={0}".format(nombre_archivo)
+        #response["Content-Disposition"] = contenido
+        #wb.save(response)
+
+        #['IdCtto', 'NumCtto', 'DescCtto', 'MonedaCtto', 'ValorCtto', 'IdCtta', 'EstCtto', 'FechIniCtto', 'FechTerCtto', 'IdCecoCtto', 'CordCtto', 'IdMandante',\
+        #'Carpeta','TipoServ', 'AjusteCom','AjustNumEDP','AjustValEDP','AdjudicCtto','LocalCtto','TerrenCtto','SeguroCtto'],
+
+
+
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=mydata_Edp.xlsx'
+
+        wb.save(response)
+        return response
+
+
+
+
+
+
+
+
 class Bienvenida(TemplateView):
     #template_name = 'Tabla_Servicios.html'
     template_name = 'form.html'
@@ -720,13 +816,30 @@ def EditarContrato(request,id_ctto):
     valor = 0
     try:
         valor = Ctto.objects.get(NumCtto=id_ctto).id
-        CTTO = Ctto.objects.get(NumCtto=id_ctto)
+        ctto = Ctto.objects.get(NumCtto=id_ctto)
     except ObjectDoesNotExist:
         valor =0
 
+    sumaODC = Odc.objects.filter(IdCtto__id=valor).aggregate(Sum('ValorODC'))['ValorODC__sum'] or 0
+    sumaEDP = Edp.objects.filter(IdCtto__id=valor).aggregate(Sum('ValEDP'))['ValEDP__sum'] or 0
+    sumaAnt = Edp.objects.filter(IdCtto__id=valor).aggregate(Sum('AnticipoEDP'))['AnticipoEDP__sum'] or 0
+    sumaDevAnt = Edp.objects.filter(IdCtto__id=valor).aggregate(Sum('DevAntEDP'))['DevAntEDP__sum'] or 0
+    sumaRet = Edp.objects.filter(IdCtto__id=valor).aggregate(Sum('RetEDP'))['RetEDP__sum'] or 0
+    sumaDevRet = Edp.objects.filter(IdCtto__id=valor).aggregate(Sum('DevRet'))['DevRet__sum'] or 0
+    sumaDesc = Edp.objects.filter(IdCtto__id=valor).aggregate(Sum('DescuentoEDP'))['DescuentoEDP__sum'] or 0
+
+    TerActualizado = (Odc.objects.filter(IdCtto__id=valor).aggregate(Max('FechT_ODC'))['FechT_ODC__max']) or datetime(2009, 1, 1)
+    if ctto.FechTerCtto.strftime('%F%H%M%S') > TerActualizado.strftime('%F%H%M%S'):
+        TerActualizado = ctto.FechTerCtto
 
 
-    return render_to_response('editar_contratos_new.html',{'Ctto':CTTO,'Odc':ODC,'Edp':EDP,'id_ctto':valor })
+    ValActCtto = ctto.ValorCtto + sumaODC
+    ValActFechTermCtto = TerActualizado
+
+    return render_to_response('editar_contratos_new.html',{'Ctto':ctto,'Odc':ODC,'Edp':EDP,'id_ctto':valor,\
+    'ValActCtto':ValActCtto,'TerActualizado':TerActualizado,'sumaODC':sumaODC,'sumaEDP':sumaEDP,'sumaAnt':sumaAnt,\
+    'sumaDevAnt':sumaDevAnt,'sumaRet':sumaRet,'sumaDevRet': sumaDevRet,'sumaDesc':sumaDesc
+     })
 
 
 
@@ -751,7 +864,7 @@ class ModificarEdp(UpdateView):
     #Determinamos los campos con los que se va a trabajar, esto es obligatorio sino nos saldra un error
     #fields = ['NumCtto','DescCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','IdCecoCtto','CordCtto','IdMandante' ]
     #Con esta linea establecemos que se hara despues que la operacion de modificacion se complete correctamente
-    success_url = reverse_lazy('personas:personas')
+    #success_url = reverse_lazy('personas:personas')
 
     #def get_success_url(self):
         #Aux2 = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
@@ -759,7 +872,10 @@ class ModificarEdp(UpdateView):
         #print (edp.pk)
         #success_url = reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
         #success_url = reverse_lazy('personas:personas')
-
+    def get_success_url(self):
+        Aux2 = Edp.objects.get(id=self.kwargs['pk']).IdCtto.NumCtto
+        #print( Ctto.objects.get(id=int(self.kwargs['id_ctto']))).NumCtto
+        return reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
 
 class CrearEdp(CreateView):
     model = Edp
@@ -839,6 +955,10 @@ class ModificarOdc(UpdateView):
         #success_url = reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
         #success_url = reverse_lazy('personas:personas')
 
+    def get_success_url(self):
+        Aux2 = Odc.objects.get(id=self.kwargs['pk']).IdCtto.NumCtto
+        #print( Ctto.objects.get(id=int(self.kwargs['id_ctto']))).NumCtto
+        return reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
 
 class CrearOdc(CreateView):
     model = Odc
@@ -885,7 +1005,10 @@ class BorrarOdc(DeleteView):
     #Con esta linea establecemos que se hara despues que la operacion de modificacion se complete correctamente
     success_url = reverse_lazy('personas:personas')
 
-
+    def get_success_url(self):
+        Aux2 = Odc.objects.get(id=self.kwargs['pk']).IdCtto.NumCtto
+        #print( Ctto.objects.get(id=int(self.kwargs['id_ctto']))).NumCtto
+        return reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
 
 
 

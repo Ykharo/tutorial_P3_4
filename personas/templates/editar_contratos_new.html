@@ -97,29 +97,30 @@
                                   <div class='form-group'>
                                       <div class="row">
                                           <div class="col-md-6">
-                                              <label>Ctto :&nbsp; </label>{{ Ctto.NumCtto }}
+                                              <p><label>Ctto :&nbsp; </label>{{ Ctto.NumCtto }}</p>
                                               <p><label>Descripción :&nbsp;</label>{{ Ctto.DescCtto }}</p>
                                               <p><label>Contratista :&nbsp; </label>{{ Ctto.IdCtta.NomCtta }}</p>
                                               <p><label>Centro Costo :&nbsp; </label>{{ Ctto.IdCecoCtto.CodCeco }}</p>
                                               <p><label>Fecha Inicio :&nbsp; </label>{{ Ctto.FechIniCtto }}</p>
-                                              <P><label>Fecha Término :&nbsp; </label>{{ Ctto.FechTerCtto }}</p>
+                                              <P><label>Fecha Término inicial:&nbsp; </label>{{ Ctto.FechTerCtto }}</p>
                                               <p><label>Moneda Ctto :&nbsp; </label>{{ Ctto.MonedaCtto }}</p>
-                                              <p><label>Valor Inicial Ctto :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">{{Ctto.ValorCtto}}</td></p>
+
                                               <p><label>Mandante :&nbsp; </label>{{ Ctto.IdMandante.NomMandte }}</p>
                                               <p><label>Cordinador de Ctto :&nbsp; </label>{{ Ctto.CordCtto }}</p>
                                           </div>
 
                                           <div class="col-md-6">
-                                              <label>Ctto :&nbsp; </label>{{ Ctto.NumCtto }}
-                                              <p><label>Descripción :&nbsp;</label>{{ Ctto.DescCtto }}</p>
-                                              <p><label>Contratista :&nbsp; </label>{{ Ctto.IdCtta.NomCtta }}</p>
-                                              <p><label>Centro Costo :&nbsp; </label>{{ Ctto.IdCecoCtto.CodCeco }}</p>
-                                              <p><label>Fecha Inicio :&nbsp; </label>{{ Ctto.FechIniCtto }}</p>
-                                              <P><label>Fecha Término :&nbsp; </label>{{ Ctto.FechTerCtto }}</p>
-                                              <p><label>Moneda Ctto :&nbsp; </label>{{ Ctto.MonedaCtto }}</p>
-                                              <p><label>Valor Inicial Ctto :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">{{Ctto.ValorCtto}}</td></p>
-                                              <p><label>Mandante :&nbsp; </label>{{ Ctto.IdMandante.NomMandte }}</p>
-                                              <p><label>Cordinador de Ctto :&nbsp; </label>{{ Ctto.CordCtto }}</p>
+                                              <p><label>Valor Inicial Ctto :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ Ctto.ValorCtto}}</td></p>
+                                              <p><label>Valor Modificaciones :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ sumaODC}}</td></p>
+                                              <p><label>Valor Actualizado :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ ValActCtto}}</td></p>
+                                              <P><label>Fecha Término Actualizado:&nbsp; </label>{{ TerActualizado }}</p>
+                                              <p><label>Total Avance :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ sumaEDP}}</td></p>
+                                              <p><label>Total Retenciones :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ sumaRet}}</td></p>
+                                              <p><label>Total Devolución Retenciones :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ sumaDevRet}}</td></p>
+                                              <p><label>Total Anticipos :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ sumaAnt}}</td></p>
+                                              <p><label>Total Devolución Anticipos :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ sumaDevAnt}}</td></p>
+                                              <p><label>Total Descuentos :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ sumaDesc}}</td></p>
+
                                           </div>
 
 
@@ -215,7 +216,7 @@
                               <td>{{ odc.DescripODC }}</td>
                               <td>{{ odc.IdCecoODC.CodCeco }}</td>
                               <td>{{ odc.FechT_ODC }}</td>
-                              <td>{{ odc.ValorODC }} {{ odc.IdCtto.MonedaCtto}}</td>
+                              <td>{{ odc.IdCtto.MonedaCtto}} {{ odc.ValorODC }}</td>
                               <td>{{ odc.ObservOdc }}</td>
 
                                <td class="text-center">
@@ -323,7 +324,7 @@
                                       <td>{{ edp.NumEDP }}</td>
                                       <td>{{ edp.PeriodEDP }}</td>
                                       <td>{{ edp.PeriodEDPTer }}</td>
-                                      <td>{{ edp.ValEDP }} {{ edp.IdCtto.MonedaCtto}}</td>
+                                      <td>{{ edp.IdCtto.MonedaCtto}} {{ edp.ValEDP }}</td>
                                       <td>{{ edp.DevAntEDP }}</td>
                                       <td>{{ edp.RetEDP }}</td>
                                       <td>{{ edp.DevRet }}</td>
@@ -352,6 +353,94 @@
                 </div>
               </div>
             </div>
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2>Generar Cierre <small>Users</small></h2>
+                  <ul class="nav navbar-right panel_toolbox">
+                    <li><a href="#"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Settings 1</a>
+                        </li>
+                        <li><a href="#">Settings 2</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><a href="#"><i class="fa fa-close"></i></a>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <p class="text-muted font-13 m-b-30">
+                    Responsive is an extension for DataTables that resolves that problem by optimising the table's layout for different screen sizes through the dynamic insertion and removal of columns from the table.
+                  </p>
+
+
+
+
+                  <div class='form-group'>
+                      <div class="row">
+                          <div class="col-lg-3">
+
+                          </div>
+                          <div class="col-lg-7">
+
+                          </div>
+
+                          <div class="col-lg-1">
+                              <a id="crear_finiquito" href="{% url 'personas:reporte_finiquito' id_ctto %}" class="btn btn-info btn-block">
+                                <span class="glyphicon glyphicon-file"></span>
+                              </a>
+                          </div>
+
+                      </div>
+                  </div>
+                  <div class="row">
+
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
           </div>

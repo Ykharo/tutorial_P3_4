@@ -44,6 +44,10 @@ class Ctta(models.Model):
     NomCtta = models.CharField(max_length=100)
     DirCtta = models.CharField(max_length=100, null=True, blank=True)
     RutCtta = models.CharField(max_length=15, null=True, blank=True)
+    Rep1Ctta = models.CharField(max_length=100, null=True, blank=True)
+    RutRep1Ctta = models.CharField(max_length=100, null=True, blank=True)
+    Rep2Ctta = models.CharField(max_length=100, null=True, blank=True)
+    RutRep2Ctta = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return self.NomCtta
@@ -90,6 +94,7 @@ class Ctto(models.Model):
     CordCtto = models.CharField(max_length=100, null=True, blank=True)
     IdMandante = models.ForeignKey(Mdte)
 
+
     Carpeta = models.CharField(max_length=30, null=True, blank=True)
     TipoServ = models.CharField(max_length=25, choices=TIPOSERV, default="Contrato",null=True, blank=True)
     AjusteCom = models.DecimalField(decimal_places=2, max_digits=21, null=True, blank=True)
@@ -114,9 +119,13 @@ class Edp(models.Model):
     ValEDP = models.DecimalField( decimal_places=2, max_digits=21,null=False)
     PeriodEDP = models.DateField( null=False)
     PeriodEDPTer = models.DateField( null=True, blank=True)# Sept, Final de Periodo
+
+    AnticipoEDP = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True)
     DevAntEDP = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True)
     RetEDP = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True)
     DevRet = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True)
+    DescuentoEDP = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True)
+
     Estado = models.CharField( max_length=10)
     FactEDP = models.CharField( max_length=30, null=True, blank=True)
 

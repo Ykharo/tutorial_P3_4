@@ -59,11 +59,13 @@ class EdpUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Edp
-        fields = ['IdCtto','NumEDP','ValEDP','PeriodEDP','PeriodEDPTer','DevAntEDP','RetEDP','DevRet','Estado','FactEDP'
+        fields = ['IdCtto','NumEDP','ValEDP','PeriodEDP','PeriodEDPTer','AnticipoEDP','DevAntEDP','RetEDP','DevRet','DescuentoEDP','Estado','FactEDP'
                     ,'PresenEDP','AprobEDP','ObservEDP']
         labels = {
             'PeriodEDP': 'Periodo Inicio',
-            'PeriodEDPTer': 'Periodo Término'
+            'PeriodEDPTer': 'Periodo Término',
+            'AnticipoEDP': 'Anticipo',
+            'DescuentoEDP': 'Descuento'
         }
 
         widgets = {
@@ -73,11 +75,15 @@ class EdpUpdateForm(forms.ModelForm):
 
             'PeriodEDP': forms.DateInput(format='%d/%m/%Y'),
             'PeriodEDPTer': forms.DateInput(format='%d/%m/%Y'),
+
+            'AnticipoEDP': forms.TextInput(attrs={'class': 'form-control'}),
             'DevAntEDP': forms.TextInput(attrs={'class': 'form-control'}),
             'RetEDP': forms.NumberInput(attrs={'class': 'form-control'} ),
             'DevRet': forms.NumberInput(attrs={'class': 'form-control'} ),
-            'Estado': forms.TextInput(attrs={'class': 'form-control'}),
+            'DescuentoEDP': forms.TextInput(attrs={'class': 'form-control'}),
 
+
+            'Estado': forms.TextInput(attrs={'class': 'form-control'}),
             'FactEDP': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
             'PresenEDP': forms.DateInput(format='%d/%m/%Y'),
             'AprobEDP': forms.DateInput(format='%d/%m/%Y'),
@@ -90,11 +96,13 @@ class EdpCreateForm(forms.ModelForm):
 
     class Meta:
         model = Edp
-        fields = ['IdCtto','NumEDP','ValEDP','PeriodEDP','PeriodEDPTer','DevAntEDP','RetEDP','DevRet','Estado','FactEDP'
+        fields = ['IdCtto','NumEDP','ValEDP','PeriodEDP','PeriodEDPTer','AnticipoEDP','DevAntEDP','RetEDP','DevRet','DescuentoEDP','Estado','FactEDP'
                     ,'PresenEDP','AprobEDP','ObservEDP']
         labels = {
             'PeriodEDP': 'Periodo Inicio',
-            'PeriodEDPTer': 'Periodo Término'
+            'PeriodEDPTer': 'Periodo Término',
+            'AnticipoEDP': 'Anticipo',
+            'DescuentoEDP': 'Descuento'
         }
 
         widgets = {
@@ -104,11 +112,14 @@ class EdpCreateForm(forms.ModelForm):
 
             'PeriodEDP': forms.DateInput(format='%d/%m/%Y'),
             'PeriodEDPTer': forms.DateInput(format='%d/%m/%Y'),
+
+            'AnticipoEDP': forms.TextInput(attrs={'class': 'form-control'}),
             'DevAntEDP': forms.TextInput(attrs={'class': 'form-control'}),
             'RetEDP': forms.NumberInput(attrs={'class': 'form-control'} ),
             'DevRet': forms.NumberInput(attrs={'class': 'form-control'} ),
-            'Estado': forms.TextInput(attrs={'class': 'form-control'}),
+            'DescuentoEDP': forms.TextInput(attrs={'class': 'form-control'}),
 
+            'Estado': forms.TextInput(attrs={'class': 'form-control'}),
             'FactEDP': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
             'PresenEDP': forms.DateInput(format='%d/%m/%Y'),
             'AprobEDP': forms.DateInput(format='%d/%m/%Y'),
