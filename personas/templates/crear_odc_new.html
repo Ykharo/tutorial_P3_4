@@ -149,7 +149,12 @@
             <div class="x_panel">
               <div class="x_title">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                  <div >
+                        <button type="submit" class="btn btn-primary" onclick="location.href='{% url 'personas:crear_docODC' Validctto %}'">
+                        Crear Documento OC
+                      </button>
 
+                  </div>
 
                   <div class="panel-body">
                       <form role="form" action="#" method="post">{% csrf_token %}
@@ -164,8 +169,9 @@
                           <div class='form-group'>
                               <input type="submit" class="btn btn-primary" name="submit" value="Guardar Orden de Cambio">
                               <button type="reset" class="btn btn-primary" onclick="location.href='{% url 'personas:personas' %}'">
-                                  Cancelar
+                                Cancelar
                               </button>
+
                           </div>
                       </form>
                   </div>

@@ -13,6 +13,7 @@ from django.conf import settings
 from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateForm, CttaUpdateForm, OdcUpdateForm, OdcCreateForm
 
 #Workbook nos permite crear libros en excel
+
 from openpyxl import Workbook
 #Nos devuelve un objeto resultado, en este caso un archivo de excel
 from django.http.response import HttpResponse
@@ -760,7 +761,22 @@ class ReporteFiniquito(TemplateView):
         return response
 
 
+class crear_docODC(TemplateView):
+    def get(self, request, *args, **kwargs):
 
+        from openpyxl import load_workbook
+        wb = load_workbook('test.xlsx')
+        wb.template = False
+        print (wb.get_sheet_names())
+        ws = wb.active
+
+        ws['B3'] = 'Ctto'
+        wb.save('test.xlsx')
+
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=sample.xlsx'
+
+        return response
 
 
 
@@ -840,6 +856,9 @@ def EditarContrato(request,id_ctto):
     'ValActCtto':ValActCtto,'TerActualizado':TerActualizado,'sumaODC':sumaODC,'sumaEDP':sumaEDP,'sumaAnt':sumaAnt,\
     'sumaDevAnt':sumaDevAnt,'sumaRet':sumaRet,'sumaDevRet': sumaDevRet,'sumaDesc':sumaDesc
      })
+
+
+
 
 
 
