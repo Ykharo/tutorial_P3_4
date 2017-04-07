@@ -14,7 +14,8 @@ from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateFo
 
 #Workbook nos permite crear libros en excel
 
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
+
 #Nos devuelve un objeto resultado, en este caso un archivo de excel
 from django.http.response import HttpResponse
 
@@ -764,17 +765,76 @@ class ReporteFiniquito(TemplateView):
 class crear_docODC(TemplateView):
     def get(self, request, *args, **kwargs):
 
-        from openpyxl import load_workbook
-        wb = load_workbook('test.xlsx')
-        wb.template = False
-        print (wb.get_sheet_names())
-        ws = wb.active
 
-        ws['B3'] = 'Ctto'
-        wb.save('test.xlsx')
+
+        wb = load_workbook(filename = 'Datos.xlsx')
+        wb.template = False
+        ws = wb.get_sheet_by_name('BD')
+
+        try:
+            id_odc = self.kwargs['id_odc']
+            id_ctto = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.id
+            ctto = Ctto.objects.get(id=id_ctto)
+        except ObjectDoesNotExist:
+            valor =0
+
+        Desc_ceco = Odc.objects.get(id=id_odc).IdCecoODC.CodCeco+': '+Odc.objects.get(id=id_odc).IdCecoODC.NomCeco
+
+        sumaODC = Odc.objects.filter(IdCtto__id=id_ctto).aggregate(Sum('ValorODC'))['ValorODC__sum'] or 0
+
+        TerActualizado = (Odc.objects.filter(IdCtto__id=id_ctto).aggregate(Max('FechT_ODC'))['FechT_ODC__max']) or datetime(2009, 1, 1)
+        if ctto.FechTerCtto.strftime('%F%H%M%S') > TerActualizado.strftime('%F%H%M%S'):
+            TerActualizado = ctto.FechTerCtto
+
+        ODC_ctto = Odc.objects.filter(IdCtto__id=id_ctto)
+
+        TerActualizado2 = ctto.FechTerCtto
+        for odc in ODC_ctto:
+
+            if odc.FechT_ODC.strftime('%F%H%M%S') > TerActualizado2.strftime('%F%H%M%S') :
+                TerActualizado2 = odc.FechT_ODC
+
+            if odc.id == int(id_odc):
+                print ("ODC Actual : " + odc.NumODC)
+                break
+
+            print("odc.id")
+            print(odc.id)
+            print("id_odc")
+            print(id_odc)
+
+
+
+
+
+
+        ws['B5'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.NumCtto
+        ws['B6'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.DescCtto
+        ws['B7'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdCtta.NomCtta
+        ws['B8'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdCtta.RutCtta
+        ws['B9'] = Odc.objects.get(id=self.kwargs['id_odc']).NumODC
+        ws['B10'] = ""
+        ws['B11'] = ""
+        ws['B12'] = Odc.objects.get(id=self.kwargs['id_odc']).FechAppOdc
+        ws['B13'] = Odc.objects.get(id=self.kwargs['id_odc']).DescripODC
+        ws['B14'] = Desc_ceco
+        ws['B15'] = ""
+        ws['B16'] = ""
+        ws['B17'] = ""
+        ws['B18'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.MonedaCtto
+        ws['B19'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.ValorCtto
+        ws['B20'] = sumaODC
+        ws['B21'] = Odc.objects.get(id=self.kwargs['id_odc']).ValorODC
+        ws['B22'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.FechIniCtto
+        ws['B23'] = TerActualizado
+        ws['B24'] = Odc.objects.get(id=self.kwargs['id_odc']).FechT_ODC
+
+        wb.save('Datos.xlsx')
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=sample.xlsx'
+        response['Content-Disposition'] = 'attachment; filename=Datos.xlsx'
+
+        wb.save(response)
 
         return response
 
@@ -1007,6 +1067,7 @@ class CrearOdc(CreateView):
 
     def get_success_url(self):
         Aux2 = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
+        crear_docODC(kwargs={'id_ctto': Aux2 })
         #print( Ctto.objects.get(id=int(self.kwargs['id_ctto']))).NumCtto
         return reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
 

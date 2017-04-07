@@ -220,6 +220,9 @@
                               <td>{{ odc.ObservOdc }}</td>
 
                                <td class="text-center">
+                                  <a class="btn btn-xs" href="{% url 'personas:crear_docODC' odc.pk %}">
+                                      <span class="glyphicon glyphicon-file"></span>
+                                  </a>
                                   <a class="btn btn-xs" href="{% url 'personas:detalle_persona' odc.pk %}">
                                       <span class="glyphicon glyphicon-folder-open"></span>
                                   </a>

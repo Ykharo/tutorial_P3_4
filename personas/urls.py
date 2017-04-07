@@ -35,7 +35,7 @@ urlpatterns = [
     url(r'^crear_odc/(?P<id_ctto>\d+)/$',views.CrearOdc.as_view(), name="crear_odc"),
     url(r'^modificar_odc/(?P<pk>\d+)/$',ModificarOdc.as_view(), name="modificar_odc"),
     url(r'^borrar_odc/(?P<pk>\d+)/$',BorrarOdc.as_view(), name="borrar_odc"),
-    url(r'^crear_docODC/(?P<id_ctto>\d+)/$',views.crear_docODC.as_view(), name="crear_docODC"),
+    url(r'^crear_docODC/(?P<id_odc>\d+)/$',views.crear_docODC.as_view(), name="crear_docODC"),
 
     url(r'^reporte_finiquito/(?P<id_ctto>\d+)/$',ReporteFiniquito.as_view(), name="reporte_finiquito"),
 
