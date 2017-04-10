@@ -26,8 +26,7 @@ class Ceco(models.Model):
     Budget = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
 
     def __str__(self):
-        return self.CodCeco
-
+        return '%s %s' % (self.CodCeco, self.NomCeco)
 
 class Mdte(models.Model):
     IdMandante = models.IntegerField(null=True, blank=True)
@@ -165,6 +164,26 @@ class Odc(models.Model):
 
     def __str__(self):
         return self.NumODC
+
+class ItemOdc(models.Model):
+    NumItem = models.CharField( max_length=8, null=False)
+    IdCecoODC = models.ForeignKey(Ceco) # Agregar ForeignKey
+    IdODC =  models.ForeignKey( Odc) #Agregar ForeignKey
+    DescripItem = models.CharField( max_length=50, null=True, blank=True)
+    UnidItem = models.CharField( max_length=50, null=True, blank=True)
+    CantItem = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True) # Revisar, False y default=0
+    PuItem = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True)
+    TotalItem = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    ObservItem = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.NumItem
+
+    def save(self):
+        self.TotalItem = self.CantItem * self.PuItem
+        super(ItemOdc, self).save()
+
+
 
 class Monedas(models.Model):
     NomMoneda = models.CharField(max_length=4, null=False)

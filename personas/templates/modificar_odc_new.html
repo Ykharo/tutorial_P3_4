@@ -71,6 +71,36 @@
                                       <div class="form-group">
                                           {{ form.as_p}}
                                       </div>
+                                      <table class="table">
+                                          {{ familymembers.management_form }}
+
+                                          {% for form in familymembers.forms %}
+                                              {% if forloop.first %}
+                                                  <thead>
+                                                  <tr>
+                                                      {% for field in form.visible_fields %}
+                                                          <th>{{ field.label|capfirst }}</th>
+                                                      {% endfor %}
+                                                  </tr>
+                                                  </thead>
+                                              {% endif %}
+                                              <tr class="{% cycle row1 row2 %} formset_row">
+                                                  {% for field in form.visible_fields %}
+                                                      <td>
+                                                          {# Include the hidden fields in the form #}
+                                                          {% if forloop.first %}
+                                                              {% for hidden in form.hidden_fields %}
+                                                                  {{ hidden }}
+                                                              {% endfor %}
+                                                          {% endif %}
+                                                          {{ field.errors.as_ul }}
+                                                          {{ field }}
+                                                      </td>
+                                                  {% endfor %}
+                                              </tr>
+                                          {% endfor %}
+                                      </table>
+
                                       <div class='form-group'>
                                           <input type="submit" class="btn btn-primary" name="submit" value="Modificar Orden de Cambio">
                                           <button type="reset" class="btn btn-primary" onclick="location.href='{% url 'personas:personas' %}'">
@@ -106,7 +136,15 @@
 
 {% endblock cuerpo %}
 
+{% block js %}
 
+<script type="text/javascript">
+    $('.formset_row').formset({
+        addText: 'add family member',
+        deleteText: 'remove',
+        prefix: 'itemodc_set'
+    });
+</script>
 
 jQuery(function($){
    $("#date").mask("99/99/9999",{placeholder:"mm/dd/yyyy"});
@@ -114,3 +152,5 @@ jQuery(function($){
    $("#tin").mask("99-9999999");
    $("#ssn").mask("999-99-9999");
 });
+
+{% endblock js %}

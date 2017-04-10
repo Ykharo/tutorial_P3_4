@@ -10,7 +10,7 @@ from django.views.generic.detail import DetailView
 
 
 from django.conf import settings
-from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateForm, CttaUpdateForm, OdcUpdateForm, OdcCreateForm
+from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateForm, CttaUpdateForm, OdcUpdateForm, OdcCreateForm, ItemOdcFormSet
 
 #Workbook nos permite crear libros en excel
 
@@ -20,6 +20,7 @@ from openpyxl import Workbook, load_workbook
 from django.http.response import HttpResponse
 
 from django.db.models import Avg, Max, Min, Count, Sum
+from django.db import transaction
 
 from django.core.exceptions import ObjectDoesNotExist # para cuando exista moneda
 
@@ -35,7 +36,7 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django import forms
 from django.template import RequestContext
 import django_excel as excel
-from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas
+from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, ItemOdc
 
 # No longer you need the following import statements if you use pyexcel >=0.2.2
 import pyexcel.ext.xls
@@ -774,38 +775,26 @@ class crear_docODC(TemplateView):
         try:
             id_odc = self.kwargs['id_odc']
             id_ctto = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.id
+
             ctto = Ctto.objects.get(id=id_ctto)
         except ObjectDoesNotExist:
             valor =0
 
         Desc_ceco = Odc.objects.get(id=id_odc).IdCecoODC.CodCeco+': '+Odc.objects.get(id=id_odc).IdCecoODC.NomCeco
 
-        sumaODC = Odc.objects.filter(IdCtto__id=id_ctto).aggregate(Sum('ValorODC'))['ValorODC__sum'] or 0
-
-        TerActualizado = (Odc.objects.filter(IdCtto__id=id_ctto).aggregate(Max('FechT_ODC'))['FechT_ODC__max']) or datetime(2009, 1, 1)
-        if ctto.FechTerCtto.strftime('%F%H%M%S') > TerActualizado.strftime('%F%H%M%S'):
-            TerActualizado = ctto.FechTerCtto
-
-        ODC_ctto = Odc.objects.filter(IdCtto__id=id_ctto)
-
-        TerActualizado2 = ctto.FechTerCtto
+        ODC_ctto = Odc.objects.filter(IdCtto__id=id_ctto).order_by('NumODC')
+        Item_odc = ItemOdc.objects.filter(IdODC__id=id_odc).order_by('NumItem')
+        TerActualizado_ant = ctto.FechTerCtto
+        sumaODC = 0
         for odc in ODC_ctto:
-
-            if odc.FechT_ODC.strftime('%F%H%M%S') > TerActualizado2.strftime('%F%H%M%S') :
-                TerActualizado2 = odc.FechT_ODC
-
             if odc.id == int(id_odc):
                 print ("ODC Actual : " + odc.NumODC)
                 break
-
-            print("odc.id")
-            print(odc.id)
-            print("id_odc")
-            print(id_odc)
-
-
-
-
+            print("Fecha TAct")
+            print(odc.FechT_ODC)
+            if odc.FechT_ODC != None:
+                TerActualizado_ant = odc.FechT_ODC
+            sumaODC = sumaODC+ (odc.ValorODC or 0)
 
 
         ws['B5'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.NumCtto
@@ -826,10 +815,22 @@ class crear_docODC(TemplateView):
         ws['B20'] = sumaODC
         ws['B21'] = Odc.objects.get(id=self.kwargs['id_odc']).ValorODC
         ws['B22'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.FechIniCtto
-        ws['B23'] = TerActualizado
-        ws['B24'] = Odc.objects.get(id=self.kwargs['id_odc']).FechT_ODC
+        ws['B23'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.FechTerCtto
+        ws['B24'] = TerActualizado_ant
+        ws['B25'] = Odc.objects.get(id=self.kwargs['id_odc']).FechT_ODC
 
-        wb.save('Datos.xlsx')
+        cont =1
+        for itemodc in Item_odc:
+            ws.cell(row=cont+30,column=1).value = itemodc.NumItem
+            ws.cell(row=cont+30,column=2).value = itemodc.IdCecoODC.CodCeco
+            ws.cell(row=cont+30,column=3).value = itemodc.DescripItem
+            ws.cell(row=cont+30,column=4).value = itemodc.UnidItem
+            ws.cell(row=cont+30,column=5).value = itemodc.CantItem
+            ws.cell(row=cont+30,column=6).value = itemodc.PuItem
+            ws.cell(row=cont+30,column=7).value = itemodc.TotalItem
+            cont =cont+1
+
+        #wb.save('Datos.xlsx')
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=Datos.xlsx'
@@ -1033,11 +1034,37 @@ class ModificarOdc(UpdateView):
         #print (edp.pk)
         #success_url = reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
         #success_url = reverse_lazy('personas:personas')
+    def get_context_data(self, **kwargs):
+        data = super(ModificarOdc, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['familymembers'] = ItemOdcFormSet(self.request.POST, instance=self.object)
+        else:
+            data['familymembers'] = ItemOdcFormSet(instance=self.object)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        familymembers = context['familymembers']
+        with transaction.atomic():
+            self.object = form.save()
+
+            if familymembers.is_valid():
+                familymembers.instance = self.object
+                familymembers.save()
+        return super(ModificarOdc, self).form_valid(form)
+
 
     def get_success_url(self):
         Aux2 = Odc.objects.get(id=self.kwargs['pk']).IdCtto.NumCtto
         #print( Ctto.objects.get(id=int(self.kwargs['id_ctto']))).NumCtto
         return reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
+
+
+
+
+
+
+
 
 class CrearOdc(CreateView):
     model = Odc
@@ -1049,15 +1076,36 @@ class CrearOdc(CreateView):
 
 
     def get_context_data(self, **kwargs):
-        context = super(CrearOdc, self).get_context_data(**kwargs)
-        context['Valodc'] = Odc.objects.all()
-        context['Validctto'] = int(self.kwargs['id_ctto'])
-        context['NumeroCtto'] = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
-        context['DescripCtto'] = Ctto.objects.get(id=self.kwargs['id_ctto']).DescCtto
+        data = super(CrearOdc, self).get_context_data(**kwargs)
+        data['Valodc'] = Odc.objects.all()
+        data['Validctto'] = int(self.kwargs['id_ctto'])
+        data['NumeroCtto'] = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
+        data['DescripCtto'] = Ctto.objects.get(id=self.kwargs['id_ctto']).DescCtto
 
-        print('valor de idctto =')
-        print(self.kwargs['id_ctto'])
-        return context
+        #return context
+
+        #data = super(CrearOdc, self).get_context_data(**kwargs)
+        #print("imprimiendo Data")
+        #print(data)
+
+        if self.request.POST:
+            data['ItemOdcs'] = ItemOdcFormSet(self.request.POST)
+        else:
+            data['ItemOdcs'] = ItemOdcFormSet()
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        ItemOdcs = context['ItemOdcs']
+        with transaction.atomic():
+            self.object = form.save()
+
+            if ItemOdcs.is_valid():
+                ItemOdcs.instance = self.object
+                ItemOdcs.save()
+        return super(CrearOdc, self).form_valid(form)
+
+
 
     def get_form_kwargs(self):
         kwargs = super(CrearOdc, self).get_form_kwargs()

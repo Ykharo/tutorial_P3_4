@@ -1,6 +1,7 @@
 from django import forms
+from django.forms import inlineformset_factory
 
-from .models import Persona, Ctto, Edp, Ctta, Odc
+from .models import Persona, Ctto, Edp, Ctta, Odc, ItemOdc, Ceco
 
 class PersonaCreateForm(forms.ModelForm):
 
@@ -167,6 +168,7 @@ class OdcCreateForm(forms.ModelForm):
 
     class Meta:
         model = Odc
+
         fields = ['IdCtto','NumODC','IdCecoODC','FechT_ODC','ValorODC','DescripODC','FechSolOdc','FechAppOdc','ObservOdc']
         labels = {
             'IdCecoODC': 'Cuenta Contable',
@@ -176,14 +178,14 @@ class OdcCreateForm(forms.ModelForm):
         widgets = {
             #'IdCtto': forms.TextInput(attrs={'class': 'form-control'}),
             'NumODC': forms.TextInput(attrs={'class': 'form-control'}),
-            #'IdCecoODC': forms.TextInput(attrs={'class': 'form-control'}),
-            'FechT_ODC': forms.DateInput(format='%d/%m/%Y'),
+            #'IdCecoODC': forms.ModelChoiceField(queryset=Ceco.objects.all),
+            'FechT_ODC': forms.DateInput(format='%d/%m/%Y', attrs={'class': 'form-control'}),
             'ValorODC': forms.NumberInput(attrs={'class': 'form-control','localization': True}),
             'DescripODC': forms.TextInput(attrs={'class': 'form-control'}),
 
-            'FechSolOdc': forms.DateInput(format='%d/%m/%Y'),
-            'FechAppOdc': forms.DateInput(format='%d/%m/%Y'),
-            'ObservEDP': forms.TextInput(attrs={'class': 'form-control'}),
+            'FechSolOdc': forms.DateInput(format='%d/%m/%Y', attrs={'class': 'form-control'}),
+            'FechAppOdc': forms.DateInput(format='%d/%m/%Y', attrs={'class': 'form-control'}),
+            'ObservOdc': forms.TextInput(attrs={'class': 'form-control'}),
 
                 }
 
@@ -203,6 +205,7 @@ class CttaUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Ctta
+        exclude = ()
         fields = ['NomCtta','DirCtta','RutCtta']
         labels = {
             'NomCtta': 'Nombre Contratista',
@@ -217,3 +220,23 @@ class CttaUpdateForm(forms.ModelForm):
             'RutCtta': forms.TextInput(attrs={'class': 'form-control'}),
 
                 }
+
+
+
+class ItemOdcForm(forms.ModelForm):
+    class Meta:
+        model = ItemOdc
+        exclude = ()
+        labels = {
+            'NumItem': 'Item',
+            'IdCecoODC': 'Cuenta',
+            'DescripItem': 'Descripción',
+            'UnidItem': 'Unidad',
+            'CantItem': 'Cantidad',
+            'PuItem': 'Precio Unitario',
+            'TotalItem': 'Total',
+            'ObservItem': 'Obs'
+        }
+
+ItemOdcFormSet = inlineformset_factory(Odc, ItemOdc,
+                                            form=ItemOdcForm, extra=1)
