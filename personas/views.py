@@ -781,7 +781,7 @@ class crear_docODC(TemplateView):
             valor =0
 
         Desc_ceco = Odc.objects.get(id=id_odc).IdCecoODC.CodCeco+': '+Odc.objects.get(id=id_odc).IdCecoODC.NomCeco
-
+        factor = fac(ctto.MonedaCtto)
         ODC_ctto = Odc.objects.filter(IdCtto__id=id_ctto).order_by('NumODC')
         Item_odc = ItemOdc.objects.filter(IdODC__id=id_odc).order_by('NumItem')
         TerActualizado_ant = ctto.FechTerCtto
@@ -818,6 +818,19 @@ class crear_docODC(TemplateView):
         ws['B23'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.FechTerCtto
         ws['B24'] = TerActualizado_ant
         ws['B25'] = Odc.objects.get(id=self.kwargs['id_odc']).FechT_ODC
+        ws['B26'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdCtta.DirCtta
+        ws['B27'] = ""
+        ws['B28'] = ""
+        ws['B29'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdMandante.NomMandte
+
+
+
+        # Valores de ODC en USD
+        ws['C19'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.ValorCtto*factor
+        ws['C20'] = sumaODC*factor
+        ws['C21'] = Odc.objects.get(id=self.kwargs['id_odc']).ValorODC*factor
+
+
 
         cont =1
         for itemodc in Item_odc:
