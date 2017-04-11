@@ -807,8 +807,8 @@ class crear_docODC(TemplateView):
         ws['B12'] = Odc.objects.get(id=self.kwargs['id_odc']).FechAppOdc
         ws['B13'] = Odc.objects.get(id=self.kwargs['id_odc']).DescripODC
         ws['B14'] = Desc_ceco
-        ws['B15'] = ""
-        ws['B16'] = ""
+        ws['B15'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCecoODC.IdDueno.NomDueno
+        ws['B16'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCecoODC.IdDueno.CargoDueno
         ws['B17'] = ""
         ws['B18'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.MonedaCtto
         ws['B19'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.ValorCtto

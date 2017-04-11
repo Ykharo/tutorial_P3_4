@@ -8,6 +8,22 @@ from django.utils import timezone
 from django.db import models
 
 
+class Duenoceco(models.Model):
+
+    DOCIDENTIDAD = (
+        ("CI", "CI"),
+        ("Pasaporte", "Pasaporte"),)
+
+    NomDueno = models.CharField(max_length=20)
+    DocIdDueno = models.CharField(max_length=10,choices=DOCIDENTIDAD, default="CI", null=True, blank=True)
+    NumDocDueno = models.CharField(max_length=15, null=True, blank=True)
+    CargoDueno = models.CharField(max_length=25, null=True, blank=True)
+
+    def __str__(self):
+        return self.NomDueno
+
+
+
 class Area(models.Model):
     IdAreas = models.IntegerField(null=True, blank=True)
     NomArea = models.CharField(max_length=20)
@@ -23,6 +39,7 @@ class Ceco(models.Model):
     IdAreas = models.ForeignKey(Area)
     CodCeco = models.CharField(max_length=10, null=True, blank=True)
     NomCeco = models.CharField(max_length=100, null=True, blank=True)
+    IdDueno = models.ForeignKey(Duenoceco)
     Budget = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
 
     def __str__(self):

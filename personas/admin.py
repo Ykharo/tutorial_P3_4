@@ -43,7 +43,15 @@ import datetime
 USE_THOUSAND_SEPARATOR = True
 THOUSAND_SEPARATOR = ','
 
-from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas
+from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, Duenoceco
+
+
+
+class CecoAdmin(admin.ModelAdmin):
+    list_display = ('IdCeco','IdAreas','CodCeco','NomCeco','IdDueno','Budget')
+    list_editable = ('IdCeco','IdAreas','CodCeco','NomCeco','IdDueno','Budget')
+
+
 
 class EdpInline(admin.StackedInline): #TabularInline
     model = Edp
@@ -92,10 +100,11 @@ class QuestionAdmin(admin.ModelAdmin):
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Choice)
 admin.site.register(Area)
-admin.site.register(Ceco)
+admin.site.register(Ceco, CecoAdmin)
 admin.site.register(Mdte)
 admin.site.register(Ctta)
 admin.site.register(Ctto, CttoAdmin)
 admin.site.register(Edp)
 admin.site.register(Odc)
 admin.site.register(Monedas)
+admin.site.register(Duenoceco)
