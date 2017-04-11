@@ -375,7 +375,7 @@ class ReportePersonasExcel(TemplateView):
         ws['E3'] = 'N° Ctto.'
         ws['F3'] = 'Descripcion Servicio'
         ws['G3'] = 'Contratista'
-        ws['H3'] = 'Carpeta'
+        ws['H3'] = 'Rut Contratista'
         ws['I3'] = 'Fecha Ini Ctto'
         ws['J3'] = 'Fecha Term Ctto'
         ws['K3'] = 'Estatus'
@@ -420,7 +420,7 @@ class ReportePersonasExcel(TemplateView):
             ws.cell(row=cont,column=5).value = ctto.NumCtto
             ws.cell(row=cont,column=6).value = ctto.DescCtto
             ws.cell(row=cont,column=7).value = ctto.IdCtta.NomCtta
-            ws.cell(row=cont,column=8).value = ctto.Carpeta
+            ws.cell(row=cont,column=8).value = ctto.IdCtta.RutCtta
             ws.cell(row=cont,column=9).value = ctto.FechIniCtto
             ws.cell(row=cont,column=10).value = ctto.FechTerCtto
             ws.cell(row=cont,column=11).value = ctto.EstCtto

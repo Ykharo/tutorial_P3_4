@@ -46,6 +46,12 @@ THOUSAND_SEPARATOR = ','
 from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, Duenoceco
 
 
+class CttaAdmin(admin.ModelAdmin):
+    list_display = ('IdCtta','NomCtta','DirCtta','RutCtta','Rep1Ctta','RutRep1Ctta','Rep2Ctta','RutRep2Ctta')
+    list_editable = ('IdCtta','NomCtta','DirCtta','RutCtta','Rep1Ctta','RutRep1Ctta','Rep2Ctta','RutRep2Ctta')
+
+
+
 
 class CecoAdmin(admin.ModelAdmin):
     list_display = ('IdCeco','IdAreas','CodCeco','NomCeco','IdDueno','Budget')
@@ -102,7 +108,7 @@ admin.site.register(Choice)
 admin.site.register(Area)
 admin.site.register(Ceco, CecoAdmin)
 admin.site.register(Mdte)
-admin.site.register(Ctta)
+admin.site.register(Ctta, CttaAdmin)
 admin.site.register(Ctto, CttoAdmin)
 admin.site.register(Edp)
 admin.site.register(Odc)
