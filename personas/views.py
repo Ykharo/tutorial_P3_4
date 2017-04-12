@@ -10,7 +10,7 @@ from django.views.generic.detail import DetailView
 
 
 from django.conf import settings
-from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateForm, CttaUpdateForm, OdcUpdateForm, OdcCreateForm, ItemOdcFormSet
+from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateForm, CttaUpdateForm, OdcUpdateForm, OdcCreateForm, ItemOdcFormSet, ItemCttoFormSet
 
 #Workbook nos permite crear libros en excel
 
@@ -276,30 +276,6 @@ def export_data(request, atype):
 
 
 
-class ModificarPersona(UpdateView):
-    #Especificamos que el modelo a utilizar va a ser Persona
-    form_class = CttoUpdateForm
-
-    model = Ctto
-    #Establecemos que la plantilla se llamara modificar persona
-    template_name = 'modificar_persona_new.html'
-    #Determinamos los campos con los que se va a trabajar, esto es obligatorio sino nos saldra un error
-    #fields = ['NumCtto','DescCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','IdCecoCtto','CordCtto','IdMandante' ]
-    #Con esta linea establecemos que se hara despues que la operacion de modificacion se complete correctamente
-    success_url = reverse_lazy('personas:personas')
-
-
-
-class DetallePersona(DetailView):
-    model = Ctto
-    template_name = 'detalle_persona_new.html'
-
-
-#def sumarLista(lista):
-#    sum=0
-#    for i in range(0,len(lista)):
-#        sum=sum+lista[i]
-#    return sum
 
 
 
@@ -860,12 +836,92 @@ class Bienvenida(TemplateView):
     #template_name = 'Tabla_Servicios.html'
     template_name = 'form.html'
 # Create your views here.
+
+
+
+
 class CrearPersona(CreateView):
     model = Ctto
     #fields =['dni','nombre','apellido_paterno','apellido_materno']
     template_name = 'crear_contrato_new.html'
     form_class = CttoUpdateForm
     success_url = reverse_lazy('personas:personas')
+
+    def get_context_data(self, **kwargs):
+        data = super(CrearPersona, self).get_context_data(**kwargs)
+
+        if self.request.POST:
+            data['ItemCttos'] = ItemCttoFormSet(self.request.POST)
+        else:
+            data['ItemCttos'] = ItemCttoFormSet()
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        ItemCttos = context['ItemCttos']
+        with transaction.atomic():
+            self.object = form.save()
+
+            if ItemCttos.is_valid():
+                ItemCttos.instance = self.object
+                ItemCttos.save()
+        return super(CrearPersona, self).form_valid(form)
+
+
+
+
+
+class ModificarPersona(UpdateView):
+    #Especificamos que el modelo a utilizar va a ser Ctto
+    form_class = CttoUpdateForm
+
+    model = Ctto
+    #Establecemos que la plantilla se llamara modificar persona
+    template_name = 'modificar_persona_new.html'
+    #Determinamos los campos con los que se va a trabajar, esto es obligatorio sino nos saldra un error
+    #fields = ['NumCtto','DescCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','IdCecoCtto','CordCtto','IdMandante' ]
+    #Con esta linea establecemos que se hara despues que la operacion de modificacion se complete correctamente
+    success_url = reverse_lazy('personas:personas')
+
+    def get_context_data(self, **kwargs):
+        data = super(ModificarPersona, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['familymembers'] = ItemCttoFormSet(self.request.POST, instance=self.object)
+        else:
+            data['familymembers'] = ItemCttoFormSet(instance=self.object)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        familymembers = context['familymembers']
+        with transaction.atomic():
+            self.object = form.save()
+
+            if familymembers.is_valid():
+                familymembers.instance = self.object
+                familymembers.save()
+        return super(ModificarPersona, self).form_valid(form)
+
+
+
+
+
+
+class DetallePersona(DetailView):
+    model = Ctto
+    template_name = 'detalle_persona_new.html'
+
+
+#def sumarLista(lista):
+#    sum=0
+#    for i in range(0,len(lista)):
+#        sum=sum+lista[i]
+#    return sum
+
+
+
+
+
 
 class Personas(ListView):
     model = Ctto

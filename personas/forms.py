@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import inlineformset_factory
 
-from .models import Persona, Ctto, Edp, Ctta, Odc, ItemOdc, Ceco
+from .models import Persona, Ctto, Edp, Ctta, Odc, ItemOdc, ItemCtto, Ceco
 
 class PersonaCreateForm(forms.ModelForm):
 
@@ -240,3 +240,22 @@ class ItemOdcForm(forms.ModelForm):
 
 ItemOdcFormSet = inlineformset_factory(Odc, ItemOdc,
                                             form=ItemOdcForm, extra=1)
+
+
+class ItemCttoForm(forms.ModelForm):
+    class Meta:
+        model = ItemCtto
+        exclude = ()
+        labels = {
+            'NumItem': 'Item',
+            'IdCecoCtto': 'Cuenta',
+            'DescripItem': 'Descripción',
+            'UnidItem': 'Unidad',
+            'CantItem': 'Cantidad',
+            'PuItem': 'Precio Unitario',
+            'TotalItem': 'Total',
+            'ObservItem': 'Obs'
+        }
+
+ItemCttoFormSet = inlineformset_factory(Ctto, ItemCtto,
+                                            form=ItemCttoForm, extra=1)
