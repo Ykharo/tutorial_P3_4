@@ -136,6 +136,9 @@
                                 <td>{{ ctto.IdCecoCtto.CodCeco }}</td>
                                 <td>{{ ctto.CordCtto }}</td>
                                  <td class="text-center">
+                                   <a class="btn btn-xs" href="{% url 'personas:crear_docCtto' ctto.pk %}">
+                                       <span class="glyphicon glyphicon-file"></span>
+                                   </a>
                                     <a class="btn btn-xs" href="{% url 'personas:detalle_persona' ctto.pk %}">
                                         <span class="glyphicon glyphicon-folder-open"></span>
                                     </a>
@@ -235,6 +238,9 @@
                                 <td>{{ ctto.IdCecoCtto.CodCeco }}</td>
                                 <td>{{ ctto.CordCtto }}</td>
                                  <td class="text-center">
+                                   <a class="btn btn-xs" href="{% url 'personas:crear_docCtto' ctto.pk %}">
+                                       <span class="glyphicon glyphicon-file"></span>
+                                   </a>
                                     <a class="btn btn-xs" href="{% url 'personas:detalle_persona' ctto.pk %}">
                                         <span class="glyphicon glyphicon-folder-open"></span>
                                     </a>
@@ -335,6 +341,9 @@
                                       <td>{{ ctto.IdCecoCtto.CodCeco }}</td>
                                       <td>{{ ctto.CordCtto }}</td>
                                        <td class="text-center">
+                                         <a class="btn btn-xs" href="{% url 'personas:crear_docCtto' ctto.pk %}">
+                                             <span class="glyphicon glyphicon-file"></span>
+                                         </a>
                                           <a class="btn btn-xs" href="{% url 'personas:detalle_persona' ctto.pk %}">
                                               <span class="glyphicon glyphicon-folder-open"></span>
                                           </a>

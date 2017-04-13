@@ -100,6 +100,7 @@ class Ctto(models.Model):
     IdCtto = models.IntegerField(null=True, blank=True)
     NumCtto = models.CharField(max_length=20, null=False)
     DescCtto = models.CharField(max_length=100, null=True, blank=True)
+    AlcanceCtto = models.CharField(max_length=200, null=True, blank=True)
     MonedaCtto = models.CharField(max_length=5, choices=MONEDA, default="CLP",null=True, blank=True)
     ValorCtto = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
     IdCtta = models.ForeignKey(Ctta) # Agregar ForeignKey

@@ -24,7 +24,7 @@ class CttoUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Ctto
-        fields = ['NumCtto','DescCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','FechTerCtto',
+        fields = ['NumCtto','DescCtto','AlcanceCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','FechTerCtto',
         'IdCecoCtto','CordCtto','IdMandante','TipoServ','AjusteCom', 'AjustNumEDP','AjustValEDP','AdjudicCtto',
         'LocalCtto','TerrenCtto','SeguroCtto','FechSolCtto','FechAppCtto','ObservCtto']
 
@@ -38,6 +38,7 @@ class CttoUpdateForm(forms.ModelForm):
         widgets = {
             'NumCtto': forms.TextInput(attrs={'class': 'form-control'}),
             'DescCtto': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':30}),
+            'AlcanceCtto': forms.Textarea(attrs={'class': 'form-control'}),
             #'MonedaCtto': forms.TextInput(attrs={'class': 'form-control'}),
             'ValorCtto': forms.NumberInput(attrs={'class': 'form-control'} ),
             #'IdCtta': forms.TextInput(attrs={'class': 'form-control'}),

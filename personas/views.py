@@ -36,7 +36,7 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django import forms
 from django.template import RequestContext
 import django_excel as excel
-from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, ItemOdc
+from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, ItemOdc, ItemCtto
 
 # No longer you need the following import statements if you use pyexcel >=0.2.2
 import pyexcel.ext.xls
@@ -736,6 +736,85 @@ class ReporteFiniquito(TemplateView):
         response['Content-Disposition'] = 'attachment; filename=mydata_Edp.xlsx'
 
         wb.save(response)
+        return response
+
+
+
+
+class crear_docCtto(TemplateView):
+    def get(self, request, *args, **kwargs):
+
+        wb = load_workbook(filename = 'DatosOS_Cttos.xlsx')
+        wb.template = False
+        ws = wb.get_sheet_by_name('BD')
+
+        try:
+            id_ctto = self.kwargs['id_ctto']
+
+
+            ctto = Ctto.objects.get(id=id_ctto)
+        except ObjectDoesNotExist:
+            valor =0
+
+        Desc_ceco = Ctto.objects.get(id=id_ctto).IdCecoCtto.CodCeco+': '+Ctto.objects.get(id=id_ctto).IdCecoCtto.NomCeco
+        factor = fac(ctto.MonedaCtto)
+        Item_ctto = ItemCtto.objects.filter(IdCtto__id=id_ctto).order_by('NumItem')
+
+
+
+        ws['B5'] = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
+        ws['B6'] = Ctto.objects.get(id=self.kwargs['id_ctto']).DescCtto
+        ws['B7'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.NomCtta
+        ws['B8'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.RutCtta
+        ws['B9'] = Ctto.objects.get(id=self.kwargs['id_ctto']).AlcanceCtto
+        ws['B10'] = ""
+        ws['B11'] = ""
+        ws['B12'] = ""
+        ws['B13'] = ""
+        ws['B14'] = Desc_ceco
+        ws['B15'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.NomDueno
+        ws['B16'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.CargoDueno
+        ws['B17'] = ""
+        ws['B18'] = Ctto.objects.get(id=self.kwargs['id_ctto']).MonedaCtto
+        ws['B19'] = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto
+        ws['B20'] = ""
+        ws['B21'] = ""
+        ws['B22'] = Ctto.objects.get(id=self.kwargs['id_ctto']).FechIniCtto
+        ws['B23'] = Ctto.objects.get(id=self.kwargs['id_ctto']).FechTerCtto
+        ws['B24'] = ""
+        ws['B25'] = ""
+        ws['B26'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.DirCtta
+        ws['B27'] = ""
+        ws['B28'] = ""
+        ws['B29'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.NomMandte
+
+
+
+        # Valores de ODC en USD
+        ws['C19'] = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto*factor
+        ws['C20'] = ""
+        ws['C21'] = ""
+
+
+
+        cont =1
+        for item in Item_ctto:
+            ws.cell(row=cont+30,column=1).value = item.NumItem
+            ws.cell(row=cont+30,column=2).value = item.IdCecoCtto.CodCeco
+            ws.cell(row=cont+30,column=3).value = item.DescripItem
+            ws.cell(row=cont+30,column=4).value = item.UnidItem
+            ws.cell(row=cont+30,column=5).value = item.CantItem
+            ws.cell(row=cont+30,column=6).value = item.PuItem
+            ws.cell(row=cont+30,column=7).value = item.TotalItem
+            cont =cont+1
+
+        #wb.save('DatosOS_Cttos.xlsx')
+
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=DatosOS_Cttos.xlsx'
+
+        wb.save(response)
+
         return response
 
 
