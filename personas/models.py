@@ -48,8 +48,14 @@ class Ceco(models.Model):
 class Mdte(models.Model):
     IdMandante = models.IntegerField(null=True, blank=True)
     NomMandte = models.CharField(max_length=50)
-    DirecMandte = models.CharField(max_length=100)
     RutMandte = models.CharField(max_length=20)
+    DirecMandte = models.CharField(max_length=100)
+    ComunaMandte = models.CharField(max_length=50,null=True, blank=True)
+    CiudadMandte = models.CharField(max_length=50,null=True, blank=True)
+    NotarioMandte = models.CharField(max_length=100,null=True, blank=True)
+    FechDocpersonMandte = models.DateField(null=True, blank=True)
+    NotariapersonMandte = models.CharField(max_length=100,null=True, blank=True)
+
 
     def __str__(self):
         return self.NomMandte
@@ -57,13 +63,28 @@ class Mdte(models.Model):
 
 class Ctta(models.Model):
     IdCtta = models.IntegerField(null=True, blank=True)
+
+    RutCtta = models.CharField(max_length=15, null=True, blank=True)
     NomCtta = models.CharField(max_length=100)
     DirCtta = models.CharField(max_length=100, null=True, blank=True)
-    RutCtta = models.CharField(max_length=15, null=True, blank=True)
+    ComunaCtta = models.CharField(max_length=50,null=True, blank=True)
+    CiudadCtta = models.CharField(max_length=50,null=True, blank=True)
+    GiroCtta = models.CharField(max_length=50,null=True, blank=True)
+    BcoCtta = models.CharField(max_length=50,null=True, blank=True)
+    NumCtaCtta = models.CharField(max_length=50,null=True, blank=True)
+
+
     Rep1Ctta = models.CharField(max_length=100, null=True, blank=True)
     RutRep1Ctta = models.CharField(max_length=100, null=True, blank=True)
     Rep2Ctta = models.CharField(max_length=100, null=True, blank=True)
     RutRep2Ctta = models.CharField(max_length=100, null=True, blank=True)
+
+    NotarioCtta = models.CharField(max_length=100,null=True, blank=True)
+    FechDocpersonCtta = models.DateField(null=True, blank=True)
+    NotariapersonCtta = models.CharField(max_length=100,null=True, blank=True)
+
+
+
 
     def __str__(self):
         return self.NomCtta
@@ -97,6 +118,12 @@ class Ctto(models.Model):
         ("Si","Aplica Seguro"),
         ("No","No Aplica Seguro"))
 
+    IMPUESTO = (
+        ("IVA","Afecto a IVA"),
+        ("NO_IVA","No Afecto a IVA"),
+        ("RET_Legal","Retención Legal"))
+
+
     IdCtto = models.IntegerField(null=True, blank=True)
     NumCtto = models.CharField(max_length=20, null=False)
     DescCtto = models.CharField(max_length=100, null=True, blank=True)
@@ -114,20 +141,40 @@ class Ctto(models.Model):
 
     Carpeta = models.CharField(max_length=30, null=True, blank=True)
     TipoServ = models.CharField(max_length=25, choices=TIPOSERV, default="Contrato",null=True, blank=True)
-    AjusteCom = models.DecimalField(decimal_places=2, max_digits=21, null=True, blank=True)
-    AjustNumEDP = models.CharField( max_length=10, null=True, blank=True)
-    AjustValEDP = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    AjusteCom = models.DecimalField(decimal_places=2,default= 0, max_digits=21, null=True, blank=True)
+    AjustNumEDP = models.CharField( max_length=10,default= "1",null=True, blank=True)
+    AjustValEDP = models.DecimalField(decimal_places=2,default= 0,max_digits=21,null=True, blank=True)
     AdjudicCtto = models.CharField( max_length=15, choices=ADJUDICACION, default="Directa", null=True, blank=True)
     LocalCtto = models.CharField( max_length=30,choices=LOCACION, default="Nacional",null=True, blank=True)
     TerrenCtto = models.CharField( max_length=10,choices=TERRENOCONTRATO, default="No", null=True, blank=True)
     SeguroCtto = models.CharField( max_length=10,choices=SEGURO, default="No", null=True, blank=True)
+    LugarCtto = models.CharField( max_length=50, null=True, blank=True)
 
     FechSolCtto = models.DateField( null=True, blank=True)# Sept, Fecha Solicitud
     FechAppCtto = models.DateField( null=True, blank=True)# Sept, Fecha Aprob
     ObservCtto = models.CharField(max_length=100, null=True, blank=True)
 
+    DocOferta = models.CharField(max_length=100, null=True, blank=True)
+    FechOferta = models.DateField(null=True, blank=True)
+    FechCartaAdj = models.DateField(null=True, blank=True)
+    IvaOferta = models.CharField(max_length=30, choices=IMPUESTO, default="IVA",null=True, blank=True)
+    Anticipo = models.DecimalField(decimal_places=2, max_digits=21, null=True, blank=True)
+    Modalidad = models.CharField(max_length=50, null=True, blank=True)
+
+    Boleta = models.DecimalField(decimal_places=2, max_digits=21, null=True, blank=True)
+    MonedaBoleta = models.CharField(max_length=5, choices=MONEDA, default="CLP",null=True, blank=True)
+    VigenBoleta = models.CharField(max_length=100, null=True, blank=True)
+
+    RetenCtto = models.CharField(max_length=100, null=True, blank=True)
+
+
+
+
+
+
     def __str__(self):
         return self.NumCtto
+
 
 class Edp(models.Model):
     IdEDP = models.IntegerField( null=True, blank=True) # Agregar primary_key
@@ -219,20 +266,76 @@ class ItemCtto(models.Model):
         self.TotalItem = self.CantItem * self.PuItem
         super(ItemCtto, self).save()
 
+class AportesCtto(models.Model):
+    NumItem = models.CharField( max_length=8, null=False)
+    IdCtto =  models.ForeignKey( Ctto) #Agregar ForeignKey
+    Aporte = models.CharField( max_length=100, null=True, blank=True)
+    ObsAporte = models.CharField( max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.NumItem
+
+class MultasPerClaveCtto(models.Model):
+
+    MONEDA = (
+        ("CLP", "CLP"),
+        ("USD", "USD"),
+        ("UF", "UF"),("EUR", "EUR"),("CAD", "CAD"))
+
+    NumItem = models.CharField( max_length=8, null=False)
+    IdCtto =  models.ForeignKey( Ctto) #Agregar ForeignKey
+    NomPersClave = models.CharField( max_length=50, null=True, blank=True)
+    CargPersClave = models.CharField( max_length=50, null=True, blank=True)
+    Multa = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True)
+    Moneda = models.CharField(max_length=5, choices=MONEDA, default="UF",null=True, blank=True)
+    ObsMulta = models.CharField( max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.NumItem
 
 
 
 
+class PersonalProyecto(models.Model):
+    Nombre = models.CharField(max_length=100, null=True, blank=True)
+    Cargo = models.CharField(max_length=50, null=True, blank=True)
+    Correo = models.CharField(max_length=50, null=True, blank=True)
+    IdArea = models.ForeignKey(Area)
+    Cel = models.CharField(max_length=20, null=True, blank=True)
+    CI = models.CharField(max_length=20, null=True, blank=True)
+
+    def __str__(self):
+        return '%s' % (self.Nombre)
+
+class PersonalCtta(models.Model):
+    Nombre = models.CharField(max_length=100, null=True, blank=True)
+    Cargo = models.CharField(max_length=50, null=True, blank=True)
+    Correo = models.CharField(max_length=50, null=True, blank=True)
+    IdCtta = models.ForeignKey(Ctta)
+    Cel = models.CharField(max_length=20, null=True, blank=True)
+    CI = models.CharField(max_length=20, null=True, blank=True)
+
+    def __str__(self):
+        return '%s' % (self.Nombre)
 
 
 
+class Reprentantes(models.Model):
+    IdDuenoCeco = models.ForeignKey(Ceco)
+    IdMandante = models.ForeignKey(Mdte)
+
+    def __str__(self):
+        return '%s %s' % (self.IdDuenoCeco, self.IdMandante)
 
 
 
+class CoordCtto(models.Model):
+    IdPersCtta = models.ForeignKey(PersonalCtta)
+    IdCtto = models.ForeignKey(Ctto)
+    IdPersProy = models.ForeignKey(PersonalProyecto)
 
-
-
-
+    def __str__(self):
+        return '%s %s' % (self.IdCtto, self.IdPersCtta)
 
 
 

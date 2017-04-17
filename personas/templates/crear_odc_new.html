@@ -129,10 +129,10 @@
                       </div>
                     </div>
                       <form role="form" action="#" method="post"> {% csrf_token %}
-                          <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div class="x_panel">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                  <div class="x_panel">
 
-                                                        <div class="x_title">
+                                                    <div class="x_title">
                                                           <h2>Nueva Orden de Cambio<small>Contrato :{{NumeroCtto}} :Información General </small></h2>
                                                           <ul class="nav navbar-right panel_toolbox">
                                                             <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
@@ -150,8 +150,8 @@
                                                             </li>
                                                           </ul>
                                                           <div class="clearfix"></div>
-                                                        </div>
-                                                      <div class="form-horizontal form-label-left col-md-12 col-sm-12 col-xs-12">
+                                                    </div>
+                                                    <div class="form-horizontal form-label-left col-md-12 col-sm-12 col-xs-12">
                                                             <div class="col-md-6 col-sm-6 col-xs-6">
                                                               <div class="form-group">
                                                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ form.NumODC.errors }}{{ form.NumODC.label_tag }}<span class="required">*</span>
@@ -256,9 +256,10 @@
 
                                                                         </div>
                                                             </div>
-                                                      </div>
-                          </div>
-                        </div>
+                                                    </div>
+                                  </div>
+
+                            </div>
 
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                                 <div class="x_panel">
@@ -310,7 +311,15 @@
                                                                                   {% endfor %}
                                                                               {% endif %}
                                                                               {{ field.errors.as_ul }}
+
+
+
                                                                               {{ field }}
+
+
+
+
+
                                                                           </td>
                                                                       {% endfor %}
                                                                   </tr>

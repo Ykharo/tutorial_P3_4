@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import inlineformset_factory
 
-from .models import Persona, Ctto, Edp, Ctta, Odc, ItemOdc, ItemCtto, Ceco
+from .models import Persona, Ctto, Edp, Ctta, Odc, ItemOdc, ItemCtto, Ceco, AportesCtto, MultasPerClaveCtto
 
 class PersonaCreateForm(forms.ModelForm):
 
@@ -26,12 +26,17 @@ class CttoUpdateForm(forms.ModelForm):
         model = Ctto
         fields = ['NumCtto','DescCtto','AlcanceCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','FechTerCtto',
         'IdCecoCtto','CordCtto','IdMandante','TipoServ','AjusteCom', 'AjustNumEDP','AjustValEDP','AdjudicCtto',
-        'LocalCtto','TerrenCtto','SeguroCtto','FechSolCtto','FechAppCtto','ObservCtto']
+        'LocalCtto','TerrenCtto','SeguroCtto','FechSolCtto','FechAppCtto','ObservCtto','LugarCtto','DocOferta','FechOferta','FechCartaAdj',
+        'IvaOferta', 'Anticipo', 'Modalidad', 'Boleta', 'MonedaBoleta', 'VigenBoleta', 'RetenCtto',
+
+        ]
 
 
         labels = {
-            'FechIniCtto': 'Fecha de Inicio_1',
+            'FechIniCtto': 'Fecha de Inicio',
+            'FechTerCtto': 'Fecha de Término',
             'IdCecoCtto': 'Centro de Costo'
+
         }
 
 
@@ -49,11 +54,16 @@ class CttoUpdateForm(forms.ModelForm):
             'CordCtto': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
             #'IdMandante': forms.Textarea(attrs={'class': 'form-control'}),
             #'TipoServ': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
-
-
-
+            'Modalidad': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':30}),
+            'DocOferta': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':20}),
+            'LugarCtto': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':30}),
+            'ObservCtto': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':30}),
 
         }
+    def __init__(self, *args, **kwargs):
+        super(CttoUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['IdCtta'].widget.attrs['style'] = "width:550px"
+        self.fields['IdCecoCtto'].widget.attrs['style'] = "width:550px"
 
 
 
@@ -227,7 +237,7 @@ class CttaUpdateForm(forms.ModelForm):
 class ItemOdcForm(forms.ModelForm):
     class Meta:
         model = ItemOdc
-        exclude = ()
+        exclude = ('ObservItem',)
         labels = {
             'NumItem': 'Item',
             'IdCecoODC': 'Cuenta',
@@ -239,8 +249,19 @@ class ItemOdcForm(forms.ModelForm):
             'ObservItem': 'Obs'
         }
 
+
+
+    def __init__(self, *args, **kwargs):
+        super(ItemOdcForm, self).__init__(*args, **kwargs)
+        self.fields['NumItem'].widget.attrs['style'] = "width:150px"
+        self.fields['IdCecoODC'].widget.attrs['style'] = "width:300px"
+        self.fields['DescripItem'].widget.attrs['style'] = "width:800px"
+
+
+
 ItemOdcFormSet = inlineformset_factory(Odc, ItemOdc,
                                             form=ItemOdcForm, extra=1)
+
 
 
 class ItemCttoForm(forms.ModelForm):
@@ -258,5 +279,55 @@ class ItemCttoForm(forms.ModelForm):
             'ObservItem': 'Obs'
         }
 
+        widgets = {
+            'NumItem': forms.TextInput(attrs={'class': 'form-control','maxlength':5}),
+            'DescripItem': forms.TextInput(attrs={'class': 'form-control','maxlength':50}),
+
+                }
+
 ItemCttoFormSet = inlineformset_factory(Ctto, ItemCtto,
                                             form=ItemCttoForm, extra=1)
+
+
+
+class AportesCttoForm(forms.ModelForm):
+    class Meta:
+        model = AportesCtto
+        exclude = ()
+        labels = {
+            'NumItem': 'Item',
+            'Aporte': 'Descripción',
+            'ObsAporte': 'Obs'
+        }
+
+        widgets = {
+            'NumItem': forms.TextInput(attrs={'class': 'form-control','maxlength':5}),
+            'ObsAporte': forms.TextInput(attrs={'class': 'form-control','maxlength':50}),
+
+                }
+
+AportesCttoFormSet = inlineformset_factory(Ctto, AportesCtto,
+                                            form=AportesCttoForm, extra=1)
+
+class MultasPerClaveCttoForm(forms.ModelForm):
+    class Meta:
+        model = MultasPerClaveCtto
+        exclude = ()
+        labels = {
+            'NumItem': 'Item',
+            'NomPersClave': 'Nombre Pers.Clave',
+            'CargPersClave': 'Cargo Pers.Clave',
+            'Multa': 'Multa',
+            'Moneda': 'Moneda',
+            'ObsMulta': 'Obs'
+
+        }
+
+        widgets = {
+            'NumItem': forms.TextInput(attrs={'class': 'form-control','maxlength':5}),
+            'ObsMulta': forms.TextInput(attrs={'class': 'form-control','maxlength':50}),
+
+                }
+
+MultasPerClaveCttoFormSet = inlineformset_factory(Ctto, MultasPerClaveCtto,
+                                            form=MultasPerClaveCttoForm, extra=1)

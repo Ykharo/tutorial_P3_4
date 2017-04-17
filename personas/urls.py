@@ -1,6 +1,6 @@
 from django.conf.urls import url
-from personas.views import Personas,EditarContrato,CrearPersona,EditarPersona, ReportePersonasExcel, Bienvenida, DetallePersona,\
-ModificarPersona,ReporteEDPExcel,ReporteODCExcel,ficha,DetalleEdp,ModificarEdp,BorrarEdp,ModificarOdc,BorrarOdc,ReporteFiniquito,\
+from personas.views import Personas,EditarContrato,CrearContrato,EditarPersona, ReportePersonasExcel, Bienvenida, DetalleContrato,\
+ModificarContrato,ReporteEDPExcel,ReporteODCExcel,ficha,DetalleEdp,ModificarEdp,BorrarEdp,ModificarOdc,DetalleOdc,BorrarOdc,ReporteFiniquito,\
 crear_docODC,crear_docCtto
 
 from . import models
@@ -9,7 +9,7 @@ from . import views
 urlpatterns = [
     #url(r'^',include('seguridad.urls',namespace='seguridad')),
     url(r'^$',views.Bienvenida.as_view(), name="bienvenida"),
-    url(r'^crear_persona/$',views.CrearPersona.as_view(), name="crear_persona"),
+    url(r'^crear_persona/$',views.CrearContrato.as_view(), name="crear_contrato"),
     url(r'^crear_persona/busqueda_ajax/$',views.BusquedaAjaxView.as_view(), name="Busqueda_ajax"),
     url(r'^crear_contratista/$',views.CrearContratista.as_view(), name="crear_contratista"),
     url(r'^crear_docCtto/(?P<id_ctto>\d+)/$',views.crear_docCtto.as_view(), name="crear_docCtto"),
@@ -27,8 +27,8 @@ urlpatterns = [
     url(r'^reporte_edp_excel/$',ReporteEDPExcel.as_view(), name="reporte_edp_excel"),
     url(r'^reporte_odc_excel/$',ReporteODCExcel.as_view(), name="reporte_odc_excel"),
 
-    url(r'^detalle_persona/(?P<pk>\d+)/$', DetallePersona.as_view(), name="detalle_persona"),
-    url(r'^modificar_persona/(?P<pk>\d+)/$',ModificarPersona.as_view(), name="modificar_persona"),
+    url(r'^detalle_persona/(?P<pk>\d+)/$', DetalleContrato.as_view(), name="detalle_contrato"),
+    url(r'^modificar_persona/(?P<pk>\d+)/$',ModificarContrato.as_view(), name="modificar_contrato"),
 
     url(r'^crear_edp/(?P<id_ctto>\d+)/$',views.CrearEdp.as_view(), name="crear_edp"),
     url(r'^detalle_edp/(?P<pk>\d+)/$', DetalleEdp.as_view(), name="detalle_edp"),
@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^borrar_edp/(?P<pk>\d+)/$',BorrarEdp.as_view(), name="borrar_edp"),
 
     url(r'^crear_odc/(?P<id_ctto>\d+)/$',views.CrearOdc.as_view(), name="crear_odc"),
+    url(r'^detalle_odc/(?P<pk>\d+)/$', DetalleOdc.as_view(), name="detalle_odc"),
     url(r'^modificar_odc/(?P<pk>\d+)/$',ModificarOdc.as_view(), name="modificar_odc"),
     url(r'^borrar_odc/(?P<pk>\d+)/$',BorrarOdc.as_view(), name="borrar_odc"),
     url(r'^crear_docODC/(?P<id_odc>\d+)/$',views.crear_docODC.as_view(), name="crear_docODC"),

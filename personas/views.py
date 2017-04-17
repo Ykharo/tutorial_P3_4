@@ -10,7 +10,8 @@ from django.views.generic.detail import DetailView
 
 
 from django.conf import settings
-from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateForm, CttaUpdateForm, OdcUpdateForm, OdcCreateForm, ItemOdcFormSet, ItemCttoFormSet
+from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateForm, CttaUpdateForm, OdcUpdateForm, OdcCreateForm,\
+ItemOdcFormSet, ItemCttoFormSet, AportesCttoFormSet, MultasPerClaveCttoFormSet
 
 #Workbook nos permite crear libros en excel
 
@@ -919,74 +920,105 @@ class Bienvenida(TemplateView):
 
 
 
-class CrearPersona(CreateView):
+class CrearContrato(CreateView):
     model = Ctto
     #fields =['dni','nombre','apellido_paterno','apellido_materno']
     template_name = 'crear_contrato_new.html'
     form_class = CttoUpdateForm
     success_url = reverse_lazy('personas:personas')
 
+    # Primer Formset
     def get_context_data(self, **kwargs):
-        data = super(CrearPersona, self).get_context_data(**kwargs)
+        data = super(CrearContrato, self).get_context_data(**kwargs)
 
         if self.request.POST:
             data['ItemCttos'] = ItemCttoFormSet(self.request.POST)
+            data['AportesCttos'] = AportesCttoFormSet(self.request.POST)
+            data['MultasPcCttos'] = MultasPerClaveCttoFormSet(self.request.POST)
         else:
             data['ItemCttos'] = ItemCttoFormSet()
+            data['AportesCttos'] = AportesCttoFormSet()
+            data['MultasPcCttos'] = MultasPerClaveCttoFormSet()
         return data
 
     def form_valid(self, form):
         context = self.get_context_data()
         ItemCttos = context['ItemCttos']
+        AportesCttos = context['AportesCttos']
+        MultasPcCttos = context['MultasPcCttos']
         with transaction.atomic():
             self.object = form.save()
 
             if ItemCttos.is_valid():
                 ItemCttos.instance = self.object
                 ItemCttos.save()
-        return super(CrearPersona, self).form_valid(form)
+
+            if AportesCttos.is_valid():
+                AportesCttos.instance = self.object
+                AportesCttos.save()
+
+            if MultasPcCttos.is_valid():
+                MultasPcCttos.instance = self.object
+                MultasPcCttos.save()
+
+
+        return super(CrearContrato, self).form_valid(form)
 
 
 
 
-
-class ModificarPersona(UpdateView):
+class ModificarContrato(UpdateView):
     #Especificamos que el modelo a utilizar va a ser Ctto
     form_class = CttoUpdateForm
 
     model = Ctto
     #Establecemos que la plantilla se llamara modificar persona
-    template_name = 'modificar_persona_new.html'
+    template_name = 'modificar_contrato_new.html'
     #Determinamos los campos con los que se va a trabajar, esto es obligatorio sino nos saldra un error
     #fields = ['NumCtto','DescCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','IdCecoCtto','CordCtto','IdMandante' ]
     #Con esta linea establecemos que se hara despues que la operacion de modificacion se complete correctamente
     success_url = reverse_lazy('personas:personas')
 
     def get_context_data(self, **kwargs):
-        data = super(ModificarPersona, self).get_context_data(**kwargs)
+        data = super(ModificarContrato, self).get_context_data(**kwargs)
         if self.request.POST:
-            data['familymembers'] = ItemCttoFormSet(self.request.POST, instance=self.object)
+            data['ItemCttos'] = ItemCttoFormSet(self.request.POST, instance=self.object)
+            data['AportesCttos'] = AportesCttoFormSet(self.request.POST, instance=self.object)
+            data['MultasPcCttos'] = MultasPerClaveCttoFormSet(self.request.POST, instance=self.object)
         else:
-            data['familymembers'] = ItemCttoFormSet(instance=self.object)
+            data['ItemCttos'] = ItemCttoFormSet(instance=self.object)
+            data['AportesCttos'] = AportesCttoFormSet(instance=self.object)
+            data['MultasPcCttos'] = MultasPerClaveCttoFormSet(instance=self.object)
         return data
 
     def form_valid(self, form):
         context = self.get_context_data()
-        familymembers = context['familymembers']
+        ItemCttos = context['ItemCttos']
+        AportesCttos = context['AportesCttos']
+        MultasPcCttos = context['MultasPcCttos']
         with transaction.atomic():
             self.object = form.save()
 
-            if familymembers.is_valid():
-                familymembers.instance = self.object
-                familymembers.save()
-        return super(ModificarPersona, self).form_valid(form)
+            if ItemCttos.is_valid():
+                ItemCttos.instance = self.object
+                ItemCttos.save()
+
+            if AportesCttos.is_valid():
+                AportesCttos.instance = self.object
+                AportesCttos.save()
+
+            if MultasPcCttos.is_valid():
+                MultasPcCttos.instance = self.object
+                MultasPcCttos.save()
+
+        return super(ModificarContrato, self).form_valid(form)
 
 
 
 
 
 
-class DetallePersona(DetailView):
+class DetalleContrato(DetailView):
     model = Ctto
     template_name = 'detalle_persona_new.html'
 
@@ -1285,6 +1317,13 @@ class BorrarOdc(DeleteView):
         Aux2 = Odc.objects.get(id=self.kwargs['pk']).IdCtto.NumCtto
         #print( Ctto.objects.get(id=int(self.kwargs['id_ctto']))).NumCtto
         return reverse('personas:EditarContrato',kwargs={'id_ctto': Aux2 })
+
+
+class DetalleOdc(DetailView):
+    model = Odc
+    template_name = 'detalle_persona_new.html'
+
+
 
 
 
