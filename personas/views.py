@@ -745,9 +745,9 @@ class ReporteFiniquito(TemplateView):
 class crear_docCtto(TemplateView):
     def get(self, request, *args, **kwargs):
 
-        wb = load_workbook(filename = 'DatosOS_Cttos.xlsx')
+        wb = load_workbook(filename = 'DatosOS_Cttos.xlsm', keep_vba=True)
         wb.template = False
-        ws = wb.get_sheet_by_name('BD')
+        ws = wb.get_sheet_by_name('Datos')
 
         try:
             id_ctto = self.kwargs['id_ctto']
@@ -762,57 +762,100 @@ class crear_docCtto(TemplateView):
         Item_ctto = ItemCtto.objects.filter(IdCtto__id=id_ctto).order_by('NumItem')
 
 
-
-        ws['B5'] = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
-        ws['B6'] = Ctto.objects.get(id=self.kwargs['id_ctto']).DescCtto
-        ws['B7'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.NomCtta
-        ws['B8'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.RutCtta
+        ws['B1'] = ""
+        ws['B2'] = ""
+        ws['B3'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.NomMandte
+        ws['B4'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.RutMandte
+        ws['B5'] = ""
+        ws['B6'] = ""
+        ws['B7'] = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
+        ws['B8'] = Ctto.objects.get(id=self.kwargs['id_ctto']).DescCtto
         ws['B9'] = Ctto.objects.get(id=self.kwargs['id_ctto']).AlcanceCtto
-        ws['B10'] = ""
-        ws['B11'] = ""
-        ws['B12'] = ""
+        ws['B10'] = Desc_ceco
+        ws['B11'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.NomDueno
+        ws['B12'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.CargoDueno
         ws['B13'] = ""
-        ws['B14'] = Desc_ceco
-        ws['B15'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.NomDueno
-        ws['B16'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.CargoDueno
+        ws['B14'] = ""
+        ws['B15'] = ""
+        ws['B16'] = ""
         ws['B17'] = ""
-        ws['B18'] = Ctto.objects.get(id=self.kwargs['id_ctto']).MonedaCtto
-        ws['B19'] = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto
-        ws['B20'] = ""
+        ws['B18'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.NomCtta
+        ws['B19'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.RutCtta
+        ws['B20'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.DirCtta
         ws['B21'] = ""
-        ws['B22'] = Ctto.objects.get(id=self.kwargs['id_ctto']).FechIniCtto
-        ws['B23'] = Ctto.objects.get(id=self.kwargs['id_ctto']).FechTerCtto
+        ws['B22'] = ""
+        ws['B23'] = ""
         ws['B24'] = ""
         ws['B25'] = ""
-        ws['B26'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.DirCtta
+        ws['B26'] = ""
         ws['B27'] = ""
         ws['B28'] = ""
-        ws['B29'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.NomMandte
-
-
+        ws['B29'] = ""
+        ws['B30'] = ""
+        ws['B31'] = ""
+        ws['B32'] = ""
+        ws['B33'] = Ctto.objects.get(id=self.kwargs['id_ctto']).FechIniCtto
+        ws['B34'] = Ctto.objects.get(id=self.kwargs['id_ctto']).FechTerCtto
+        ws['B35'] = ""
+        ws['B36'] = ""
+        ws['B37'] = Ctto.objects.get(id=self.kwargs['id_ctto']).MonedaCtto
+        ws['B38'] = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto
+        ws['B39'] = ""
+        ws['B40'] = ""
+        ws['B41'] = ""
+        ws['B42'] = ""
+        ws['B43'] = ""
+        ws['B44'] = ""
+        ws['B45'] = ""
+        ws['B46'] = ""
+        ws['B47'] = ""
+        ws['B48'] = ""
+        ws['B49'] = ""
+        ws['B50'] = ""
+        ws['B51'] = ""
+        ws['B52'] = ""
+        ws['B53'] = ""
+        ws['B54'] = ""
+        ws['B55'] = ""
+        ws['B56'] = ""
+        ws['B57'] = ""
+        ws['B58'] = ""
+        ws['B59'] = ""
+        ws['B60'] = ""
+        ws['B61'] = ""
+        ws['B62'] = ""
+        ws['B63'] = ""
+        ws['B64'] = ""
+        ws['B65'] = ""
+        ws['B66'] = ""
+        ws['B67'] = ""
+        ws['B68'] = ""
+        ws['B69'] = ""
+        ws['B70'] = ""
+        ws['B71'] = ""
+        ws['B72'] = ""
 
         # Valores de ODC en USD
-        ws['C19'] = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto*factor
-        ws['C20'] = ""
-        ws['C21'] = ""
+        ws['C38'] = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto*factor
+
 
 
 
         cont =1
         for item in Item_ctto:
-            ws.cell(row=cont+30,column=1).value = item.NumItem
-            ws.cell(row=cont+30,column=2).value = item.IdCecoCtto.CodCeco
-            ws.cell(row=cont+30,column=3).value = item.DescripItem
-            ws.cell(row=cont+30,column=4).value = item.UnidItem
-            ws.cell(row=cont+30,column=5).value = item.CantItem
-            ws.cell(row=cont+30,column=6).value = item.PuItem
-            ws.cell(row=cont+30,column=7).value = item.TotalItem
+            ws.cell(row=cont+1,column=7).value = item.NumItem
+            ws.cell(row=cont+1,column=8).value = item.IdCecoCtto.CodCeco
+            ws.cell(row=cont+1,column=9).value = item.DescripItem
+            ws.cell(row=cont+1,column=10).value = item.UnidItem
+            ws.cell(row=cont+1,column=11).value = item.CantItem
+            ws.cell(row=cont+1,column=12).value = item.PuItem
+            ws.cell(row=cont+1,column=13).value = item.TotalItem
             cont =cont+1
 
         #wb.save('DatosOS_Cttos.xlsx')
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=DatosOS_Cttos.xlsx'
+        response['Content-Disposition'] = 'attachment; filename=DatosOS_Cttos.xlsm'
 
         wb.save(response)
 
