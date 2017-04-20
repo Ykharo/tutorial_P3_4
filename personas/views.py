@@ -44,6 +44,13 @@ import pyexcel.ext.xls
 import pyexcel.ext.xlsx
 import pyexcel.ext.ods3   # noqa
 
+import unittest
+from numerosletras import number_to_letter
+import pdb
+import locale
+
+locale.setlocale(locale.LC_ALL,"")
+
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
@@ -325,6 +332,45 @@ def fac(moneda):
         valor =0
 
     return valor
+
+def fechaPalabra(fecha):
+
+    formato_fecha = "%Y-%m-%d"
+    mes = {1:"Enero",2:"Febrero",3:"Marzo",4:"Abril",5:"Mayo",6:"Junio",7:"Julio",8:"Agosto",9:"Septiembre",10:"Octubre",11:"Noviembre",12:"Diciembre"}
+    dia_semana = {0:"lunes",1:"martes",2:"miércoles",3:"jueves",4:"viernes",5:"sábado",6:"domingo"}
+
+    valor = ""
+    try:
+        valor = datetime.strptime(str(fecha),formato_fecha)
+        valor =  str(valor.day) + " de " + str(mes[valor.month]) + " de " + str(valor.year)
+    except:
+        valor = ""
+    return valor
+
+
+def Plazodiaz(Finicio,Ftermino):
+
+    formato_fecha = "%Y-%m-%d"
+    valor = 0
+
+    try:
+        fecha_inicial = datetime.strptime(str(Finicio),formato_fecha)
+        fecha_final = datetime.strptime(str(Ftermino),formato_fecha)
+        valordias = fecha_final - fecha_inicial
+        valor = valordias.days
+    except:
+        valor = 0
+
+    return valor
+
+
+
+
+
+
+
+
+
 
 
 
@@ -760,6 +806,73 @@ class crear_docCtto(TemplateView):
         Desc_ceco = Ctto.objects.get(id=id_ctto).IdCecoCtto.CodCeco+': '+Ctto.objects.get(id=id_ctto).IdCecoCtto.NomCeco
         factor = fac(ctto.MonedaCtto)
         Item_ctto = ItemCtto.objects.filter(IdCtto__id=id_ctto).order_by('NumItem')
+        ValorCttoPalabras = number_to_letter.to_word(Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto,str(ctto.MonedaCtto))
+
+        formato_fecha = "%Y-%m-%d"
+        Finicio = Ctto.objects.get(id=self.kwargs['id_ctto']).FechIniCtto
+        Ftermino = Ctto.objects.get(id=self.kwargs['id_ctto']).FechTerCtto
+        Plazo = Plazodiaz(Finicio,Ftermino)
+        PlazoPalabras = number_to_letter.to_word(int(Plazo))
+        fecha_inicialPalabras =  fechaPalabra(Finicio)
+        fecha_finalPalabras =  fechaPalabra(Ftermino)
+
+
+        s_nommandante = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.NomMandte
+        s_rutmandante = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.RutMandte
+        s_numctto = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
+        s_descctto = Ctto.objects.get(id=self.kwargs['id_ctto']).DescCtto
+        s_nomcttocompleto =str(s_numctto)+" - '"+str(s_descctto)+"''"
+
+        ValorBoleta = Ctto.objects.get(id=self.kwargs['id_ctto']).Boleta
+        MonedaBoleta = Ctto.objects.get(id=self.kwargs['id_ctto']).MonedaBoleta
+
+
+
+        if ValorBoleta != None and ValorBoleta !=0:
+            try:
+
+                ValorboletaPalabras =number_to_letter.to_word(Ctto.objects.get(id=self.kwargs['id_ctto']).Boleta)
+                FVigenciaBoleta = Ctto.objects.get(id=self.kwargs['id_ctto']).FechVigenBoleta
+                FVigenciaBoletaPalabras = fechaPalabra(FVigenciaBoleta)
+                print(ValorboletaPalabras)
+                print(Finicio)
+                print(FVigenciaBoleta)
+                print(fecha_inicialPalabras)
+                print(FVigenciaBoletaPalabras)
+
+                parrafo1_Boleta = "El Contratista deberá entregar a El Mandante, en un plazo no superior a 30 días hábiles posteriores " +\
+                                "a la emisión de esta Carta de Adjudicación, una boleta de garantía bancaria a la vista e incondicional "
+
+                parrafo2_Boleta ="por el fiel cumplimiento del Contrato, emitida por un banco comercial autorizado para operar en el país, " +\
+                                "a favor de " + s_nommandante +" , R.U.T.: "+ s_rutmandante+" , por un total de "+str(MonedaBoleta)+" "+str(ValorBoleta)+" ( "+ ValorboletaPalabras+" )"
+
+                parrafo3_Boleta = "Dicha boleta, en su glosa, deberá indicar que su objeto es garantizar el fiel cumplimiento del Contrato N° " +\
+                                 s_nomcttocompleto + ". El período de vigencia de dicha boleta, abarcará toda la duración del "
+
+                parrafo4_Boleta ="servicio, hasta los 90 días siguientes a partir de la fecha fijada como término del Contrato, esto es hasta el día "+\
+                                 FVigenciaBoletaPalabras + ". "
+
+                aplicaboleta = ""
+
+
+
+            except:
+                #pdb.set_trace() ## Punto de ruptura
+                parrafo1_Boleta =" Exept"
+                parrafo2_Boleta =" Exept"
+                FVigenciaBoletaPalabras = "Exept"
+                aplicaboleta = "Exept"
+        else:
+            parrafo1_Boleta  = "else"
+            parrafo2_Boleta = "else"
+            FVigenciaBoletaPalabras = ""
+            aplicaboleta = " (No Aplica Contrato " + s_numctto + " )"
+
+        print(parrafo1_Boleta)
+        print(parrafo2_Boleta)
+
+
+
 
 
         ws['B1'] = ""
@@ -779,12 +892,12 @@ class crear_docCtto(TemplateView):
         ws['B15'] = ""
         ws['B16'] = ""
         ws['B17'] = ""
-        ws['B18'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.NomCtta
-        ws['B19'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.RutCtta
-        ws['B20'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.DirCtta
-        ws['B21'] = ""
+        ws['B20'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.NomCtta
+        ws['B21'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.RutCtta
         ws['B22'] = ""
-        ws['B23'] = ""
+        ws['B23'] = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.DirCtta
+
+
         ws['B24'] = ""
         ws['B25'] = ""
         ws['B26'] = ""
@@ -794,30 +907,29 @@ class crear_docCtto(TemplateView):
         ws['B30'] = ""
         ws['B31'] = ""
         ws['B32'] = ""
-        ws['B33'] = Ctto.objects.get(id=self.kwargs['id_ctto']).FechIniCtto
-        ws['B34'] = Ctto.objects.get(id=self.kwargs['id_ctto']).FechTerCtto
-        ws['B35'] = ""
-        ws['B36'] = ""
-        ws['B37'] = Ctto.objects.get(id=self.kwargs['id_ctto']).MonedaCtto
-        ws['B38'] = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto
-        ws['B39'] = ""
-        ws['B40'] = ""
-        ws['B41'] = ""
-        ws['B42'] = ""
-        ws['B43'] = ""
-        ws['B44'] = ""
-        ws['B45'] = ""
+
+
+        ws['B36'] = Ctto.objects.get(id=self.kwargs['id_ctto']).FechIniCtto
+        ws['B37'] = fecha_inicialPalabras
+        ws['B38'] = Ctto.objects.get(id=self.kwargs['id_ctto']).FechTerCtto
+        ws['B39'] = fecha_finalPalabras
+        ws['B40'] = Plazo
+        ws['B41'] = PlazoPalabras
+        ws['B42'] = Ctto.objects.get(id=self.kwargs['id_ctto']).MonedaCtto
+        ws['B43'] = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto
+        ws['B44'] = ValorCttoPalabras
+
         ws['B46'] = ""
         ws['B47'] = ""
         ws['B48'] = ""
         ws['B49'] = ""
-        ws['B50'] = ""
-        ws['B51'] = ""
-        ws['B52'] = ""
-        ws['B53'] = ""
-        ws['B54'] = ""
-        ws['B55'] = ""
-        ws['B56'] = ""
+        ws['B50'] = aplicaboleta
+        ws['B51'] = parrafo1_Boleta
+        ws['B52'] = parrafo2_Boleta
+        ws['B53'] = parrafo3_Boleta
+        ws['B54'] = parrafo4_Boleta
+        ws['B55'] = FVigenciaBoleta
+        ws['B56'] = FVigenciaBoletaPalabras
         ws['B57'] = ""
         ws['B58'] = ""
         ws['B59'] = ""
@@ -834,9 +946,9 @@ class crear_docCtto(TemplateView):
         ws['B70'] = ""
         ws['B71'] = ""
         ws['B72'] = ""
-
+        ws['B73'] = ""
         # Valores de ODC en USD
-        ws['C38'] = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto*factor
+        ws['C43'] = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto*factor
 
 
 

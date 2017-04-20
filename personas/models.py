@@ -164,7 +164,7 @@ class Ctto(models.Model):
     Boleta = models.DecimalField(decimal_places=2, max_digits=21, null=True, blank=True)
     MonedaBoleta = models.CharField(max_length=5, choices=MONEDA, default="CLP",null=True, blank=True)
     VigenBoleta = models.CharField(max_length=100, null=True, blank=True)
-
+    FechVigenBoleta = models.DateField( null=True, blank=True)
     RetenCtto = models.CharField(max_length=100, null=True, blank=True)
 
 

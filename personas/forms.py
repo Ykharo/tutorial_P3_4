@@ -27,7 +27,7 @@ class CttoUpdateForm(forms.ModelForm):
         fields = ['NumCtto','DescCtto','AlcanceCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','FechTerCtto',
         'IdCecoCtto','CordCtto','IdMandante','TipoServ','AjusteCom', 'AjustNumEDP','AjustValEDP','AdjudicCtto',
         'LocalCtto','TerrenCtto','SeguroCtto','FechSolCtto','FechAppCtto','ObservCtto','LugarCtto','DocOferta','FechOferta','FechCartaAdj',
-        'IvaOferta', 'Anticipo', 'Modalidad', 'Boleta', 'MonedaBoleta', 'VigenBoleta', 'RetenCtto',
+        'IvaOferta', 'Anticipo', 'Modalidad', 'Boleta', 'MonedaBoleta', 'FechVigenBoleta', 'RetenCtto',
 
         ]
 
@@ -58,7 +58,7 @@ class CttoUpdateForm(forms.ModelForm):
             'DocOferta': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':20}),
             'LugarCtto': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':30}),
             'ObservCtto': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':30}),
-
+            'FechVigenBoleta': forms.DateInput(format='%d/%m/%Y')
         }
     def __init__(self, *args, **kwargs):
         super(CttoUpdateForm, self).__init__(*args, **kwargs)
