@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from personas.views import Personas,EditarContrato,CrearContrato,EditarPersona, ReportePersonasExcel, Bienvenida, DetalleContrato,\
 ModificarContrato,ReporteEDPExcel,ReporteODCExcel,ficha,DetalleEdp,ModificarEdp,BorrarEdp,ModificarOdc,DetalleOdc,BorrarOdc,ReporteFiniquito,\
-crear_docODC,crear_docCtto
+crear_docODC,crear_docCtto,crear_docEDP
 
 from . import models
 from . import views
@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^detalle_edp/(?P<pk>\d+)/$', DetalleEdp.as_view(), name="detalle_edp"),
     url(r'^modificar_edp/(?P<pk>\d+)/$',ModificarEdp.as_view(), name="modificar_edp"),
     url(r'^borrar_edp/(?P<pk>\d+)/$',BorrarEdp.as_view(), name="borrar_edp"),
+    url(r'^crear_docEDP/(?P<pk>\d+)/$',views.crear_docEDP.as_view(), name="crear_docEDP"),
 
     url(r'^crear_odc/(?P<id_ctto>\d+)/$',views.CrearOdc.as_view(), name="crear_odc"),
     url(r'^detalle_odc/(?P<pk>\d+)/$', DetalleOdc.as_view(), name="detalle_odc"),

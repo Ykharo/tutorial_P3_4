@@ -1067,6 +1067,133 @@ class crear_docODC(TemplateView):
 
 
 
+
+
+
+
+class crear_docEDP(TemplateView):
+    def get(self, request, *args, **kwargs):
+
+        wb = load_workbook(filename = 'CaratulaEDP.xlsx')
+        wb.template = False
+        ws = wb.get_sheet_by_name('BD')
+
+        try:
+            id_edp = self.kwargs['pk']
+            id_ctto = Edp.objects.get(id=self.kwargs['pk']).IdCtto.id
+
+            ctto = Ctto.objects.get(id=id_ctto)
+        except ObjectDoesNotExist:
+            valor =0
+
+        factor = fac(ctto.MonedaCtto)
+        EDP_ctto = Edp.objects.filter(IdCtto__id=id_ctto).order_by('NumEDP')
+        ODC_ctto = Odc.objects.filter(IdCtto__id=id_ctto).order_by('NumODC')
+
+        #Item_odc = ItemOdc.objects.filter(IdEDP__id=id_edp).order_by('NumItem')
+        TerActualizado_ant = ctto.FechTerCtto
+
+
+        sumaODC = 0
+        for odc in ODC_ctto:
+            if odc.id == int(id_odc):
+                print ("ODC Actual : " + odc.NumODC)
+                break
+            print("Fecha TAct")
+            print(odc.FechT_ODC)
+            if odc.FechT_ODC != None:
+                TerActualizado_ant = odc.FechT_ODC
+            sumaODC = sumaODC+ (odc.ValorODC or 0)
+
+
+        sumaEDP = 0
+        sumaRet = 0
+        SumaDevRet = 0
+
+        for edp in EDP_ctto:
+            sumaEDP = sumaEDP+ (edp.ValEDP or 0)
+            sumaRet = sumaRet+ (edp.RetEDP or 0)
+            SumaDevRet = SumaDevRet + (edp.DevRet or 0)
+
+        ws['B5'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.NumCtto
+        ws['B6'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.DescCtto
+        ws['B7'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.IdCtta.NomCtta
+        ws['B8'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.IdCtta.RutCtta
+        ws['B9'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.IdMandante.NomMandte
+        ws['B10'] = Edp.objects.get(id=self.kwargs['pk']).PeriodEDP
+        ws['B11'] = Edp.objects.get(id=self.kwargs['pk']).PeriodEDPTer
+        ws['B12'] = ""
+        ws['B13'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.FechIniCtto
+        ws['B14'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.FechTerCtto
+        ws['B15'] = ""
+        ws['B16'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.ValorCtto
+        ws['B17'] = sumaODC
+        ws['B18'] = Edp.objects.get(id=self.kwargs['pk']).NumEDP
+        ws['B19'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.MonedaCtto
+        ws['B20'] = ""
+        ws['B21'] = ""
+        ws['B22'] = ""
+        ws['B23'] = Edp.objects.get(id=self.kwargs['pk']).RetEDP
+        ws['B24'] = sumaRet-SumaDevRet
+        ws['B25'] = Edp.objects.get(id=self.kwargs['pk']).ValEDP
+        ws['B26'] = Edp.objects.get(id=self.kwargs['pk']).ValEDP*factor
+        ws['B27'] = sumaEDP
+        ws['B28'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.IdCecoCtto.CodCeco+': '+Edp.objects.get(id=self.kwargs['pk']).IdCtto.IdCecoCtto.NomCeco
+        ws['B29'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.IdCecoCtto.IdDueno.NomDueno
+        ws['B30'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.IvaOferta
+        ws['B31'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.RetenCtto
+        ws['B32'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.FechVigenBoleta
+        ws['B33'] = Edp.objects.get(id=self.kwargs['pk']).IdCtto.TerrenCtto
+        # Valores de ODC en USD
+
+
+
+
+        #cont =1
+        #for itemodc in Item_odc:
+        #    ws.cell(row=cont+30,column=1).value = itemodc.NumItem
+        #    ws.cell(row=cont+30,column=2).value = itemodc.IdCecoODC.CodCeco
+        #    ws.cell(row=cont+30,column=3).value = itemodc.DescripItem
+        #    ws.cell(row=cont+30,column=4).value = itemodc.UnidItem
+        #    ws.cell(row=cont+30,column=5).value = itemodc.CantItem
+        #    ws.cell(row=cont+30,column=6).value = itemodc.PuItem
+        #    ws.cell(row=cont+30,column=7).value = itemodc.TotalItem
+        #    cont =cont+1
+
+        #wb.save('Datos.xlsx')
+
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=CaratulaEDP.xlsx'
+
+        wb.save(response)
+
+        return response
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class Bienvenida(TemplateView):
     #template_name = 'Tabla_Servicios.html'
     template_name = 'form.html'

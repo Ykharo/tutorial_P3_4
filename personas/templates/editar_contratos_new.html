@@ -334,6 +334,9 @@
                                       <td>{{ edp.FactEDP }}</td>
 
                                        <td class="text-center">
+                                         <a class="btn btn-xs" href="{% url 'personas:crear_docEDP' edp.pk %}">
+                                             <span class="glyphicon glyphicon-file"></span>
+                                         </a>
                                           <a class="btn btn-xs" href="{% url 'personas:detalle_edp' edp.pk %}">
                                               <span class="glyphicon glyphicon-folder-open"></span>
                                           </a>
