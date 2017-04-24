@@ -285,8 +285,7 @@ class ItemCttoForm(forms.ModelForm):
 
                 }
 
-ItemCttoFormSet = inlineformset_factory(Ctto, ItemCtto,
-                                            form=ItemCttoForm, extra=1)
+ItemCttoFormSet = inlineformset_factory(Ctto, ItemCtto,form=ItemCttoForm, extra=1)
 
 
 
@@ -306,8 +305,7 @@ class AportesCttoForm(forms.ModelForm):
 
                 }
 
-AportesCttoFormSet = inlineformset_factory(Ctto, AportesCtto,
-                                            form=AportesCttoForm, extra=1)
+AportesCttoFormSet = inlineformset_factory(Ctto, AportesCtto,form=AportesCttoForm, extra=1)
 
 class MultasPerClaveCttoForm(forms.ModelForm):
     class Meta:
@@ -329,5 +327,4 @@ class MultasPerClaveCttoForm(forms.ModelForm):
 
                 }
 
-MultasPerClaveCttoFormSet = inlineformset_factory(Ctto, MultasPerClaveCtto,
-                                            form=MultasPerClaveCttoForm, extra=1)
+MultasPerClaveCttoFormSet = inlineformset_factory(Ctto, MultasPerClaveCtto,form=MultasPerClaveCttoForm, extra=1)

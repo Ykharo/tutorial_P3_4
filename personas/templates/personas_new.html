@@ -10,7 +10,7 @@
         <h3>
               Users
               <small>
-                  Some examples to get you started
+                  Some examples to get you started Principal
               </small>
           </h3>
       </div>
@@ -388,61 +388,5 @@
 {% endblock cuerpo %}
 
 {% block js %}
-
-<script>
-$(document).ready(function()
-{
-    var table = $('#datatable-responsive1').DataTable( {
-        "language": {
-            url: "/static/localizacion/es_ES.json"
-        },
-
-       "paging": true  ,
-       "ordering": true,
-       "info":    true,
-       "pagingType": "full_numbers",
-       "scrollY": 500,
-       "scrollX": true,
-       "decimal": ",",
-       "thousands": "."
-
-    } );
-
-    $('#datatable-responsive1 tbody').on( 'click', 'tr', function()
-    {
-        if ($(this).hasClass('selected') )
-        {
-            $(this).removeClass('selected');
-
-        }
-        else
-        {
-            table.$('tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
-
-    });
-
-    $('#datatable-responsive tbody1').on( 'dblclick', 'tr', function()
-    {
-
-        var data = table.row( this ).data();
-        alert( 'Tu clickeaste en el'+data[0]+'\'s row' );
-        var id = this.rowIndex;
-        window.location.href = "/editar_contrato/";
-
-
-        $.ajax({
-            data : {'id':id},
-            url  : '/editar_contrato/',
-            type: 'get',
-        })
-    });
-
-
-});
-</script>
-
-
 
 {% endblock js %}

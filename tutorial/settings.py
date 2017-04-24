@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'personas',
     'django.contrib.humanize',
     'numerosletras',
+
 #    'import_export',
 )
 
