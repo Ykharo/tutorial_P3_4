@@ -444,7 +444,10 @@ class ReportePersonasExcel(TemplateView):
         ws['AM3'] = 'Fecha Aprob Ctto'
         ws['AN3'] = 'Rut Ctta'
         ws['AO3'] = 'Observ Cttos'
-
+        ws['AP3'] = 'Giro Ctta'
+        ws['AQ3'] = 'Direccion Ctta'
+        ws['AR3'] = 'Comuna Ctta'
+        ws['AS3'] = 'Ciudad Ctta'
 
         cont=4
         valcttoAct = 0
@@ -520,6 +523,15 @@ class ReportePersonasExcel(TemplateView):
             ws.cell(row=cont,column=40).value = ctto.IdCtta.RutCtta
 
             ws.cell(row=cont,column=41).value = ctto.ObservCtto
+
+            ws.cell(row=cont,column=42).value = ctto.IdCtta.GiroCtta
+            ws.cell(row=cont,column=43).value = ctto.IdCtta.DirCtta
+            ws.cell(row=cont,column=44).value = ctto.IdCtta.ComunaCtta
+            ws.cell(row=cont,column=45).value = ctto.IdCtta.CiudadCtta
+
+
+
+
 
 
             cont = cont + 1
