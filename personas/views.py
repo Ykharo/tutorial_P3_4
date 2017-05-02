@@ -596,6 +596,9 @@ class ReporteEDPExcel(TemplateView):
         ws['O3'] = 'Fecha Aprob EDP'
         ws['P3'] = 'Obs EDP'
         ws['Q3'] = 'EstCtto'
+        ws['R3'] = 'Ccosto'
+        ws['S3'] = 'NomCeco'
+        ws['T3'] = 'Mandante'
 
         cont=4
         valcttoAct = 0
@@ -623,6 +626,10 @@ class ReporteEDPExcel(TemplateView):
                 ws.cell(row=cont,column=15).value = edp.AprobEDP
                 ws.cell(row=cont,column=16).value = edp.ObservEDP
                 ws.cell(row=cont,column=17).value = ctto.EstCtto
+                ws.cell(row=cont,column=18).value = ctto.IdCecoCtto.CodCeco
+                ws.cell(row=cont,column=19).value = ctto.IdCecoCtto.NomCeco
+                ws.cell(row=cont,column=20).value = ctto.IdMandante.NomMandte
+
 
                 cont = cont + 1
 
