@@ -106,7 +106,8 @@
                                               <p><label>Moneda Ctto :&nbsp; </label>{{ Ctto.MonedaCtto }}</p>
 
                                               <p><label>Mandante :&nbsp; </label>{{ Ctto.IdMandante.NomMandte }}</p>
-                                              <p><label>Cordinador de Ctto :&nbsp; </label>{{ Ctto.CordCtto }}</p>
+                                              <p><label>Cordinador de Ctto NU :&nbsp; </label>{{ Ctto.CordCtto }}</p>
+                                              <p><label>Administrador de Ctto Ctta:&nbsp; </label>{{ Ctto.AdminCttoCtta }}</p>
                                           </div>
 
                                           <div class="col-md-6">
@@ -114,7 +115,13 @@
                                               <p><label>Valor Modificaciones :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ sumaODC}}</td></p>
                                               <p><label>Valor Actualizado :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ ValActCtto}}</td></p>
                                               <P><label>Fecha Término Actualizado:&nbsp; </label>{{ TerActualizado }}</p>
+                                              <P><label>Vigencia (Días):&nbsp; </label>{{ Vigencia }}</p>
+                                              <p><label>Porcentaje Vencimiento :&nbsp;</label><td>&nbsp;{{ porvigencia }}%</td></p>
+
                                               <p><label>Total Avance :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ sumaEDP}}</td></p>
+
+                                              <p><label>Porcentaje Avanzado :&nbsp;</label><td style="">&nbsp;{{ poravance}}%</td></p>
+
                                               <p><label>Total Retenciones :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ sumaRet}}</td></p>
                                               <p><label>Total Devolución Retenciones :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ sumaDevRet}}</td></p>
                                               <p><label>Total Anticipos :&nbsp; </label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ sumaAnt}}</td></p>

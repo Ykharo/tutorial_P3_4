@@ -8,6 +8,29 @@ from django.utils import timezone
 from django.db import models
 
 
+class Area(models.Model):
+    IdAreas = models.IntegerField(null=True, blank=True)
+    NomArea = models.CharField(max_length=20)
+    CodArea = models.CharField(max_length=20,null=True, blank=True)
+
+    def __str__(self):
+        return self.NomArea
+
+
+class PersonalProyecto(models.Model):
+    Nombre = models.CharField(max_length=100, null=True, blank=True)
+    Cargo = models.CharField(max_length=50, null=True, blank=True)
+    Correo = models.CharField(max_length=50, null=True, blank=True)
+    IdArea = models.ForeignKey(Area)
+    Cel = models.CharField(max_length=20, null=True, blank=True)
+    CI = models.CharField(max_length=20, null=True, blank=True)
+
+    def __str__(self):
+        return '%s' % (self.Nombre)
+
+
+
+
 class Duenoceco(models.Model):
 
     DOCIDENTIDAD = (
@@ -24,16 +47,6 @@ class Duenoceco(models.Model):
 
 
 
-class Area(models.Model):
-    IdAreas = models.IntegerField(null=True, blank=True)
-    NomArea = models.CharField(max_length=20)
-    CodArea = models.CharField(max_length=20,null=True, blank=True)
-
-    def __str__(self):
-        return self.NomArea
-
-
-
 class Ceco(models.Model):
     IdCeco = models.IntegerField(null=True, blank=True)
     IdAreas = models.ForeignKey(Area)
@@ -41,6 +54,11 @@ class Ceco(models.Model):
     NomCeco = models.CharField(max_length=100, null=True, blank=True)
     IdDueno = models.ForeignKey(Duenoceco)
     Budget = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+
+
+    class Meta:
+        ordering = ['CodCeco']
+
 
     def __str__(self):
         return '%s %s' % (self.CodCeco, self.NomCeco)
@@ -83,11 +101,30 @@ class Ctta(models.Model):
     FechDocpersonCtta = models.DateField(null=True, blank=True)
     NotariapersonCtta = models.CharField(max_length=100,null=True, blank=True)
 
-
-
+    class Meta:
+        ordering = ['NomCtta']
 
     def __str__(self):
         return self.NomCtta
+
+
+class PersonalCtta(models.Model):
+    Nombre = models.CharField(max_length=100, null=True, blank=True)
+    Cargo = models.CharField(max_length=50, null=True, blank=True)
+    Correo = models.CharField(max_length=50, null=True, blank=True)
+    IdCtta = models.ForeignKey(Ctta)
+    Cel = models.CharField(max_length=20, null=True, blank=True)
+    CI = models.CharField(max_length=20, null=True, blank=True)
+
+    class Meta:
+        ordering = ['IdCtta']
+
+
+    def __str__(self):
+        return '%s - %s' % (self.IdCtta.NomCtta, self.Nombre)
+
+
+
 
 class Ctto(models.Model):
     LOCACION = (
@@ -123,6 +160,10 @@ class Ctto(models.Model):
         ("NO_IVA","No Afecto a IVA"),
         ("RET_Legal","Retención Legal"))
 
+    PROVISION = (
+        ("Calculada","Calculada"),
+        ("Informada","Informada"))
+
 
     IdCtto = models.IntegerField(null=True, blank=True)
     NumCtto = models.CharField(max_length=20, null=False)
@@ -135,7 +176,10 @@ class Ctto(models.Model):
     FechIniCtto = models.DateField(null=False) #DateTimeField
     FechTerCtto = models.DateField(null=False)
     IdCecoCtto = models.ForeignKey(Ceco)
-    CordCtto = models.CharField(max_length=100, null=True, blank=True)
+
+    CordCtto = models.ForeignKey(PersonalProyecto,default="1")
+    AdminCttoCtta = models.ForeignKey(PersonalCtta,default="1")
+
     IdMandante = models.ForeignKey(Mdte)
 
 
@@ -149,6 +193,8 @@ class Ctto(models.Model):
     TerrenCtto = models.CharField( max_length=10,choices=TERRENOCONTRATO, default="No", null=True, blank=True)
     SeguroCtto = models.CharField( max_length=10,choices=SEGURO, default="No", null=True, blank=True)
     LugarCtto = models.CharField( max_length=50, null=True, blank=True)
+
+    ProvisCtto = models.CharField( max_length=10,choices=PROVISION , default="Calculada", null=True, blank=True)
 
     FechSolCtto = models.DateField( null=True, blank=True)# Sept, Fecha Solicitud
     FechAppCtto = models.DateField( null=True, blank=True)# Sept, Fecha Aprob
@@ -166,9 +212,6 @@ class Ctto(models.Model):
     VigenBoleta = models.CharField(max_length=100, null=True, blank=True)
     FechVigenBoleta = models.DateField( null=True, blank=True)
     RetenCtto = models.CharField(max_length=100, null=True, blank=True)
-
-
-
 
 
 
@@ -296,28 +339,6 @@ class MultasPerClaveCtto(models.Model):
 
 
 
-class PersonalProyecto(models.Model):
-    Nombre = models.CharField(max_length=100, null=True, blank=True)
-    Cargo = models.CharField(max_length=50, null=True, blank=True)
-    Correo = models.CharField(max_length=50, null=True, blank=True)
-    IdArea = models.ForeignKey(Area)
-    Cel = models.CharField(max_length=20, null=True, blank=True)
-    CI = models.CharField(max_length=20, null=True, blank=True)
-
-    def __str__(self):
-        return '%s' % (self.Nombre)
-
-class PersonalCtta(models.Model):
-    Nombre = models.CharField(max_length=100, null=True, blank=True)
-    Cargo = models.CharField(max_length=50, null=True, blank=True)
-    Correo = models.CharField(max_length=50, null=True, blank=True)
-    IdCtta = models.ForeignKey(Ctta)
-    Cel = models.CharField(max_length=20, null=True, blank=True)
-    CI = models.CharField(max_length=20, null=True, blank=True)
-
-    def __str__(self):
-        return '%s' % (self.Nombre)
-
 
 
 class Reprentantes(models.Model):
@@ -326,6 +347,8 @@ class Reprentantes(models.Model):
 
     def __str__(self):
         return '%s %s' % (self.IdDuenoCeco, self.IdMandante)
+
+
 
 
 

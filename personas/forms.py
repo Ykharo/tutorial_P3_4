@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import inlineformset_factory
 
-from .models import Persona, Ctto, Edp, Ctta, Odc, ItemOdc, ItemCtto, Ceco, AportesCtto, MultasPerClaveCtto
+from .models import Persona, Ctto, Edp, Ctta, Odc, ItemOdc, ItemCtto, Ceco, AportesCtto, MultasPerClaveCtto,PersonalProyecto,PersonalCtta
 
 class PersonaCreateForm(forms.ModelForm):
 
@@ -27,7 +27,7 @@ class CttoUpdateForm(forms.ModelForm):
         fields = ['NumCtto','DescCtto','AlcanceCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','FechTerCtto',
         'IdCecoCtto','CordCtto','IdMandante','TipoServ','AjusteCom', 'AjustNumEDP','AjustValEDP','AdjudicCtto',
         'LocalCtto','TerrenCtto','SeguroCtto','FechSolCtto','FechAppCtto','ObservCtto','LugarCtto','DocOferta','FechOferta','FechCartaAdj',
-        'IvaOferta', 'Anticipo', 'Modalidad', 'Boleta', 'MonedaBoleta', 'FechVigenBoleta', 'RetenCtto',
+        'IvaOferta', 'Anticipo', 'Modalidad', 'Boleta', 'MonedaBoleta', 'FechVigenBoleta', 'RetenCtto','AdminCttoCtta','ProvisCtto'
 
         ]
 
@@ -35,8 +35,10 @@ class CttoUpdateForm(forms.ModelForm):
         labels = {
             'FechIniCtto': 'Fecha de Inicio',
             'FechTerCtto': 'Fecha de Término',
-            'IdCecoCtto': 'Centro de Costo'
-
+            'IdCecoCtto': 'Centro de Costo',
+            'CordCtto': 'Coord Téc NU',
+            'AdminCttoCtta': 'Admin Ctta',
+            'Tipo Prov': 'ProvisCtto'
         }
 
 
@@ -51,7 +53,7 @@ class CttoUpdateForm(forms.ModelForm):
             'FechIniCtto': forms.DateInput(format='%d/%m/%Y'),
             'FechTerCtto': forms.DateInput(format='%d/%m/%Y'),
             #'IdCecoCtto': forms.TextInput(attrs={'class': 'form-control'}),
-            'CordCtto': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
+            #'CordCtto': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
             #'IdMandante': forms.Textarea(attrs={'class': 'form-control'}),
             #'TipoServ': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
             'Modalidad': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':30}),
@@ -64,7 +66,7 @@ class CttoUpdateForm(forms.ModelForm):
         super(CttoUpdateForm, self).__init__(*args, **kwargs)
         self.fields['IdCtta'].widget.attrs['style'] = "width:550px"
         self.fields['IdCecoCtto'].widget.attrs['style'] = "width:550px"
-
+        self.fields['AdminCttoCtta'].widget.attrs['style'] = "width:550px"
 
 
 class EdpUpdateForm(forms.ModelForm):
@@ -217,7 +219,7 @@ class CttaUpdateForm(forms.ModelForm):
     class Meta:
         model = Ctta
         exclude = ()
-        fields = ['NomCtta','DirCtta','RutCtta']
+        fields = ['NomCtta','RutCtta','DirCtta','ComunaCtta','CiudadCtta','GiroCtta']
         labels = {
             'NomCtta': 'Nombre Contratista',
             'DirCtta': 'Dirección',
@@ -227,10 +229,18 @@ class CttaUpdateForm(forms.ModelForm):
 
         widgets = {
             'NomCtta': forms.TextInput(attrs={'class': 'form-control'}),
-            'DirCtta': forms.TextInput(attrs={'class': 'form-control'}),
             'RutCtta': forms.TextInput(attrs={'class': 'form-control'}),
-
+            'DirCtta': forms.TextInput(attrs={'class': 'form-control'}),
+            'ComunaCtta': forms.TextInput(attrs={'class': 'form-control'}),
+            'CiudadCtta': forms.TextInput(attrs={'class': 'form-control'}),
+            'GiroCtta': forms.TextInput(attrs={'class': 'form-control'}),
                 }
+
+
+
+
+
+
 
 
 
@@ -328,3 +338,49 @@ class MultasPerClaveCttoForm(forms.ModelForm):
                 }
 
 MultasPerClaveCttoFormSet = inlineformset_factory(Ctto, MultasPerClaveCtto,form=MultasPerClaveCttoForm, extra=1)
+
+
+
+
+class PersonalProyUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = PersonalProyecto
+        exclude = ()
+        fields = ['Nombre','Cargo','Correo','IdArea','Cel','CI']
+        labels = {
+
+        }
+
+        widgets = {
+            'Nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'Cargo': forms.TextInput(attrs={'class': 'form-control'}),
+            'Correo': forms.TextInput(attrs={'class': 'form-control'}),
+            'Cel': forms.TextInput(attrs={'class': 'form-control'}),
+            'CI': forms.TextInput(attrs={'class': 'form-control'}),
+
+
+                }
+
+
+
+
+class PersonalCttaUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = PersonalCtta
+        exclude = ()
+        fields = ['Nombre','Cargo','Correo','IdCtta','Cel','CI']
+        labels = {
+
+        }
+
+        widgets = {
+            'Nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'Cargo': forms.TextInput(attrs={'class': 'form-control'}),
+            'Correo': forms.TextInput(attrs={'class': 'form-control'}),
+            'Cel': forms.TextInput(attrs={'class': 'form-control'}),
+            'CI': forms.TextInput(attrs={'class': 'form-control'}),
+
+
+                }

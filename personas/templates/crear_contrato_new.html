@@ -133,19 +133,6 @@
                                                           {{ form.FechOferta }}
                                                     </div>
                                                   </div>
-
-
-
-
-
-
-
-
-
-                                            </div>
-                                            <div class="col-md-6 col-sm-6 col-xs-6">
-
-                                                <div class="panel-body">
                                                   <div class="form-group">
                                                       <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ form.FechIniCtto.errors }}{{ form.FechIniCtto.label_tag }}</label>
                                                       <div class="col-md-3 col-sm-3 col-xs-12">
@@ -160,6 +147,15 @@
                                                           </div>
                                                       </div>
                                                   </div>
+
+
+
+
+
+                                            </div>
+                                            <div class="col-md-6 col-sm-6 col-xs-6">
+
+                                                <div class="panel-body">
                                                   <div class="form-group">
                                                       <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ form.EstCtto.errors }}{{ form.EstCtto.label_tag }}</label>
                                                       <div class="col-md-3 col-sm-3 col-xs-12">
@@ -238,14 +234,6 @@
                                                       </div>
                                                   </div>
                                                   <div class="form-group">
-                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ form.CordCtto.errors }}{{ form.CordCtto.label_tag }}</label>
-                                                      <div class="col-md-9 col-sm-9 col-xs-12">
-                                                        <div class="fieldWrapper">
-                                                          {{ form.CordCtto }}
-                                                        </div>
-                                                      </div>
-                                                  </div>
-                                                  <div class="form-group">
                                                       <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ form.AjusteCom.errors }}{{ form.AjusteCom.label_tag }}</label>
                                                       <div class="col-md-3 col-sm-3 col-xs-12">
                                                           <div class="fieldWrapper">
@@ -289,6 +277,38 @@
                                                         </div>
                                                       </div>
                                                   </div>
+                                                  <div class="form-group">
+                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ form.CordCtto.errors }}{{ form.CordCtto.label_tag }}</label>
+                                                    <div class="col-md-7 col-sm-7 col-xs-12">
+                                                          {{ form.CordCtto }}
+                                                    </div>
+                                                    <div class="col-md-2 col-sm-2 col-xs-12">
+                                                      <a id="crear_detalle" href="{% url 'personas:crear_personalproy' %}" class="btn btn-xs" >
+                                                          <span class="glyphicon glyphicon-plus-sign cruz_section"> Crear</span>
+                                                      </a>
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ form.AdminCttoCtta.errors }}{{ form.AdminCttoCtta.label_tag }}</label>
+                                                    <div class="col-md-7 col-sm-7 col-xs-12">
+                                                          {{ form.AdminCttoCtta }}
+                                                    </div>
+                                                    <div class="col-md-2 col-sm-2 col-xs-12">
+                                                      <a id="crear_detalle" href="{% url 'personas:crear_personalctta' %}" class="btn btn-xs" >
+                                                          <span class="glyphicon glyphicon-plus-sign cruz_section"> Crear</span>
+                                                      </a>
+                                                    </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <label class="control-label col-md-3 col-sm-3 col-xs-12">{{ form.ProvisCtto.errors }}{{ form.ProvisCtto.label_tag }}</label>
+                                                      <div class="col-md-9 col-sm-9 col-xs-12">
+                                                        <div class="fieldWrapper">
+                                                          {{ form.ProvisCtto }}
+                                                        </div>
+                                                      </div>
+                                                  </div>
+
+
 
 
                                           </div>

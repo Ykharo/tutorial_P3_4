@@ -43,7 +43,7 @@ import datetime
 USE_THOUSAND_SEPARATOR = True
 THOUSAND_SEPARATOR = ','
 
-from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, Duenoceco
+from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, Duenoceco,PersonalProyecto,PersonalCtta
 
 
 class CttaAdmin(admin.ModelAdmin):
@@ -74,8 +74,8 @@ class OdcInline(admin.StackedInline):
 
 
 class CttoAdmin(admin.ModelAdmin):
-    list_display = ('NumCtto','DescCtto','EstCtto','IdMandante','FechTerCtto','IdCecoCtto','IdCtta','ObservCtto')
-    list_editable = ('EstCtto','IdMandante','FechTerCtto','IdCecoCtto','ObservCtto')
+    list_display = ('NumCtto','DescCtto','EstCtto','IdMandante','FechTerCtto','IdCecoCtto','IdCtta','ObservCtto','ProvisCtto')
+    list_editable = ('EstCtto','IdMandante','FechTerCtto','IdCecoCtto','ObservCtto','ProvisCtto')
     list_per_page = 20
     list_filter = ('TipoServ', )
     inlines = [EdpInline,OdcInline]
@@ -114,3 +114,5 @@ admin.site.register(Edp)
 admin.site.register(Odc)
 admin.site.register(Monedas)
 admin.site.register(Duenoceco)
+admin.site.register(PersonalProyecto)
+admin.site.register(PersonalCtta)

@@ -11,7 +11,7 @@ from django.views.generic.detail import DetailView
 
 from django.conf import settings
 from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateForm, CttaUpdateForm, OdcUpdateForm, OdcCreateForm,\
-ItemOdcFormSet, ItemCttoFormSet, AportesCttoFormSet, MultasPerClaveCttoFormSet
+ItemOdcFormSet, ItemCttoFormSet, AportesCttoFormSet, MultasPerClaveCttoFormSet, PersonalProyUpdateForm, PersonalCttaUpdateForm
 
 #Workbook nos permite crear libros en excel
 
@@ -37,7 +37,7 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django import forms
 from django.template import RequestContext
 import django_excel as excel
-from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, ItemOdc, ItemCtto,AportesCtto
+from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, ItemOdc, ItemCtto,AportesCtto,PersonalProyecto,PersonalCtta
 
 # No longer you need the following import statements if you use pyexcel >=0.2.2
 import pyexcel.ext.xls
@@ -448,6 +448,9 @@ class ReportePersonasExcel(TemplateView):
         ws['AQ3'] = 'Direccion Ctta'
         ws['AR3'] = 'Comuna Ctta'
         ws['AS3'] = 'Ciudad Ctta'
+        ws['AT3'] = 'Tipo Prov'
+
+
 
         cont=4
         valcttoAct = 0
@@ -528,7 +531,7 @@ class ReportePersonasExcel(TemplateView):
             ws.cell(row=cont,column=43).value = ctto.IdCtta.DirCtta
             ws.cell(row=cont,column=44).value = ctto.IdCtta.ComunaCtta
             ws.cell(row=cont,column=45).value = ctto.IdCtta.CiudadCtta
-
+            ws.cell(row=cont,column=46).value = ctto.ProvisCtto
 
 
 
@@ -1287,7 +1290,7 @@ class CrearContrato(CreateView):
         if self.request.POST:
              data['ItemCttos'] = ItemCttoFormSet(self.request.POST)
              data['AportesCttos'] = AportesCttoFormSet(self.request.POST)
-             data['MultasPcCttos'] = MultasPerFormSet(self.request.POST)
+             data['MultasPcCttos'] = MultasPerClaveCttoFormSet(self.request.POST)
         else:
              data['ItemCttos'] = ItemCttoFormSet()
              data['AportesCttos'] = AportesCttoFormSet()
@@ -1334,6 +1337,10 @@ class ModificarContrato(UpdateView):
 
     def get_context_data(self, **kwargs):
         data = super(ModificarContrato, self).get_context_data(**kwargs)
+        dato = self.kwargs['pk']
+        print('dato')
+        print(dato)
+
         if self.request.POST:
             data['ItemCttos'] = ItemCttoFormSet(self.request.POST, instance=self.object)
             data['AportesCttos'] = AportesCttoFormSet(self.request.POST, instance=self.object)
@@ -1365,7 +1372,6 @@ class ModificarContrato(UpdateView):
                 MultasPcCttos.save()
 
         return super(ModificarContrato, self).form_valid(form)
-
 
 
 
@@ -1446,9 +1452,32 @@ def EditarContrato(request,id_ctto):
     ValActCtto = ctto.ValorCtto + sumaODC
     ValActFechTermCtto = TerActualizado
 
+    # Fecha ingresada
+    #fecha_ingresada = '09/04/2008'
+
+    # Separo el formato de fecha para convertirlo en yyyy/mm/dd
+    #d = fecha_ingresada.split('/')
+    #fecha_a_calcular = datetime.strptime(d[2] + d[1] + d[0],'%Y%m%d').date()
+
+    # Creo una variable con la operación aritmética
+    PlazoCtto = TerActualizado - ctto.FechIniCtto
+    VigenciaCtto = TerActualizado - datetime.now().date()
+
+    try:
+        porvigencia =round(VigenciaCtto/PlazoCtto,1)
+    except:
+        porvigencia =0
+
+    try:
+        poravance =round(sumaEDP/ValActCtto,1)
+    except:
+        poravance =0
+
+
     return render_to_response('editar_contratos_new.html',{'Ctto':ctto,'Odc':ODC,'Edp':EDP,'id_ctto':valor,\
     'ValActCtto':ValActCtto,'TerActualizado':TerActualizado,'sumaODC':sumaODC,'sumaEDP':sumaEDP,'sumaAnt':sumaAnt,\
-    'sumaDevAnt':sumaDevAnt,'sumaRet':sumaRet,'sumaDevRet': sumaDevRet,'sumaDesc':sumaDesc
+    'sumaDevAnt':sumaDevAnt,'sumaRet':sumaRet,'sumaDevRet': sumaDevRet,'sumaDesc':sumaDesc,'Vigencia':VigenciaCtto,\
+    'porvigencia':porvigencia*100,'poravance':poravance*100
      })
 
 
@@ -1501,13 +1530,15 @@ class CrearEdp(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CrearEdp, self).get_context_data(**kwargs)
+        id_ctto = self.kwargs['id_ctto']
         context['Valedp'] = Edp.objects.all()
         context['Validctto'] = int(self.kwargs['id_ctto'])
         context['NumeroCtto'] = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
         context['DescripCtto'] = Ctto.objects.get(id=self.kwargs['id_ctto']).DescCtto
+        context['ItemCtto'] = ItemCtto.objects.filter(IdCtto__id=id_ctto).order_by('NumItem')
 
-        print('valor de idctto =')
-        print(self.kwargs['id_ctto'])
+        print("valor de idctto =")
+        print(id_ctto)
         return context
 
     def get_form_kwargs(self):
@@ -1699,4 +1730,26 @@ class CrearContratista(CreateView):
         #fields =['dni','nombre','apellido_paterno','apellido_materno']
         template_name = 'crear_ctta_new.html'
         form_class = CttaUpdateForm
-        success_url = reverse_lazy('personas:crear_persona')
+        success_url = reverse_lazy('personas:crear_contrato')
+
+
+
+
+class Crear_Personalproy(CreateView):
+
+    model = PersonalProyecto
+    #fields =['dni','nombre','apellido_paterno','apellido_materno']
+    template_name = 'crear_personalproy_new.html'
+    form_class = PersonalProyUpdateForm
+
+    success_url = reverse_lazy('personas:crear_contrato')
+
+
+
+
+class Crear_Personalctta(CreateView):
+        model = PersonalCtta
+        #fields =['dni','nombre','apellido_paterno','apellido_materno']
+        template_name = 'crear_personalctta_new.html'
+        form_class = PersonalCttaUpdateForm
+        success_url = reverse_lazy('personas:crear_contrato')

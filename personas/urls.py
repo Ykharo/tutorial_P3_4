@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from personas.views import Personas,EditarContrato,CrearContrato,EditarPersona, ReportePersonasExcel, Bienvenida, DetalleContrato,\
 ModificarContrato,ReporteEDPExcel,ReporteODCExcel,ficha,DetalleEdp,ModificarEdp,BorrarEdp,ModificarOdc,DetalleOdc,BorrarOdc,ReporteFiniquito,\
-crear_docODC,crear_docCtto,crear_docEDP
+crear_docODC,crear_docCtto,crear_docEDP, Crear_Personalproy, Crear_Personalctta
 
 from . import models
 from . import views
@@ -13,6 +13,10 @@ urlpatterns = [
     url(r'^crear_persona/busqueda_ajax/$',views.BusquedaAjaxView.as_view(), name="Busqueda_ajax"),
     url(r'^crear_contratista/$',views.CrearContratista.as_view(), name="crear_contratista"),
     url(r'^crear_docCtto/(?P<id_ctto>\d+)/$',views.crear_docCtto.as_view(), name="crear_docCtto"),
+
+
+    url(r'^crear_personalproy/$',views.Crear_Personalproy.as_view(), name="crear_personalproy"),
+    url(r'^crear_personalctta/$',views.Crear_Personalctta.as_view(), name="crear_personalctta"),
 
 
     url(r'^personas/$',Personas.as_view(), name="personas"),
