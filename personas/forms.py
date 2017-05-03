@@ -25,8 +25,8 @@ class CttoUpdateForm(forms.ModelForm):
     class Meta:
         model = Ctto
         fields = ['NumCtto','DescCtto','AlcanceCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','FechTerCtto',
-        'IdCecoCtto','CordCtto','IdMandante','TipoServ','AjusteCom', 'AjustNumEDP','AjustValEDP','AdjudicCtto',
-        'LocalCtto','TerrenCtto','SeguroCtto','FechSolCtto','FechAppCtto','ObservCtto','LugarCtto','DocOferta','FechOferta','FechCartaAdj',
+        'IdCecoCtto','CordCtto','IdMandante','TipoServ','AjusteCom', 'AjustNumEDP','AjustValEDP','AdjudicCtto','ObservCtto',
+        'LocalCtto','TerrenCtto','SeguroCtto','FechSolCtto','FechAppCtto','LugarCtto','DocOferta','FechOferta','FechCartaAdj',
         'IvaOferta', 'Anticipo', 'Modalidad', 'Boleta', 'MonedaBoleta', 'FechVigenBoleta', 'RetenCtto','AdminCttoCtta','ProvisCtto'
 
         ]
@@ -38,7 +38,8 @@ class CttoUpdateForm(forms.ModelForm):
             'IdCecoCtto': 'Centro de Costo',
             'CordCtto': 'Coord Téc NU',
             'AdminCttoCtta': 'Admin Ctta',
-            'Tipo Prov': 'ProvisCtto'
+            'Tipo Prov': 'ProvisCtto',
+            'ObservCtto':'Obs'
         }
 
 
@@ -57,9 +58,10 @@ class CttoUpdateForm(forms.ModelForm):
             #'IdMandante': forms.Textarea(attrs={'class': 'form-control'}),
             #'TipoServ': forms.TextInput(attrs={'class': 'form-control','rows':1, 'cols':60}),
             'Modalidad': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':30}),
+            'ObservCtto': forms.Textarea(attrs={'class': 'form-control'}),
             'DocOferta': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':20}),
             'LugarCtto': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':30}),
-            'ObservCtto': forms.TextInput(attrs={'class': 'form-control','rows':2, 'cols':30}),
+
             'FechVigenBoleta': forms.DateInput(format='%d/%m/%Y')
         }
     def __init__(self, *args, **kwargs):
