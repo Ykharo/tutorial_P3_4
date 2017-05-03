@@ -405,6 +405,8 @@ class ReportePersonasExcel(TemplateView):
         #Juntamos las celdas desde la B1 hasta la E1, formando una sola celda
         ws.merge_cells('B1:E1')
         #Creamos los encabezados desde la celda B3 hasta la E3
+        ws['A3'] = 'Centro Costo'
+        ws['B3'] = 'Cuenta'
         ws['C3'] = 'Mandante'
         ws['D3'] = 'Tipo'
         ws['E3'] = 'N° Ctto.'
@@ -456,6 +458,8 @@ class ReportePersonasExcel(TemplateView):
         valcttoAct = 0
         #Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
         for ctto in CTTOS:
+            ws.cell(row=cont,column=1).value = ctto.IdCecoCtto.IdAreas.CodArea
+            ws.cell(row=cont,column=2).value = ctto.IdCecoCtto.CodCeco
             ws.cell(row=cont,column=3).value = ctto.IdMandante.NomMandte
             ws.cell(row=cont,column=4).value = ctto.TipoServ
             ws.cell(row=cont,column=5).value = ctto.NumCtto
