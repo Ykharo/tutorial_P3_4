@@ -140,7 +140,7 @@ class Ctto(models.Model):
     MONEDA = (
         ("CLP", "CLP"),
         ("USD", "USD"),
-        ("UF", "UF"),("EUR", "EUR"),("CAD", "CAD"))
+        ("UF", "UF"),("EUR", "EUR"),("CAD", "CAD"),("AUD","AUD"))
 
     ADJUDICACION = (
         ("Directa", "Directa"),
