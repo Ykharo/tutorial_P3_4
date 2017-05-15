@@ -395,66 +395,77 @@ class ReportePersonasExcel(TemplateView):
         CTTOS = Ctto.objects.all()
         ODC = Odc.objects.all()
         EDP = Edp.objects.all()
+        Estatustxt = [ 'Solicitados en la semana','No iniciados','En preparación','En licitación','En evaluación','En negociación / Adjudicación','Adjudicado','En emisión','En firmas','En ejecución','Servicio terminado','En cierre','Cerrado','Servicio suspendido','Solicitud anulada','Solicitud diferida o postergada']
+
+
 
         #Creamos el libro de trabajo
         wb = Workbook()
         #Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
         ws = wb.active
         #En la celda B1 ponemos el texto 'REPORTE DE PERSONAS'
-        ws['B1'] = 'REPORTE DE PERSONAS'
+        #ws['B1'] = 'REPORTE DE PERSONAS'
         #Juntamos las celdas desde la B1 hasta la E1, formando una sola celda
-        ws.merge_cells('B1:E1')
+        #ws.merge_cells('B1:E1')
         #Creamos los encabezados desde la celda B3 hasta la E3
-        ws['A3'] = 'Centro Costo'
-        ws['B3'] = 'Cuenta'
-        ws['C3'] = 'Mandante'
-        ws['D3'] = 'Tipo'
-        ws['E3'] = 'N° Ctto.'
-        ws['F3'] = 'Descripcion Servicio'
-        ws['G3'] = 'Contratista'
-        ws['H3'] = 'Rut Contratista'
-        ws['I3'] = 'Fecha Ini Ctto'
-        ws['J3'] = 'Fecha Term Ctto'
-        ws['K3'] = 'Estatus'
-        ws['L3'] = 'Centro de Costo'
-        ws['M3'] = 'Cuenta'
-        ws['N3'] = 'Descrip-Cuenta'
-        ws['O3'] = 'Moneda Ctto'
-        ws['P3'] = 'Valor Inicial'
-        ws['Q3'] = 'Ajuste Commit Proyecto'
-        ws['R3'] = 'EDP Ini Proy'
-        ws['S3'] = 'EDP Ajust Proy'
-        ws['T3'] = 'Adjudicación'
-        ws['U3'] = 'Local'
-        ws['V3'] = 'Terreno'
-        ws['W3'] = 'Seguro'
-        ws['X3'] = 'Valor ODC'
-        ws['Y3'] = 'Valor EDP'
-        ws['Z3'] = 'Val Actual Ctto'
-        ws['AA3'] = 'Commitment Aprobado'
-        ws['AB3'] = 'EDP Pagados Proy'
-        ws['AC3'] = 'EDP Pagados Proy (USD)'
-        ws['AD3'] = 'Commitment (USD)'
-        ws['AE3'] = 'Commitment To Go (USD)'
-        ws['AF3'] = 'Termino Actualizado'
-        ws['AG3'] = 'Fecha Sol Ultima ODC'
-        ws['AH3'] = 'Fecha Aprob Ultimo ODC'
-        ws['AI3'] = 'Fecha Present Ultimo EDP'
-        ws['AJ3'] = 'Fecha Aprob Ultimo EDP'
-        ws['AK3'] = 'Fecha Periodo Ultimo EDP'
-        ws['AL3'] = 'Fecha Solicitud Ctto'
-        ws['AM3'] = 'Fecha Aprob Ctto'
-        ws['AN3'] = 'Rut Ctta'
-        ws['AO3'] = 'Observ Cttos'
-        ws['AP3'] = 'Giro Ctta'
-        ws['AQ3'] = 'Direccion Ctta'
-        ws['AR3'] = 'Comuna Ctta'
-        ws['AS3'] = 'Ciudad Ctta'
-        ws['AT3'] = 'Tipo Prov'
+        ws['A1'] = 'Centro Costo'
+        ws['B1'] = 'Cuenta'
+        ws['C1'] = 'Mandante'
+        ws['D1'] = 'Tipo'
+        ws['E1'] = 'N° Ctto.'
+        ws['F1'] = 'Descripcion Servicio'
+        ws['G1'] = 'Contratista'
+        ws['H1'] = 'Rut Contratista'
+        ws['I1'] = 'Fecha Ini Ctto'
+        ws['J1'] = 'Fecha Term Ctto'
+        ws['K1'] = 'Estatus'
+        ws['L1'] = 'Area'
+        ws['M1'] = 'Cuenta'
+        ws['N1'] = 'Descrip-Cuenta'
+        ws['O1'] = 'Moneda Ctto'
+        ws['P1'] = 'Valor Inicial'
+        ws['Q1'] = 'Ajuste Commit Proyecto'
+        ws['R1'] = 'EDP Ini Proy'
+        ws['S1'] = 'EDP Ajust Proy'
+        ws['T1'] = 'Adjudicación'
+        ws['U1'] = 'Local'
+        ws['V1'] = 'Terreno'
+        ws['W1'] = 'Seguro'
+        ws['X1'] = 'Valor ODC'
+        ws['Y1'] = 'Valor EDP'
+        ws['Z1'] = 'Val Actual Ctto'
+        ws['AA1'] = 'Commitment Aprobado'
+        ws['AB1'] = 'EDP Pagados Proy'
+        ws['AC1'] = 'EDP Pagados Proy (USD)'
+        ws['AD1'] = 'Commitment (USD)'
+        ws['AE1'] = 'Commitment To Go (USD)'
+        ws['AF1'] = 'Termino Actualizado'
+        ws['AG1'] = 'Fecha Sol Ultima ODC'
+        ws['AH1'] = 'Fecha Aprob Ultimo ODC'
+        ws['AI1'] = 'Fecha Present Ultimo EDP'
+        ws['AJ1'] = 'Fecha Aprob Ultimo EDP'
+        ws['AK1'] = 'Fecha Periodo Ultimo EDP'
+        ws['AL1'] = 'Fecha Solicitud Ctto'
+        ws['AM1'] = 'Fecha Aprob Ctto'
+        ws['AN1'] = 'Rut Ctta'
+        ws['AO1'] = 'Observ Cttos'
+        ws['AP1'] = 'Giro Ctta'
+        ws['AQ1'] = 'Direccion Ctta'
+        ws['AR1'] = 'Comuna Ctta'
+        ws['AS1'] = 'Ciudad Ctta'
+        ws['AT1'] = 'Tipo Prov'
+        ws['AU1'] = 'Valor Inicio (USD)'
+        ws['AV1'] = 'Valor ODC (USD)'
+        ws['AW1'] = 'Num Ctto Descrip'
+        ws['AX1'] = 'Estatus Texto'
+        ws['AY1'] = 'Coordinador Tec NU'
+        ws['AZ1'] = 'Administrador Ctta'
+        ws['BA1'] = 'Cargo Administrador Ctta'
+        ws['BB1'] = 'Correo Admnistrador Ctta'
+        ws['BC1'] = 'Telefono Administrdaor Ctta'
 
 
-
-        cont=4
+        cont=2
         valcttoAct = 0
         #Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
         for ctto in CTTOS:
@@ -469,7 +480,7 @@ class ReportePersonasExcel(TemplateView):
             ws.cell(row=cont,column=9).value = ctto.FechIniCtto
             ws.cell(row=cont,column=10).value = ctto.FechTerCtto
             ws.cell(row=cont,column=11).value = ctto.EstCtto
-            ws.cell(row=cont,column=12).value = ctto.IdCecoCtto.IdAreas.CodArea
+            ws.cell(row=cont,column=12).value = ctto.IdCecoCtto.IdAreas.NomArea
             ws.cell(row=cont,column=13).value = ctto.IdCecoCtto.CodCeco
             ws.cell(row=cont,column=14).value = ctto.IdCecoCtto.NomCeco
             ws.cell(row=cont,column=15).value = ctto.MonedaCtto
@@ -536,12 +547,25 @@ class ReportePersonasExcel(TemplateView):
             ws.cell(row=cont,column=44).value = ctto.IdCtta.ComunaCtta
             ws.cell(row=cont,column=45).value = ctto.IdCtta.CiudadCtta
             ws.cell(row=cont,column=46).value = ctto.ProvisCtto
+            ws.cell(row=cont,column=47).value = factor*ctto.ValorCtto
+            ws.cell(row=cont,column=48).value = factor*sumaODC
+            ws.cell(row=cont,column=49).value = ctto.NumCtto+" "+ctto.DescCtto
 
+            if  ctto.EstCtto == "":
+                i = 0
+            else:
+                i = int(ctto.EstCtto)-1
 
+            ws.cell(row=cont,column=50).value = Estatustxt[i]
 
-
+            ws.cell(row=cont,column=51).value = ctto.CordCtto.Nombre
+            ws.cell(row=cont,column=52).value = ctto.AdminCttoCtta.Nombre
+            ws.cell(row=cont,column=53).value = ctto.AdminCttoCtta.Cargo
+            ws.cell(row=cont,column=54).value = ctto.AdminCttoCtta.Correo
+            ws.cell(row=cont,column=55).value = ctto.AdminCttoCtta.Cel
 
             cont = cont + 1
+
         #Establecemos el nombre del archivo
         nombre_archivo ="ReportePersonasExcel.xlsx"
         #Definimos que el tipo de respuesta a devolver es un archivo de microsoft excel
