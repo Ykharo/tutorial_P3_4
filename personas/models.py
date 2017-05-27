@@ -41,6 +41,7 @@ class Duenoceco(models.Model):
     DocIdDueno = models.CharField(max_length=10,choices=DOCIDENTIDAD, default="CI", null=True, blank=True)
     NumDocDueno = models.CharField(max_length=15, null=True, blank=True)
     CargoDueno = models.CharField(max_length=25, null=True, blank=True)
+    RutDueno = models.CharField(max_length=25, null=True, blank=True)
 
     def __str__(self):
         return self.NomDueno

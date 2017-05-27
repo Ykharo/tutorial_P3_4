@@ -764,88 +764,264 @@ class ReporteFiniquito(TemplateView):
 
     #Usamos el metodo get para generar el archivo excel
     def get(self, request, *args, **kwargs):
-        #Obtenemos todas las personas de nuestra base de datos
-        CTTOS = Ctto.objects.all()
-        ODC = Odc.objects.all()
-        EDP = Edp.objects.all()
+            #Obtenemos todas las personas de nuestra base de datos
 
-        #Creamos el libro de trabajo
-        wb = Workbook()
-        #Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
-        ws = wb.active
-        #En la celda B1 ponemos el texto 'REPORTE DE PERSONAS'
-        ws['B1'] = 'REPORTE DE EDP'
-        #Juntamos las celdas desde la B1 hasta la E1, formando una sola celda
-        ws.merge_cells('B1:E1')
-        #Creamos los encabezados desde la celda B3 hasta la E3
-        ws['B3'] = 'Ctto'
-        ws['C3'] = 'Ctta'
-        ws['D3'] = 'Descripción'
-        ws['E3'] = 'Nº EDP'
-        ws['F3'] = 'Moneda'
+            CTTOS = Ctto.objects.all()
+            ODC = Odc.objects.all()
+            EDP = Edp.objects.all()
 
-        ws['G3'] = 'Valor EDP'
-        ws['H3'] = 'Dev Anticipo'
-        ws['I3'] = 'Reten EDP'
-        ws['J3'] = 'Dev Ret EDP'
-
-        ws['K3'] = 'Valor EDP [USD]'
+            #Creamos el libro de trabajo
+            wb = Workbook()
+            #Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
+            ws = wb.active
 
 
-        ws['L3'] = 'P inicio'
-        ws['M3'] = 'P Termino'
-        ws['N3'] = 'Fecha Present EDP'
-        ws['O3'] = 'Fecha Aprob EDP'
-        ws['P3'] = 'Obs EDP'
-        ws['Q3'] = 'EstCtto'
+            wb = load_workbook(filename = 'DatosEDPCierre_Ctto_OS.xlsm', keep_vba=True)
+            wb.template = False
+            ws = wb.get_sheet_by_name('Datos')
 
-        cont=4
-        valcttoAct = 0
-        #Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
-        for ctto in CTTOS:
+            try:
+                id_ctto = self.kwargs['id_ctto']
+
+
+                ctto = Ctto.objects.get(id=id_ctto)
+            except ObjectDoesNotExist:
+                valor =0
+
+            Desc_ceco = Ctto.objects.get(id=id_ctto).IdCecoCtto.CodCeco+': '+Ctto.objects.get(id=id_ctto).IdCecoCtto.NomCeco
             factor = fac(ctto.MonedaCtto)
-            for edp in Edp.objects.filter(IdCtto__id=ctto.id):
+            Item_ctto = ItemCtto.objects.filter(IdCtto__id=id_ctto).order_by('NumItem')
+            Aportes_ctto = AportesCtto.objects.filter(IdCtto__id=id_ctto).order_by('NumItem')
 
-                ws.cell(row=cont,column=2).value = ctto.NumCtto
-                ws.cell(row=cont,column=3).value = ctto.IdCtta.NomCtta
-                ws.cell(row=cont,column=4).value = ctto.DescCtto
-                ws.cell(row=cont,column=5).value = edp.NumEDP
-                ws.cell(row=cont,column=6).value = ctto.MonedaCtto
+            formato_fecha = "%Y-%m-%d"
 
-                ws.cell(row=cont,column=7).value = edp.ValEDP
-                ws.cell(row=cont,column=8).value = edp.DevAntEDP
-                ws.cell(row=cont,column=9).value = edp.RetEDP
-                ws.cell(row=cont,column=10).value = edp.DevRet
+            s_fhoy = fechaPalabra(time.strftime("%Y-%m-%d"))
+            hoy = date.today()
 
-                ws.cell(row=cont,column=11).value = factor*edp.ValEDP
+            Finicio = Ctto.objects.get(id=self.kwargs['id_ctto']).FechIniCtto
+            Ftermino = Ctto.objects.get(id=self.kwargs['id_ctto']).FechTerCtto
+            Plazo = Plazodiaz(Finicio,Ftermino)
+            PlazoPalabras = number_to_letter.to_word(int(Plazo))
+            fecha_inicialPalabras =  fechaPalabra(Finicio)
+            fecha_finalPalabras =  fechaPalabra(Ftermino)
 
-                ws.cell(row=cont,column=12).value = edp.PeriodEDP
-                ws.cell(row=cont,column=13).value = edp.PeriodEDPTer
-                ws.cell(row=cont,column=14).value = edp.PresenEDP
-                ws.cell(row=cont,column=15).value = edp.AprobEDP
-                ws.cell(row=cont,column=16).value = edp.ObservEDP
-                ws.cell(row=cont,column=17).value = ctto.EstCtto
+
+            s_nommandante = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.NomMandte
+            s_rutmandante = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.RutMandte
+            s_direcmandante = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.DirecMandte
+            s_comunmandante = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.ComunaMandte
+            s_ciudmandante = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.CiudadMandte
+
+
+            s_numctto = Ctto.objects.get(id=self.kwargs['id_ctto']).NumCtto
+            s_descctto = Ctto.objects.get(id=self.kwargs['id_ctto']).DescCtto
+            s_alcactto = Ctto.objects.get(id=self.kwargs['id_ctto']).AlcanceCtto
+            s_monedctto = Ctto.objects.get(id=self.kwargs['id_ctto']).MonedaCtto
+            s_valorctto = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto
+            s_valorcttoUSD = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto*factor
+            s_valorcttopalabras = number_to_letter.to_word(Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto,str(ctto.MonedaCtto))
+            s_modalidadctto = Ctto.objects.get(id=self.kwargs['id_ctto']).Modalidad
+            s_ofertactto = Ctto.objects.get(id=self.kwargs['id_ctto']).DocOferta
+            s_fechofertctto = fechaPalabra(Ctto.objects.get(id=self.kwargs['id_ctto']).FechOferta)
+            s_iva = Ctto.objects.get(id=self.kwargs['id_ctto']).IvaOferta
+            s_factor = factor
+
+
+            s_nomctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.NomCtta
+            s_rutctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.RutCtta
+            s_dirctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.DirCtta
+            s_comunctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.ComunaCtta
+            s_ciudctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.CiudadCtta
+            s_nomrep1ctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.Rep1Ctta
+            s_rutrep1ctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.Rep1Ctta
+
+            s_cordCtta = Ctto.objects.get(id=self.kwargs['id_ctto']).CordCtto.Nombre
+            s_cargCordCtta = Ctto.objects.get(id=self.kwargs['id_ctto']).CordCtto.Cargo
+            s_correoCordCtta = Ctto.objects.get(id=self.kwargs['id_ctto']).CordCtto.Correo
+
+            s_coordctto = Ctto.objects.get(id=self.kwargs['id_ctto']).CordCtto
+            s_nombccosto = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.NomCeco
+            s_numccosto = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.CodCeco
+
+
+            s_nomdueno = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.NomDueno
+            s_rutdueno = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.RutDueno
+            s_cargdueno = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.CargoDueno
+
+
+            s_fechaperonariaMdte = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.FechDocpersonMandte
+            s_fechaperonariaMdtepalabra = fechaPalabra(s_fechaperonariaMdte)
+            s_notariaMdte = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.NotariapersonMandte
+
+
+
+            s_nomcttocompleto =str(s_numctto)+" - '"+str(s_descctto)+"''"
+
+            ValorBoleta = Ctto.objects.get(id=self.kwargs['id_ctto']).Boleta
+            MonedaBoleta = Ctto.objects.get(id=self.kwargs['id_ctto']).MonedaBoleta
+            VigenBoleta = Ctto.objects.get(id=self.kwargs['id_ctto']).VigenBoleta
+
+            sumaODC = Odc.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('ValorODC'))['ValorODC__sum'] or 0
+            sumaEDP = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('ValEDP'))['ValEDP__sum'] or 0
+            sumaReten = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('RetEDP'))['RetEDP__sum'] or 0
+            sumaDevRet = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('DevRet'))['DevRet__sum'] or 0
+            sumaAnticipo = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('AnticipoEDP'))['AnticipoEDP__sum'] or 0
+            sumaDevAnticipo = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('DevAntEDP'))['DevAntEDP__sum'] or 0
+            sumaODCpalabras = number_to_letter.to_word(sumaODC)
+
+
+            s_valcttoAct = s_valorctto + sumaODC
+            s_valcttoActpalabras = number_to_letter.to_word(s_valcttoAct)
+            s_saldoReten = sumaReten-sumaDevRet
+            s_saldoAnticipo = sumaAnticipo-sumaDevAnticipo
+
+
+
+            TerActualizado = (Odc.objects.filter(IdCtto__id=ctto.id).aggregate(Max('FechT_ODC'))['FechT_ODC__max']) or datetime(2009, 1, 1)
+            #TerActualizado = datetime.strptime(TerActualizado, "%Y-%m-%d %H:%M:%S")
+
+
+            if ctto.FechTerCtto.strftime('%F%H%M%S') > TerActualizado.strftime('%F%H%M%S'):
+                TerActualizado = ctto.FechTerCtto
+
+            Fech_ultPeriodEDP = (Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Max('PeriodEDP'))['PeriodEDP__max']) or 0
+            AuxUltEDP = Edp.objects.filter(IdCtto__id=ctto.id).latest('PeriodEDP')
+            try:
+                NumUltimoEDP = int(AuxUltEDP.NumEDP[-2:])
+            except:
+                NumUltimoEDP = 0
+
+            ws['B3'] = s_nommandante
+            ws['B7'] = s_numctto
+            ws['B8'] = s_descctto
+            ws['B9'] = s_alcactto
+            ws['B10'] = s_numccosto+":"+s_nombccosto
+            ws['B11'] = s_nomdueno
+            ws['B12'] = s_cargdueno
+            ws['B20'] = s_nomctta
+            ws['B21'] = s_rutctta
+            ws['B36'] = Finicio
+            ws['B38'] = Ftermino
+            ws['B42'] = s_monedctto
+            ws['B43'] = s_valorctto
+            ws['B45'] = s_iva
+            ws['B55'] = s_valorcttoUSD
+            ws['B63'] = s_cordCtta
+            ws['B64'] = s_cargCordCtta
+            ws['B78'] = s_factor
+            ws['B85'] = NumUltimoEDP
+            ws['B86'] = s_saldoReten
+            ws['B87'] = s_saldoAnticipo
+            ws['B88'] = sumaEDP
+            ws['B89'] = sumaODC
+            ws['B90'] = VigenBoleta
+            ws['B91'] = TerActualizado
+
+
+            cont = 2
+            for odc in Odc.objects.filter(IdCtto__id=ctto.id):
+
+                ws.cell(row=cont,column=29).value = odc.NumODC
+                ws.cell(row=cont,column=30).value = odc.FechT_ODC
+                ws.cell(row=cont,column=31).value = odc.IdCecoODC.CodCeco
+                ws.cell(row=cont,column=32).value = odc.DescripODC
+                ws.cell(row=cont,column=33).value = odc.ValorODC
 
                 cont = cont + 1
 
-        #Establecemos el nombre del archivo
-        nombre_archivo ="ReportePersonasExcel.xlsx"
-        #Definimos que el tipo de respuesta a devolver es un archivo de microsoft excel
-        #response = HttpResponse(content_type="application/ms-excel")
-        #contenido = "attachment; filename={0}".format(nombre_archivo)
-        #response["Content-Disposition"] = contenido
-        #wb.save(response)
+            cont = 2
+            for edp in Edp.objects.filter(IdCtto__id=ctto.id):
 
-        #['IdCtto', 'NumCtto', 'DescCtto', 'MonedaCtto', 'ValorCtto', 'IdCtta', 'EstCtto', 'FechIniCtto', 'FechTerCtto', 'IdCecoCtto', 'CordCtto', 'IdMandante',\
-        #'Carpeta','TipoServ', 'AjusteCom','AjustNumEDP','AjustValEDP','AdjudicCtto','LocalCtto','TerrenCtto','SeguroCtto'],
+                ws.cell(row=cont,column=36).value = edp.NumEDP
+                ws.cell(row=cont,column=37).value = edp.PeriodEDP
+                ws.cell(row=cont,column=38).value = edp.PeriodEDPTer
+                ws.cell(row=cont,column=39).value = edp.ValEDP
+                ws.cell(row=cont,column=40).value = edp.DevAntEDP
+                ws.cell(row=cont,column=41).value = edp.RetEDP
+                ws.cell(row=cont,column=42).value = edp.DevRet
+                ws.cell(row=cont,column=43).value = edp.FactEDP
+
+                cont = cont + 1
 
 
 
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=mydata_Edp.xlsx'
 
-        wb.save(response)
-        return response
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename=Cierre_EDP_OS.xlsm'
+
+            wb.save(response)
+
+
+
+            tpl=DocxTemplate('test_files/BD_Finiquito.docx')
+
+            sd = tpl.new_subdoc()
+
+            context = {
+                'Fhoy':s_fhoy,
+                'NumCtto' : s_numctto,
+                'Nom_Ctto' : s_descctto,
+                'Alcan_Ctto' : s_alcactto,
+                'Nom_Mdte' : s_nommandante,
+                'Rut_Mdte': s_rutmandante,
+                'Direcc_Mdte' :s_direcmandante,
+                'Comu_Mdte' : s_comunmandante,
+                'Ciud_Mdte' : s_ciudmandante,
+                'Nom_RepLeg1_NU' : s_nomdueno,
+                'Rut_RepLeg1_NU' : s_rutdueno,
+                'Carg_RepLeg1_NU' : s_cargdueno,
+                'Nom_RepLeg2_NU' : 'Julio Retamal',
+                'Rut_RepLeg2_NU': '9.727.084-8',
+                'Carg_RepLeg2_NU' : '',
+                'Nom_Ctta' : s_nomctta,
+                'Rut_Ctta' : s_rutctta,
+                'Direcc_Ctta' : s_dirctta,
+                'Comu_Ctta' : s_comunctta,
+                'Ciud_Ctta' : s_ciudctta,
+                'Nom_RepLeg1_Ctta' : s_nomrep1ctta,
+                'Rut_RepLeg1_Ctta' : s_rutrep1ctta,
+                'Moneda_Serv' : s_monedctto,
+                'Valor_Serv' : s_valorctto,
+                'Valor_Serv_Palabras' : s_valorcttopalabras,
+                'Mod_Servicio' :s_modalidadctto,
+                'Dur_Serv' : Plazo,
+                'Dur_Serv_Palabras' : PlazoPalabras,
+                'Fecha_IniServ_Palabras' :fecha_inicialPalabras,
+                'Fecha_Ter_Serv_Palabras':fecha_finalPalabras,
+                'Documento_Oferta_Ctta':s_ofertactto,
+                'Fecha_Oferta_Ctta' :s_fechofertctto,
+
+                'Nom_Coord_Mdte' :s_cordCtta,
+                'Cargo_Coord_Mdte':s_cargCordCtta,
+                'Correo_Coord_Mdte' :s_correoCordCtta,
+                'Valor_SumOdc':sumaODC,
+                'Valor_SumOdc_Palabras':sumaODCpalabras,
+                'ValorAct_Serv':s_valcttoAct,
+                'ValorAct_Serv_Palabras':s_valcttoActpalabras,
+
+                'fechapersoneriapalabra':s_fechaperonariaMdtepalabra,
+                'notariamandente':s_notariaMdte,
+
+
+
+                'date' : '2016-03-17',
+                'example' : '',
+            }
+
+            tpl.render(context)
+
+            nombrArchivo='test_files/Finiquito_'+s_numctto+'.docx'
+            tpl.save(nombrArchivo)
+
+
+            return response
+
+
+
+
+
+
+
 
 
 
@@ -900,6 +1076,7 @@ class crear_docCtto(TemplateView):
         s_alcactto = Ctto.objects.get(id=self.kwargs['id_ctto']).AlcanceCtto
         s_monedctto = Ctto.objects.get(id=self.kwargs['id_ctto']).MonedaCtto
         s_valorctto = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto
+        s_valorcttoUSD = Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto*factor
         s_valorcttopalabras = number_to_letter.to_word(Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto,str(ctto.MonedaCtto))
         s_modalidadctto = Ctto.objects.get(id=self.kwargs['id_ctto']).Modalidad
         s_ofertactto = Ctto.objects.get(id=self.kwargs['id_ctto']).DocOferta
@@ -914,6 +1091,12 @@ class crear_docCtto(TemplateView):
         s_nomrep1ctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.Rep1Ctta
         s_rutrep1ctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.Rep1Ctta
 
+        s_cordCtta = Ctto.objects.get(id=self.kwargs['id_ctto']).CordCtto.Nombre
+        s_cargCordCtta = Ctto.objects.get(id=self.kwargs['id_ctto']).CordCtto.Cargo
+        s_correoCordCtta = Ctto.objects.get(id=self.kwargs['id_ctto']).CordCtto.Correo
+
+        s_numccosto = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.CodCeco
+        s_nombccosto = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.NomCeco
 
 
         s_nomdueno = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.NomDueno
@@ -995,6 +1178,27 @@ class crear_docCtto(TemplateView):
 
 
 
+
+
+
+        ws['B7'] = s_numctto
+        ws['B8'] = s_descctto
+        ws['B9'] = s_alcactto
+        ws['B10'] = s_numccosto+":"+s_nombccosto
+        ws['B11'] = s_nomdueno
+        ws['B12'] = s_cargdueno
+        ws['B20'] = s_nomctta
+        ws['B21'] = s_rutctta
+        ws['B36'] = Finicio
+        ws['B38'] = Ftermino
+        ws['B42'] = s_monedctto
+        ws['B55'] = s_valorcttoUSD
+
+
+
+
+
+
         cont =1
         for item in Item_ctto:
             ws.cell(row=cont+1,column=7).value = item.NumItem
@@ -1044,7 +1248,7 @@ class crear_docCtto(TemplateView):
             'Moneda_Serv' : s_monedctto,
             'Valor_Serv' : s_valorctto,
             'Valor_Serv_Palabras' : s_valorcttopalabras,
-            'mod_Servicio' :s_modalidadctto,
+            'Mod_Servicio' :s_modalidadctto,
             'Dur_Serv' : Plazo,
             'Dur_Serv_Palabras' : PlazoPalabras,
             'Fecha_IniServ_Palabras' :fecha_inicialPalabras,
@@ -1058,11 +1262,9 @@ class crear_docCtto(TemplateView):
             'col_etiqitem':s_col_etiqitem,
             'Tbl_itemc': s_itemctto,
             'Fecha_devolcarta':s_devolcartaadj,
-            'Nom_Coord_Mdte' :'',
-            'Cargo_Coord_Mdte':'',
-            'Correo_Coord_Mdte' :'',
-
-
+            'Nom_Coord_Mdte' :s_cordCtta,
+            'Cargo_Coord_Mdte':s_cargCordCtta,
+            'Correo_Coord_Mdte' :s_correoCordCtta,
 
 
 
@@ -1073,7 +1275,7 @@ class crear_docCtto(TemplateView):
 
         tpl.render(context)
 
-        nombrArchivo='test_files/CartaAdj_'+'SC235'+'.docx'
+        nombrArchivo='test_files/CartaAdj_'+s_numctto+'.docx'
         tpl.save(nombrArchivo)
 
 
@@ -1486,6 +1688,7 @@ def EditarContrato(request,id_ctto):
 
     ValActCtto = ctto.ValorCtto + sumaODC
     ValActFechTermCtto = TerActualizado
+    Saldocontrato =ValActCtto-sumaEDP
 
     # Fecha ingresada
     #fecha_ingresada = '09/04/2008'
@@ -1512,7 +1715,7 @@ def EditarContrato(request,id_ctto):
     return render_to_response('editar_contratos_new.html',{'Ctto':ctto,'Odc':ODC,'Edp':EDP,'id_ctto':valor,\
     'ValActCtto':ValActCtto,'TerActualizado':TerActualizado,'sumaODC':sumaODC,'sumaEDP':sumaEDP,'sumaAnt':sumaAnt,\
     'sumaDevAnt':sumaDevAnt,'sumaRet':sumaRet,'sumaDevRet': sumaDevRet,'sumaDesc':sumaDesc,'Vigencia':VigenciaCtto,\
-    'porvigencia':porvigencia*100,'poravance':poravance*100
+    'porvigencia':porvigencia*100,'poravance':poravance*100,'saldocontrato': Saldocontrato
      })
 
 
