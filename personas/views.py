@@ -463,7 +463,8 @@ class ReportePersonasExcel(TemplateView):
         ws['BA1'] = 'Cargo Administrador Ctta'
         ws['BB1'] = 'Correo Admnistrador Ctta'
         ws['BC1'] = 'Telefono Administrdaor Ctta'
-
+        ws['BD1'] = 'Suma Item Ctto'
+        ws['BE1'] = 'Suma Item Odc'
 
         cont=2
         valcttoAct = 0
@@ -563,6 +564,12 @@ class ReportePersonasExcel(TemplateView):
             ws.cell(row=cont,column=53).value = ctto.AdminCttoCtta.Cargo
             ws.cell(row=cont,column=54).value = ctto.AdminCttoCtta.Correo
             ws.cell(row=cont,column=55).value = ctto.AdminCttoCtta.Cel
+            ws.cell(row=cont,column=56).value = ItemCtto.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            ws.cell(row=cont,column=57).value = ItemOdc.objects.filter(IdODC__IdCtto__id=ctto.id).aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+
+
+
+
 
             cont = cont + 1
 
@@ -584,6 +591,150 @@ class ReportePersonasExcel(TemplateView):
 
         wb.save(response)
         return response
+
+class ReporteCommitmentItem(TemplateView):
+
+    #Usamos el metodo get para generar el archivo excel
+    def get(self, request, *args, **kwargs):
+        #Obtenemos todas las personas de nuestra base de datos
+        CTTOS = Ctto.objects.all()
+        ODC = Odc.objects.all()
+        EDP = Edp.objects.all()
+        ITEMCTTO = ItemCtto.objects.all()
+        ITEMODC = ItemOdc.objects.all()
+
+        Estatustxt = [ 'Solicitados en la semana','No iniciados','En preparación','En licitación','En evaluación','En negociación / Adjudicación','Adjudicado','En emisión','En firmas','En ejecución','Servicio terminado','En cierre','Cerrado','Servicio suspendido','Solicitud anulada','Solicitud diferida o postergada']
+
+
+        wb = Workbook()
+
+        ws = wb.active
+
+        ws['A1'] = 'Centro Costo'
+        ws['B1'] = 'Cuenta'
+        ws['C1'] = 'Mandante'
+        ws['D1'] = 'Tipo'
+        ws['E1'] = 'N° Ctto'
+        ws['F1'] = 'N° Odc'
+        ws['G1'] = 'N° Item'
+        ws['H1'] = 'Descripcion Servicio'
+        ws['I1'] = 'Contratista'
+
+        ws['J1'] = 'Estatus'
+        ws['K1'] = 'Area'
+        ws['L1'] = 'Cuenta'
+        ws['M1'] = 'Descrip-Cuenta'
+        ws['N1'] = 'Moneda Ctto'
+        ws['O1'] = 'Valor Item'
+        ws['P1'] = 'Ajuste Commitment'
+        ws['Q1'] = 'Valor Item Ajustado'
+        ws['R1'] = 'Valor Item Ajustado (USD)'
+
+
+        cont=2
+
+        for Item in ITEMCTTO:
+            ws.cell(row=cont,column=1).value = Item.IdCtto.IdCecoCtto.IdAreas.CodArea
+            ws.cell(row=cont,column=2).value = Item.IdCtto.IdCecoCtto.CodCeco
+            ws.cell(row=cont,column=3).value = Item.IdCtto.IdMandante.NomMandte
+            ws.cell(row=cont,column=4).value = Item.IdCtto.TipoServ
+            ws.cell(row=cont,column=5).value = Item.IdCtto.NumCtto
+
+            ws.cell(row=cont,column=6).value = 'ODC 0'
+            ws.cell(row=cont,column=7).value = Item.NumItem
+
+            ws.cell(row=cont,column=8).value = Item.IdCtto.DescCtto
+            ws.cell(row=cont,column=9).value = Item.IdCtto.IdCtta.NomCtta
+
+            ws.cell(row=cont,column=10).value = Item.IdCtto.EstCtto
+            ws.cell(row=cont,column=11).value = Item.IdCtto.IdCecoCtto.IdAreas.NomArea
+            ws.cell(row=cont,column=12).value = Item.IdCtto.IdCecoCtto.CodCeco
+            ws.cell(row=cont,column=13).value = Item.IdCtto.IdCecoCtto.NomCeco
+            ws.cell(row=cont,column=14).value = Item.IdCtto.MonedaCtto
+            ws.cell(row=cont,column=15).value = Item.TotalItem
+
+            auxiliar1 = 0
+            if Item.NumItem == '01':
+                ws.cell(row=cont,column=16).value = Item.IdCtto.AjusteCom
+                auxiliar1 = Item.IdCtto.AjusteCom
+
+            ItemAjustado = Item.TotalItem - auxiliar1
+            ws.cell(row=cont,column=17).value = ItemAjustado
+
+            factor = fac(Item.IdCtto.MonedaCtto)
+            ws.cell(row=cont,column=18).value = factor*ItemAjustado
+
+            cont = cont + 1
+
+
+
+        for Item in ITEMODC:
+            ws.cell(row=cont,column=1).value = Item.IdODC.IdCtto.IdCecoCtto.IdAreas.CodArea
+            ws.cell(row=cont,column=2).value = Item.IdODC.IdCtto.IdCecoCtto.CodCeco
+            ws.cell(row=cont,column=3).value = Item.IdODC.IdCtto.IdMandante.NomMandte
+            ws.cell(row=cont,column=4).value = Item.IdODC.IdCtto.TipoServ
+            ws.cell(row=cont,column=5).value = Item.IdODC.IdCtto.NumCtto
+
+            ws.cell(row=cont,column=6).value = Item.IdODC.NumODC
+            ws.cell(row=cont,column=7).value = Item.NumItem
+
+            ws.cell(row=cont,column=8).value = Item.IdODC.IdCtto.DescCtto
+            ws.cell(row=cont,column=9).value = Item.IdODC.IdCtto.IdCtta.NomCtta
+
+            ws.cell(row=cont,column=10).value = Item.IdODC.IdCtto.EstCtto
+            ws.cell(row=cont,column=11).value = Item.IdODC.IdCtto.IdCecoCtto.IdAreas.NomArea
+            ws.cell(row=cont,column=12).value = Item.IdODC.IdCtto.IdCecoCtto.CodCeco
+            ws.cell(row=cont,column=13).value = Item.IdODC.IdCtto.IdCecoCtto.NomCeco
+            ws.cell(row=cont,column=14).value = Item.IdODC.IdCtto.MonedaCtto
+            ws.cell(row=cont,column=15).value = Item.TotalItem
+
+            ItemAjustado = Item.TotalItem
+            ws.cell(row=cont,column=17).value = ItemAjustado
+
+            factor = fac(Item.IdODC.IdCtto.MonedaCtto)
+            ws.cell(row=cont,column=18).value = factor*ItemAjustado
+
+            cont = cont + 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        nombre_archivo ="ReportePersonasExcel.xlsx"
+
+
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=mydata.xlsx'
+
+        wb.save(response)
+        return response
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class ReporteEDPExcel(TemplateView):
@@ -753,6 +904,194 @@ class ReporteODCExcel(TemplateView):
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=mydata_Odc.xlsx'
+
+        wb.save(response)
+        return response
+
+
+class ReporteITEMExcel(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+            #Obtenemos todas las personas de nuestra base de datos
+
+        CTTOS = Ctto.objects.all()
+        ODC = Odc.objects.all()
+        EDP = Edp.objects.all()
+        ITEMCTTO = ItemCtto.objects.all()
+        ITEMODC = ItemOdc.objects.all()
+
+        #Creamos el libro de trabajo
+        wb = Workbook()
+        #Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
+        ws = wb.active
+        #En la celda B1 ponemos el texto 'REPORTE DE PERSONAS'
+        ws['B1'] = 'REPORTE DE ITEM'
+
+        ws['B3'] = 'Ctto'
+        ws['C3'] = 'Descripción'
+        ws['D3'] = 'Ctta'
+        ws['E3'] = 'NumItem'
+        ws['F3'] = 'IdCecoCtto'
+        ws['G3'] = 'DescripItem'
+        ws['H3'] = 'UnidItem'
+        ws['I3'] = 'CantItem'
+        ws['J3'] = 'PuItem'
+        ws['K3'] = 'TotalItem'
+        ws['L3'] = 'ObservItem'
+
+
+        cont=4
+        valcttoAct = 0
+        #Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
+        for Item in ITEMCTTO:
+
+                ws.cell(row=cont,column=2).value = Item.IdCtto.NumCtto
+                ws.cell(row=cont,column=3).value = Item.IdCtto.DescCtto
+                ws.cell(row=cont,column=4).value = Item.IdCtto.IdCtta.NomCtta
+                ws.cell(row=cont,column=5).value = Item.NumItem
+                ws.cell(row=cont,column=6).value = Item.IdCecoCtto.CodCeco
+                ws.cell(row=cont,column=7).value = Item.DescripItem
+                ws.cell(row=cont,column=8).value = Item.UnidItem
+                ws.cell(row=cont,column=9).value = Item.CantItem
+                ws.cell(row=cont,column=10).value = Item.PuItem
+                ws.cell(row=cont,column=11).value = Item.TotalItem
+                ws.cell(row=cont,column=12).value = Item.ObservItem
+
+                cont = cont + 1
+
+        cont=300
+        valcttoAct = 0
+
+        for ctto in CTTOS:
+                ws.cell(row=cont,column=2).value = ctto.NumCtto
+
+                sumaItem = ItemCtto.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+                ws.cell(row=cont,column=3).value = sumaItem
+                cuentaItem = ItemCtto.objects.filter(IdCtto__id=ctto.id).aggregate(Count('TotalItem'))['TotalItem__count'] or 0
+                ws.cell(row=cont,column=4).value = cuentaItem
+                ws.cell(row=cont,column=5).value = ctto.ValorCtto
+
+                if cuentaItem == 0 :
+                    p = ItemCtto(
+                    NumItem = '01',
+                    DescripItem = ctto.DescCtto,
+                    UnidItem = 'Gl',
+                    CantItem = 1,
+                    PuItem = ctto.ValorCtto,
+                    TotalItem = '',
+                    ObservItem ='Item Automatico',
+                    )
+
+                    p.IdCecoCtto_id = ctto.IdCecoCtto_id
+                    p.IdCtto_id =  ctto.id
+
+                    p.save()
+
+
+
+                cont = cont + 1
+
+
+
+        ws['B599'] = 'REPORTE DE ITEM'
+        ws['B600'] = 'Ctto'
+        ws['C600'] = 'ODC'
+        ws['D600'] = 'Ctta'
+        ws['E600'] = 'NumItem'
+        ws['F600'] = 'IdCecoCtto'
+        ws['G600'] = 'DescripItem'
+        ws['H600'] = 'UnidItem'
+        ws['I600'] = 'CantItem'
+        ws['J600'] = 'PuItem'
+        ws['K600'] = 'TotalItem'
+        ws['L600'] = 'ObservItem'
+
+
+        cont=605
+
+        #Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
+        for Item in ITEMODC:
+
+                ws.cell(row=cont,column=2).value = Item.IdODC.IdCtto.NumCtto
+                ws.cell(row=cont,column=3).value = Item.IdODC.NumODC
+                ws.cell(row=cont,column=4).value = Item.IdODC.IdCtto.IdCtta.NomCtta
+                ws.cell(row=cont,column=5).value = Item.NumItem
+                ws.cell(row=cont,column=6).value = Item.IdCecoODC.CodCeco
+                ws.cell(row=cont,column=7).value = Item.DescripItem
+                ws.cell(row=cont,column=8).value = Item.UnidItem
+                ws.cell(row=cont,column=9).value = Item.CantItem
+                ws.cell(row=cont,column=10).value = Item.PuItem
+                ws.cell(row=cont,column=11).value = Item.TotalItem
+                ws.cell(row=cont,column=12).value = Item.ObservItem
+
+                cont = cont + 1
+
+
+
+
+        cont=800
+
+        for odc in ODC:
+                ws.cell(row=cont,column=2).value = odc.IdCtto.NumCtto
+                ws.cell(row=cont,column=3).value = odc.NumODC
+                sumaItem = ItemOdc.objects.filter(IdODC__id=odc.id).aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+                ws.cell(row=cont,column=4).value = sumaItem
+                cuentaItem = ItemOdc.objects.filter(IdODC__id=odc.id).aggregate(Count('TotalItem'))['TotalItem__count'] or 0
+                ws.cell(row=cont,column=5).value = cuentaItem
+                ws.cell(row=cont,column=6).value = odc.ValorODC
+
+                if cuentaItem == 0 :
+                    p = ItemOdc(
+                    NumItem = '01',
+                    DescripItem = odc.DescripODC,
+                    UnidItem = 'Gl',
+                    CantItem = 1,
+                    PuItem = odc.ValorODC,
+                    TotalItem = '',
+                    ObservItem ='Item Automatico',
+                    )
+
+                    p.IdCecoODC_id = odc.IdCecoODC_id
+                    p.IdODC_id =  odc.id
+
+                    p.save()
+
+
+
+                cont = cont + 1
+
+
+
+                cont = cont + 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        #Establecemos el nombre del archivo
+        nombre_archivo ="ReportePersonasExcel.xlsx"
+
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=mydata_ItemCtto.xlsx'
 
         wb.save(response)
         return response
