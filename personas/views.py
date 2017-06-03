@@ -465,6 +465,9 @@ class ReportePersonasExcel(TemplateView):
         ws['BC1'] = 'Telefono Administrdaor Ctta'
         ws['BD1'] = 'Suma Item Ctto'
         ws['BE1'] = 'Suma Item Odc'
+        ws['BF1'] = 'Suma Retención'
+        ws['BG1'] = 'Suma Dev Retención'
+        ws['BH1'] = 'Saldo Retención (USD)'
 
         cont=2
         valcttoAct = 0
@@ -567,7 +570,13 @@ class ReportePersonasExcel(TemplateView):
             ws.cell(row=cont,column=56).value = ItemCtto.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
             ws.cell(row=cont,column=57).value = ItemOdc.objects.filter(IdODC__IdCtto__id=ctto.id).aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
 
+            sumaRet = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('RetEDP'))['RetEDP__sum'] or 0
+            sumaDevRet = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('DevRet'))['DevRet__sum'] or 0
+            saldoRet = sumaRet - sumaDevRet
 
+            ws.cell(row=cont,column=58).value = sumaRet
+            ws.cell(row=cont,column=59).value = sumaDevRet
+            ws.cell(row=cont,column=60).value = saldoRet*factor
 
 
 
