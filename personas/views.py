@@ -468,6 +468,7 @@ class ReportePersonasExcel(TemplateView):
         ws['BF1'] = 'Suma Retención'
         ws['BG1'] = 'Suma Dev Retención'
         ws['BH1'] = 'Saldo Retención (USD)'
+        ws['BH2'] = 'factor (Moneda)'
 
         cont=2
         valcttoAct = 0
@@ -577,7 +578,7 @@ class ReportePersonasExcel(TemplateView):
             ws.cell(row=cont,column=58).value = sumaRet
             ws.cell(row=cont,column=59).value = sumaDevRet
             ws.cell(row=cont,column=60).value = saldoRet*factor
-
+            ws.cell(row=cont,column=61).value = factor
 
 
             cont = cont + 1
@@ -947,6 +948,7 @@ class ReporteITEMExcel(TemplateView):
         ws['J3'] = 'PuItem'
         ws['K3'] = 'TotalItem'
         ws['L3'] = 'ObservItem'
+        ws['M3'] = 'PresupuestoItem'
 
 
         cont=4
@@ -965,6 +967,13 @@ class ReporteITEMExcel(TemplateView):
                 ws.cell(row=cont,column=10).value = Item.PuItem
                 ws.cell(row=cont,column=11).value = Item.TotalItem
                 ws.cell(row=cont,column=12).value = Item.ObservItem
+                ws.cell(row=cont,column=13).value = Item.PresupuestoItem
+
+                if (Item.PresupuestoItem is None ):
+                    Item.PresupuestoItem = date(Item.IdCtto.FechIniCtto.year,1,1)
+                    Item.save()
+
+
 
                 cont = cont + 1
 
@@ -997,7 +1006,6 @@ class ReporteITEMExcel(TemplateView):
                     p.save()
 
 
-
                 cont = cont + 1
 
 
@@ -1014,7 +1022,7 @@ class ReporteITEMExcel(TemplateView):
         ws['J600'] = 'PuItem'
         ws['K600'] = 'TotalItem'
         ws['L600'] = 'ObservItem'
-
+        ws['M600'] = 'PresupuestoItem'
 
         cont=605
 
@@ -1032,7 +1040,7 @@ class ReporteITEMExcel(TemplateView):
                 ws.cell(row=cont,column=10).value = Item.PuItem
                 ws.cell(row=cont,column=11).value = Item.TotalItem
                 ws.cell(row=cont,column=12).value = Item.ObservItem
-
+                ws.cell(row=cont,column=13).value = Item.PresupuestoItem
                 cont = cont + 1
 
 

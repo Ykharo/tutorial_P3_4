@@ -253,6 +253,7 @@ class ItemOdcForm(forms.ModelForm):
         labels = {
             'NumItem': 'Item',
             'IdCecoODC': 'Cuenta',
+            'PresupuestoItem': 'Presupuesto',
             'DescripItem': 'Descripción',
             'UnidItem': 'Unidad',
             'CantItem': 'Cantidad',
@@ -283,6 +284,7 @@ class ItemCttoForm(forms.ModelForm):
         labels = {
             'NumItem': 'Item',
             'IdCecoCtto': 'Cuenta',
+            'PresupuestoItem': 'Presupuesto',
             'DescripItem': 'Descripción',
             'UnidItem': 'Unidad',
             'CantItem': 'Cantidad',

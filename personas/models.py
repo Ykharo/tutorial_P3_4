@@ -278,6 +278,7 @@ class ItemOdc(models.Model):
     NumItem = models.CharField( max_length=8, null=False)
     IdCecoODC = models.ForeignKey(Ceco) # Agregar ForeignKey
     IdODC =  models.ForeignKey( Odc) #Agregar ForeignKey
+    PresupuestoItem = models.DateField( null=True, blank=True)
     DescripItem = models.CharField( max_length=150, null=True, blank=True)
     UnidItem = models.CharField( max_length=50, null=True, blank=True)
     CantItem = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True) # Revisar, False y default=0
@@ -296,6 +297,7 @@ class ItemCtto(models.Model):
     NumItem = models.CharField( max_length=8, null=False)
     IdCecoCtto = models.ForeignKey(Ceco) # Agregar ForeignKey
     IdCtto =  models.ForeignKey( Ctto) #Agregar ForeignKey
+    PresupuestoItem = models.DateField( null=True, blank=True)
     DescripItem = models.CharField( max_length=150, null=True, blank=True)
     UnidItem = models.CharField( max_length=50, null=True, blank=True)
     CantItem = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True) # Revisar, False y default=0
