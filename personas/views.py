@@ -634,16 +634,22 @@ class ReporteCommitmentItem(TemplateView):
         ws['K1'] = 'Area'
         ws['L1'] = 'Cuenta'
         ws['M1'] = 'Descrip-Cuenta'
-        ws['N1'] = 'Moneda Ctto'
-        ws['O1'] = 'Valor Item'
-        ws['P1'] = 'Ajuste Commitment'
-        ws['Q1'] = 'Valor Item Ajustado'
-        ws['R1'] = 'Valor Item Ajustado (USD)'
+        ws['N1'] = 'Presupuesto'
+        ws['O1'] = 'Moneda Ctto'
+        ws['P1'] = 'Valor Item'
+        ws['Q1'] = 'Valor Item (USD)'
+        ws['R1'] = 'Ajuste Commitment'
+        ws['S1'] = 'Ajuste Commitment (USD)'
+        ws['T1'] = 'Valor Item Ajustado'
+        ws['U1'] = 'Valor Item Ajustado (USD)'
 
 
         cont=2
 
         for Item in ITEMCTTO:
+
+            factor = fac(Item.IdCtto.MonedaCtto)
+
             ws.cell(row=cont,column=1).value = Item.IdCtto.IdCecoCtto.IdAreas.CodArea
             ws.cell(row=cont,column=2).value = Item.IdCtto.IdCecoCtto.CodCeco
             ws.cell(row=cont,column=3).value = Item.IdCtto.IdMandante.NomMandte
@@ -660,25 +666,35 @@ class ReporteCommitmentItem(TemplateView):
             ws.cell(row=cont,column=11).value = Item.IdCtto.IdCecoCtto.IdAreas.NomArea
             ws.cell(row=cont,column=12).value = Item.IdCtto.IdCecoCtto.CodCeco
             ws.cell(row=cont,column=13).value = Item.IdCtto.IdCecoCtto.NomCeco
-            ws.cell(row=cont,column=14).value = Item.IdCtto.MonedaCtto
-            ws.cell(row=cont,column=15).value = Item.TotalItem
+            ws.cell(row=cont,column=14).value = Item.PresupuestoItem.year
+            ws.cell(row=cont,column=15).value = Item.IdCtto.MonedaCtto
+            ws.cell(row=cont,column=16).value = Item.TotalItem
+            ws.cell(row=cont,column=17).value = Item.TotalItem*factor
 
             auxiliar1 = 0
-            if Item.NumItem == '01':
-                ws.cell(row=cont,column=16).value = Item.IdCtto.AjusteCom
+
+            if Item.NumItem == '1':
+                Item.NumItem = "01"
+
+
+            if Item.NumItem == '01' or Item.NumItem == '1':
+                ws.cell(row=cont,column=18).value = Item.IdCtto.AjusteCom
+                ws.cell(row=cont,column=19).value = Item.IdCtto.AjusteCom*factor
                 auxiliar1 = Item.IdCtto.AjusteCom
 
             ItemAjustado = Item.TotalItem - auxiliar1
-            ws.cell(row=cont,column=17).value = ItemAjustado
+            ws.cell(row=cont,column=20).value = ItemAjustado
+            ws.cell(row=cont,column=21).value = ItemAjustado*factor
 
-            factor = fac(Item.IdCtto.MonedaCtto)
-            ws.cell(row=cont,column=18).value = factor*ItemAjustado
 
             cont = cont + 1
 
 
 
         for Item in ITEMODC:
+
+            factor = fac(Item.IdODC.IdCtto.MonedaCtto)
+
             ws.cell(row=cont,column=1).value = Item.IdODC.IdCtto.IdCecoCtto.IdAreas.CodArea
             ws.cell(row=cont,column=2).value = Item.IdODC.IdCtto.IdCecoCtto.CodCeco
             ws.cell(row=cont,column=3).value = Item.IdODC.IdCtto.IdMandante.NomMandte
@@ -695,14 +711,19 @@ class ReporteCommitmentItem(TemplateView):
             ws.cell(row=cont,column=11).value = Item.IdODC.IdCtto.IdCecoCtto.IdAreas.NomArea
             ws.cell(row=cont,column=12).value = Item.IdODC.IdCtto.IdCecoCtto.CodCeco
             ws.cell(row=cont,column=13).value = Item.IdODC.IdCtto.IdCecoCtto.NomCeco
-            ws.cell(row=cont,column=14).value = Item.IdODC.IdCtto.MonedaCtto
-            ws.cell(row=cont,column=15).value = Item.TotalItem
+            ws.cell(row=cont,column=14).value = Item.PresupuestoItem.year
+            ws.cell(row=cont,column=15).value = Item.IdODC.IdCtto.MonedaCtto
+            ws.cell(row=cont,column=16).value = Item.TotalItem
+            ws.cell(row=cont,column=17).value = Item.TotalItem*factor
+
+            ws.cell(row=cont,column=18).value = 0
+            ws.cell(row=cont,column=19).value = 0
+
 
             ItemAjustado = Item.TotalItem
-            ws.cell(row=cont,column=17).value = ItemAjustado
 
-            factor = fac(Item.IdODC.IdCtto.MonedaCtto)
-            ws.cell(row=cont,column=18).value = factor*ItemAjustado
+            ws.cell(row=cont,column=20).value = ItemAjustado
+            ws.cell(row=cont,column=21).value = factor*ItemAjustado
 
             cont = cont + 1
 
