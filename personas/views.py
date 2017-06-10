@@ -465,10 +465,14 @@ class ReportePersonasExcel(TemplateView):
         ws['BC1'] = 'Telefono Administrdaor Ctta'
         ws['BD1'] = 'Suma Item Ctto'
         ws['BE1'] = 'Suma Item Odc'
-        ws['BF1'] = 'Suma Retención'
-        ws['BG1'] = 'Suma Dev Retención'
-        ws['BH1'] = 'Saldo Retención (USD)'
-        ws['BH2'] = 'factor (Moneda)'
+        ws['BF1'] = 'Suma Item CTT+ODC-Adj'
+        ws['BG1'] = 'Suma Item Ctto (USD)'
+        ws['BH1'] = 'Suma Item Odc (USD)'
+        ws['BI1'] = 'Suma Item Total (USD)'
+        ws['BJ1'] = 'Suma Retención'
+        ws['BK1'] = 'Suma Dev Retención'
+        ws['BL1'] = 'Saldo Retención (USD)'
+        ws['BM1'] = 'factor (Moneda)'
 
         cont=2
         valcttoAct = 0
@@ -568,17 +572,26 @@ class ReportePersonasExcel(TemplateView):
             ws.cell(row=cont,column=53).value = ctto.AdminCttoCtta.Cargo
             ws.cell(row=cont,column=54).value = ctto.AdminCttoCtta.Correo
             ws.cell(row=cont,column=55).value = ctto.AdminCttoCtta.Cel
-            ws.cell(row=cont,column=56).value = ItemCtto.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
-            ws.cell(row=cont,column=57).value = ItemOdc.objects.filter(IdODC__IdCtto__id=ctto.id).aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+
+            sumaItemCtto= ItemCtto.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            sumaItemOdc = ItemOdc.objects.filter(IdODC__IdCtto__id=ctto.id).aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            sumaItemTotal = sumaItemCtto+sumaItemOdc
+
+            ws.cell(row=cont,column=56).value = sumaItemCtto
+            ws.cell(row=cont,column=57).value = sumaItemOdc
+            ws.cell(row=cont,column=58).value = commitment_ApProy-(sumaItemTotal- ctto.AjusteCom)
+            ws.cell(row=cont,column=59).value = sumaItemCtto*factor
+            ws.cell(row=cont,column=60).value = sumaItemOdc*factor
+            ws.cell(row=cont,column=61).value = sumaItemTotal*factor
 
             sumaRet = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('RetEDP'))['RetEDP__sum'] or 0
             sumaDevRet = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('DevRet'))['DevRet__sum'] or 0
             saldoRet = sumaRet - sumaDevRet
 
-            ws.cell(row=cont,column=58).value = sumaRet
-            ws.cell(row=cont,column=59).value = sumaDevRet
-            ws.cell(row=cont,column=60).value = saldoRet*factor
-            ws.cell(row=cont,column=61).value = factor
+            ws.cell(row=cont,column=62).value = sumaRet
+            ws.cell(row=cont,column=63).value = sumaDevRet
+            ws.cell(row=cont,column=64).value = saldoRet*factor
+            ws.cell(row=cont,column=65).value = factor
 
 
             cont = cont + 1
@@ -671,20 +684,20 @@ class ReporteCommitmentItem(TemplateView):
             ws.cell(row=cont,column=16).value = Item.TotalItem
             ws.cell(row=cont,column=17).value = Item.TotalItem*factor
 
-            auxiliar1 = 0
+            #auxiliar1 = 0
 
-            if Item.NumItem == '1':
-                Item.NumItem = "01"
+            #if Item.NumItem == '1':
+            #    Item.NumItem = "01"
 
 
-            if Item.NumItem == '01' or Item.NumItem == '1':
-                ws.cell(row=cont,column=18).value = Item.IdCtto.AjusteCom
-                ws.cell(row=cont,column=19).value = Item.IdCtto.AjusteCom*factor
-                auxiliar1 = Item.IdCtto.AjusteCom
+            #if Item.NumItem == '01' or Item.NumItem == '1':
+            #    ws.cell(row=cont,column=18).value = Item.IdCtto.AjusteCom
+            #    ws.cell(row=cont,column=19).value = Item.IdCtto.AjusteCom*factor
+            #    auxiliar1 = Item.IdCtto.AjusteCom
 
-            ItemAjustado = Item.TotalItem - auxiliar1
-            ws.cell(row=cont,column=20).value = ItemAjustado
-            ws.cell(row=cont,column=21).value = ItemAjustado*factor
+            #ItemAjustado = Item.TotalItem - auxiliar1
+            #ws.cell(row=cont,column=20).value = ItemAjustado
+            #ws.cell(row=cont,column=21).value = ItemAjustado*factor
 
 
             cont = cont + 1
