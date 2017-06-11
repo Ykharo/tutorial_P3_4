@@ -663,8 +663,9 @@ class ReporteCommitmentItem(TemplateView):
 
             factor = fac(Item.IdCtto.MonedaCtto)
 
-            ws.cell(row=cont,column=1).value = Item.IdCtto.IdCecoCtto.IdAreas.CodArea
-            ws.cell(row=cont,column=2).value = Item.IdCtto.IdCecoCtto.CodCeco
+            ws.cell(row=cont,column=1).value = Item.IdCecoCtto.IdAreas.CodArea
+            ws.cell(row=cont,column=2).value = Item.IdCecoCtto.CodCeco
+
             ws.cell(row=cont,column=3).value = Item.IdCtto.IdMandante.NomMandte
             ws.cell(row=cont,column=4).value = Item.IdCtto.TipoServ
             ws.cell(row=cont,column=5).value = Item.IdCtto.NumCtto
@@ -674,11 +675,12 @@ class ReporteCommitmentItem(TemplateView):
 
             ws.cell(row=cont,column=8).value = Item.IdCtto.DescCtto
             ws.cell(row=cont,column=9).value = Item.IdCtto.IdCtta.NomCtta
-
             ws.cell(row=cont,column=10).value = Item.IdCtto.EstCtto
-            ws.cell(row=cont,column=11).value = Item.IdCtto.IdCecoCtto.IdAreas.NomArea
-            ws.cell(row=cont,column=12).value = Item.IdCtto.IdCecoCtto.CodCeco
-            ws.cell(row=cont,column=13).value = Item.IdCtto.IdCecoCtto.NomCeco
+
+            ws.cell(row=cont,column=11).value = Item.IdCecoCtto.IdAreas.NomArea
+            ws.cell(row=cont,column=12).value = Item.IdCecoCtto.CodCeco
+            ws.cell(row=cont,column=13).value = Item.IdCecoCtto.NomCeco
+
             ws.cell(row=cont,column=14).value = Item.PresupuestoItem.year
             ws.cell(row=cont,column=15).value = Item.IdCtto.MonedaCtto
             ws.cell(row=cont,column=16).value = Item.TotalItem
@@ -708,22 +710,24 @@ class ReporteCommitmentItem(TemplateView):
 
             factor = fac(Item.IdODC.IdCtto.MonedaCtto)
 
-            ws.cell(row=cont,column=1).value = Item.IdODC.IdCtto.IdCecoCtto.IdAreas.CodArea
-            ws.cell(row=cont,column=2).value = Item.IdODC.IdCtto.IdCecoCtto.CodCeco
+            ws.cell(row=cont,column=1).value = Item.IdCecoODC.IdAreas.CodArea
+            ws.cell(row=cont,column=2).value = Item.IdCecoODC.CodCeco
+
             ws.cell(row=cont,column=3).value = Item.IdODC.IdCtto.IdMandante.NomMandte
             ws.cell(row=cont,column=4).value = Item.IdODC.IdCtto.TipoServ
             ws.cell(row=cont,column=5).value = Item.IdODC.IdCtto.NumCtto
-
             ws.cell(row=cont,column=6).value = Item.IdODC.NumODC
+
             ws.cell(row=cont,column=7).value = Item.NumItem
 
             ws.cell(row=cont,column=8).value = Item.IdODC.IdCtto.DescCtto
             ws.cell(row=cont,column=9).value = Item.IdODC.IdCtto.IdCtta.NomCtta
-
             ws.cell(row=cont,column=10).value = Item.IdODC.IdCtto.EstCtto
-            ws.cell(row=cont,column=11).value = Item.IdODC.IdCtto.IdCecoCtto.IdAreas.NomArea
-            ws.cell(row=cont,column=12).value = Item.IdODC.IdCtto.IdCecoCtto.CodCeco
-            ws.cell(row=cont,column=13).value = Item.IdODC.IdCtto.IdCecoCtto.NomCeco
+
+            ws.cell(row=cont,column=11).value = Item.IdCecoODC.IdAreas.NomArea
+            ws.cell(row=cont,column=12).value = Item.IdCecoODC.CodCeco
+            ws.cell(row=cont,column=13).value = Item.IdCecoODC.NomCeco
+
             ws.cell(row=cont,column=14).value = Item.PresupuestoItem.year
             ws.cell(row=cont,column=15).value = Item.IdODC.IdCtto.MonedaCtto
             ws.cell(row=cont,column=16).value = Item.TotalItem
