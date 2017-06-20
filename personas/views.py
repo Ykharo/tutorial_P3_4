@@ -1682,11 +1682,10 @@ class crear_docCtto(TemplateView):
 class crear_docODC(TemplateView):
     def get(self, request, *args, **kwargs):
 
-
-
-        wb = load_workbook(filename = 'Datos.xlsx')
+        wb = load_workbook(filename = 'DatosOS_Cttos.xlsm', keep_vba=True)
         wb.template = False
-        ws = wb.get_sheet_by_name('BD')
+        ws = wb.get_sheet_by_name('Datos')
+
 
         try:
             id_odc = self.kwargs['id_odc']
@@ -1713,58 +1712,79 @@ class crear_docODC(TemplateView):
             sumaODC = sumaODC+ (odc.ValorODC or 0)
 
 
-        ws['B5'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.NumCtto
-        ws['B6'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.DescCtto
-        ws['B7'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdCtta.NomCtta
-        ws['B8'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdCtta.RutCtta
-        ws['B9'] = Odc.objects.get(id=self.kwargs['id_odc']).NumODC
-        ws['B10'] = ""
-        ws['B11'] = ""
-        ws['B12'] = Odc.objects.get(id=self.kwargs['id_odc']).FechAppOdc
-        ws['B13'] = Odc.objects.get(id=self.kwargs['id_odc']).DescripODC
-        ws['B14'] = Desc_ceco
-        ws['B15'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCecoODC.IdDueno.NomDueno
-        ws['B16'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCecoODC.IdDueno.CargoDueno
-        ws['B17'] = ""
-        ws['B18'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.MonedaCtto
-        ws['B19'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.ValorCtto
-        ws['B20'] = sumaODC
-        ws['B21'] = Odc.objects.get(id=self.kwargs['id_odc']).ValorODC
-        ws['B22'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.FechIniCtto
-        ws['B23'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.FechTerCtto
-        ws['B24'] = TerActualizado_ant
-        ws['B25'] = Odc.objects.get(id=self.kwargs['id_odc']).FechT_ODC
-        ws['B26'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdCtta.DirCtta
-        ws['B27'] = ""
-        ws['B28'] = ""
-        ws['B29'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdMandante.NomMandte
+        ws['B7'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.NumCtto
+        ws['B8'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.DescCtto
+        ws['B20'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdCtta.NomCtta
+        ws['B21'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdCtta.RutCtta
+        ws['B85'] = Odc.objects.get(id=self.kwargs['id_odc']).NumODC
+        ws['B86'] = Odc.objects.get(id=self.kwargs['id_odc']).FechAppOdc
+        ws['B87'] = Odc.objects.get(id=self.kwargs['id_odc']).DescripODC
+        ws['B88'] = Desc_ceco
+        ws['B11'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCecoODC.IdDueno.NomDueno
+        ws['B12'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCecoODC.IdDueno.CargoDueno
+        ws['B42'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.MonedaCtto
+        ws['B43'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.ValorCtto
+        ws['B89'] = sumaODC
+        ws['B90'] = Odc.objects.get(id=self.kwargs['id_odc']).ValorODC
+        ws['B36'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.FechIniCtto
+        ws['B38'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.FechTerCtto
+        ws['B91'] = TerActualizado_ant
+        ws['B92'] = Odc.objects.get(id=self.kwargs['id_odc']).FechT_ODC
+        ws['B23'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdCtta.DirCtta
+        ws['B3'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdMandante.NomMandte
+        ws['B24'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdCtta.ComunaCtta
+        ws['B25'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.IdCtta.CiudadCtta
+
+
+
+
+
+
+
 
 
 
         # Valores de ODC en USD
-        ws['C19'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.ValorCtto*factor
-        ws['C20'] = sumaODC*factor
-        ws['C21'] = Odc.objects.get(id=self.kwargs['id_odc']).ValorODC*factor
+        ws['B55'] = Odc.objects.get(id=self.kwargs['id_odc']).IdCtto.ValorCtto*factor
+        ws['B94'] = sumaODC*factor
+        ws['B95'] = Odc.objects.get(id=self.kwargs['id_odc']).ValorODC*factor
 
 
 
         cont =1
         for itemodc in Item_odc:
-            ws.cell(row=cont+30,column=1).value = itemodc.NumItem
-            ws.cell(row=cont+30,column=2).value = itemodc.IdCecoODC.CodCeco
-            ws.cell(row=cont+30,column=3).value = itemodc.DescripItem
-            ws.cell(row=cont+30,column=4).value = itemodc.UnidItem
-            ws.cell(row=cont+30,column=5).value = itemodc.CantItem
-            ws.cell(row=cont+30,column=6).value = itemodc.PuItem
-            ws.cell(row=cont+30,column=7).value = itemodc.TotalItem
+            ws.cell(row=cont+1,column=7).value = itemodc.NumItem
+            ws.cell(row=cont+1,column=8).value = itemodc.IdCecoODC.CodCeco
+            ws.cell(row=cont+1,column=9).value = itemodc.DescripItem
+            ws.cell(row=cont+1,column=10).value = itemodc.UnidItem
+            ws.cell(row=cont+1,column=11).value = itemodc.CantItem
+            ws.cell(row=cont+1,column=12).value = itemodc.PuItem
+            ws.cell(row=cont+1,column=13).value = itemodc.TotalItem
             cont =cont+1
 
         #wb.save('Datos.xlsx')
 
+        #response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        #response['Content-Disposition'] = 'attachment; filename=Datos_OS.xlsx'
+
+        #wb.save(response)
+
+
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=Datos.xlsx'
+        response['Content-Disposition'] = 'attachment; filename=DatosOS_Cttos_OS.xlsm'
 
         wb.save(response)
+
+
+
+
+
+
+
+
+
+
+
 
         return response
 

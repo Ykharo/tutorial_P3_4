@@ -27,7 +27,7 @@ class CttoUpdateForm(forms.ModelForm):
         fields = ['NumCtto','DescCtto','AlcanceCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','FechTerCtto',
         'IdCecoCtto','CordCtto','IdMandante','TipoServ','AjusteCom', 'AjustNumEDP','AjustValEDP','AdjudicCtto','ObservCtto',
         'LocalCtto','TerrenCtto','SeguroCtto','FechSolCtto','FechAppCtto','LugarCtto','DocOferta','FechOferta','FechCartaAdj',
-        'IvaOferta', 'Anticipo', 'Modalidad', 'Boleta', 'MonedaBoleta', 'FechVigenBoleta', 'RetenCtto','AdminCttoCtta','ProvisCtto'
+        'IvaOferta', 'Anticipo', 'Modalidad', 'Boleta', 'MonedaBoleta', 'FechVigenBoleta', 'RetenCtto','AdminCttoCtta','ProvisCtto','TipoSolicitud'
 
         ]
 

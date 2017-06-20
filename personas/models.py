@@ -88,6 +88,7 @@ class Ctta(models.Model):
     DirCtta = models.CharField(max_length=100, null=True, blank=True)
     ComunaCtta = models.CharField(max_length=50,null=True, blank=True)
     CiudadCtta = models.CharField(max_length=50,null=True, blank=True)
+    PaisCtta = models.CharField(max_length=50,null=True, blank=True)
     GiroCtta = models.CharField(max_length=50,null=True, blank=True)
     BcoCtta = models.CharField(max_length=50,null=True, blank=True)
     NumCtaCtta = models.CharField(max_length=50,null=True, blank=True)
@@ -165,6 +166,12 @@ class Ctto(models.Model):
         ("Calculada","Calculada"),
         ("Informada","Informada"))
 
+    TIPOSOL = (
+        ("Normal","Normal"),
+        ("Regularización","Regularización"),
+        ("Urgente","Urgente"))
+
+
 
     IdCtto = models.IntegerField(null=True, blank=True)
     NumCtto = models.CharField(max_length=20, null=False)
@@ -213,6 +220,8 @@ class Ctto(models.Model):
     VigenBoleta = models.CharField(max_length=100, null=True, blank=True)
     FechVigenBoleta = models.DateField( null=True, blank=True)
     RetenCtto = models.CharField(max_length=100, null=True, blank=True)
+
+    TipoSolicitud = models.CharField(max_length=20, choices=TIPOSOL, default="Normal",null=True, blank=True)
 
 
 
@@ -263,9 +272,11 @@ class Odc(models.Model):
     NumODC = models.CharField( max_length=8, null=False)
     IdCecoODC = models.ForeignKey(Ceco) # Agregar ForeignKey
     IdCtto =  models.ForeignKey( Ctto) #Agregar ForeignKey
+    FechI_ODC = models.DateField( null=True, blank=True)
     FechT_ODC = models.DateField( null=True, blank=True)
     ValorODC = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True) # Revisar, False y default=0
-    DescripODC = models.CharField( max_length=50, null=True, blank=True)
+    DescripODC = models.CharField( max_length=100, null=True, blank=True)
+    Solicitante = models.ForeignKey(PersonalProyecto,default="1")
 
     FechSolOdc = models.DateField( null=True, blank=True)# Sept, Fecha Solicitud
     FechAppOdc = models.DateField( null=True, blank=True)# Sept, Fecha Aprob
