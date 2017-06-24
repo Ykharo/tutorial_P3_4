@@ -16,6 +16,7 @@ ItemOdcFormSet, ItemCttoFormSet, AportesCttoFormSet, MultasPerClaveCttoFormSet, 
 #Workbook nos permite crear libros en excel
 
 from openpyxl import Workbook, load_workbook
+from openpyxl.worksheet.copier import WorksheetCopy
 
 #Nos devuelve un objeto resultado, en este caso un archivo de excel
 from django.http.response import HttpResponse
@@ -615,6 +616,31 @@ class ReportePersonasExcel(TemplateView):
         wb.save(response)
         return response
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class ReporteCommitmentItem(TemplateView):
 
     #Usamos el metodo get para generar el archivo excel
@@ -1154,6 +1180,213 @@ class ReporteITEMExcel(TemplateView):
 
 
 
+class ReporteCttoWSheet(TemplateView):
+
+    #Usamos el metodo get para generar el archivo excel
+    def get(self, request, *args, **kwargs):
+            #Obtenemos todas las personas de nuestra base de datos
+
+            CTTOS = Ctto.objects.all()
+            ODC = Odc.objects.all()
+            EDP = Edp.objects.all()
+
+            #Creamos el libro de trabajo
+            wb = Workbook()
+            #Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
+            ws = wb.active
+
+
+            wb = load_workbook(filename = 'CFWS.xlsm', keep_vba=True)
+            #wb.template = False
+
+            #template_worksheet = wb.get_sheet_by_name('Hoja1')
+            #new_worksheet = wb.create_sheet('SC-235')
+            #instance = WorksheetCopy(template_worksheet, new_worksheet)
+            #WorksheetCopy.copy_worksheet(instance)
+
+            #wb.create_sheet('SC-235')
+            #ws = wb.get_sheet_by_name('SC-235')
+
+
+            #try:
+            #    id_ctto = self.kwargs['id_ctto']
+
+
+            #    ctto = Ctto.objects.get(id=id_ctto)
+            #except ObjectDoesNotExist:
+            #    valor =0
+
+
+            cont=2
+            valcttoAct = 0
+            #Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
+
+            for ctto in CTTOS:
+
+                if ctto.TipoServ == 'Contrato' and ctto.EstCtto == '10' :
+
+                    nomhoja = ctto.NumCtto
+
+                    template_worksheet = wb.get_sheet_by_name('Hoja1')
+                    new_worksheet = wb.create_sheet(nomhoja)
+                    instance = WorksheetCopy(template_worksheet, new_worksheet)
+                    WorksheetCopy.copy_worksheet(instance)
+
+                    #wb.create_sheet('SC-235')
+                    ws = wb.get_sheet_by_name(nomhoja)
+
+
+
+                    id_ctto = ctto.id
+
+                    #Desc_ceco = Ctto.objects.get(id=id_ctto).IdCecoCtto.CodCeco+': '+Ctto.objects.get(id=id_ctto).IdCecoCtto.NomCeco
+                    factor = fac(ctto.MonedaCtto)
+                    #Item_ctto = ItemCtto.objects.filter(IdCtto__id=id_ctto).order_by('NumItem')
+                    #Aportes_ctto = AportesCtto.objects.filter(IdCtto__id=id_ctto).order_by('NumItem')
+
+                    #formato_fecha = "%Y-%m-%d"
+
+                    #s_fhoy = fechaPalabra(time.strftime("%Y-%m-%d"))
+                    #hoy = date.today()
+
+                    #Finicio = Ctto.objects.get(id=self.kwargs['id_ctto']).FechIniCtto
+                    #Ftermino = Ctto.objects.get(id=self.kwargs['id_ctto']).FechTerCtto
+                    #Plazo = Plazodiaz(Finicio,Ftermino)
+                    #PlazoPalabras = number_to_letter.to_word(int(Plazo))
+                    #fecha_inicialPalabras =  fechaPalabra(Finicio)
+                    #fecha_finalPalabras =  fechaPalabra(Ftermino)
+
+
+                    #s_nommandante = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.NomMandte
+                    #s_rutmandante = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.RutMandte
+                    #s_direcmandante = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.DirecMandte
+                    #s_comunmandante = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.ComunaMandte
+                    #s_ciudmandante = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.CiudadMandte
+
+
+                    s_numctto = Ctto.objects.get(id=id_ctto).NumCtto
+                    s_descctto = Ctto.objects.get(id=id_ctto).DescCtto
+                    #s_alcactto = Ctto.objects.get(id=self.kwargs['id_ctto']).AlcanceCtto
+                    s_monedctto = Ctto.objects.get(id=id_ctto).MonedaCtto
+                    s_valorctto = Ctto.objects.get(id=id_ctto).ValorCtto
+                    s_valorcttoUSD = Ctto.objects.get(id=id_ctto).ValorCtto*factor
+                    #s_valorcttopalabras = number_to_letter.to_word(Ctto.objects.get(id=self.kwargs['id_ctto']).ValorCtto,str(ctto.MonedaCtto))
+                    #s_modalidadctto = Ctto.objects.get(id=self.kwargs['id_ctto']).Modalidad
+                    #s_ofertactto = Ctto.objects.get(id=self.kwargs['id_ctto']).DocOferta
+                    #s_fechofertctto = fechaPalabra(Ctto.objects.get(id=self.kwargs['id_ctto']).FechOferta)
+                    #s_iva = Ctto.objects.get(id=self.kwargs['id_ctto']).IvaOferta
+                    #s_factor = factor
+
+
+                    #s_nomctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.NomCtta
+                    s_nomctta = Ctto.objects.get(id=id_ctto).IdCtta.NomCtta
+                    #s_rutctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.RutCtta
+                    #s_dirctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.DirCtta
+                    #s_comunctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.ComunaCtta
+                    #s_ciudctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.CiudadCtta
+                    #s_nomrep1ctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.Rep1Ctta
+                    #s_rutrep1ctta = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCtta.Rep1Ctta
+
+                    #s_cordCtta = Ctto.objects.get(id=self.kwargs['id_ctto']).CordCtto.Nombre
+                    #s_cargCordCtta = Ctto.objects.get(id=self.kwargs['id_ctto']).CordCtto.Cargo
+                    #s_correoCordCtta = Ctto.objects.get(id=self.kwargs['id_ctto']).CordCtto.Correo
+
+                    #s_coordctto = Ctto.objects.get(id=self.kwargs['id_ctto']).CordCtto
+                    #s_nombccosto = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.NomCeco
+                    #s_numccosto = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.CodCeco
+
+
+                    #s_nomdueno = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.NomDueno
+                    #s_rutdueno = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.RutDueno
+                    #s_cargdueno = Ctto.objects.get(id=self.kwargs['id_ctto']).IdCecoCtto.IdDueno.CargoDueno
+
+
+                    #s_fechaperonariaMdte = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.FechDocpersonMandte
+                    #s_fechaperonariaMdtepalabra = fechaPalabra(s_fechaperonariaMdte)
+                    #s_notariaMdte = Ctto.objects.get(id=self.kwargs['id_ctto']).IdMandante.NotariapersonMandte
+
+
+
+                    #s_nomcttocompleto =str(s_numctto)+" - '"+str(s_descctto)+"''"
+
+                    #ValorBoleta = Ctto.objects.get(id=self.kwargs['id_ctto']).Boleta
+                    #MonedaBoleta = Ctto.objects.get(id=self.kwargs['id_ctto']).MonedaBoleta
+                    #VigenBoleta = Ctto.objects.get(id=self.kwargs['id_ctto']).VigenBoleta
+
+                    sumaODC = Odc.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('ValorODC'))['ValorODC__sum'] or 0
+                    sumaEDP = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('ValEDP'))['ValEDP__sum'] or 0
+                    sumaReten = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('RetEDP'))['RetEDP__sum'] or 0
+                    sumaDevRet = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('DevRet'))['DevRet__sum'] or 0
+                    sumaAnticipo = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('AnticipoEDP'))['AnticipoEDP__sum'] or 0
+                    sumaDevAnticipo = Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Sum('DevAntEDP'))['DevAntEDP__sum'] or 0
+                    sumaODCpalabras = number_to_letter.to_word(sumaODC)
+
+
+                    s_valcttoAct = s_valorctto + sumaODC
+                    s_valcttoActpalabras = number_to_letter.to_word(s_valcttoAct)
+                    s_saldoReten = sumaReten-sumaDevRet
+                    s_saldoAnticipo = sumaAnticipo-sumaDevAnticipo
+
+
+
+                    TerActualizado = (Odc.objects.filter(IdCtto__id=ctto.id).aggregate(Max('FechT_ODC'))['FechT_ODC__max']) or datetime(2009, 1, 1)
+                    #TerActualizado = datetime.strptime(TerActualizado, "%Y-%m-%d %H:%M:%S")
+
+
+                    if ctto.FechTerCtto.strftime('%F%H%M%S') > TerActualizado.strftime('%F%H%M%S'):
+                        TerActualizado = ctto.FechTerCtto
+
+                    Fech_ultPeriodEDP = (Edp.objects.filter(IdCtto__id=ctto.id).aggregate(Max('PeriodEDP'))['PeriodEDP__max']) or 0
+
+                    try:
+                        AuxUltEDP = Edp.objects.filter(IdCtto__id=ctto.id).latest('PeriodEDP') or 0
+                        NumUltimoEDP = int(AuxUltEDP.NumEDP[-2:])
+                    except:
+                        NumUltimoEDP = 0
+
+
+                    ws['F6'] = s_nomctta
+                    ws['F8'] = s_numctto+" "+s_descctto
+                    ws['F10'] = s_monedctto
+                    ws['G14'] = s_valorctto
+                    ws['G101'] = sumaEDP
+
+
+                    cont = 17
+                    for odc in Odc.objects.filter(IdCtto__id=ctto.id):
+
+                        ws.cell(row=cont,column=3).value = odc.NumODC
+                        ws.cell(row=cont,column=7).value = odc.ValorODC
+
+                        cont = cont + 1
+
+                    #cont = 2
+                    #for edp in Edp.objects.filter(IdCtto__id=ctto.id):
+
+                        #ws.cell(row=cont,column=36).value = edp.NumEDP
+                        #ws.cell(row=cont,column=37).value = edp.PeriodEDP
+                        #ws.cell(row=cont,column=38).value = edp.PeriodEDPTer
+                        #ws.cell(row=cont,column=39).value = edp.ValEDP
+                        #ws.cell(row=cont,column=40).value = edp.DevAntEDP
+                        #ws.cell(row=cont,column=41).value = edp.RetEDP
+                        #ws.cell(row=cont,column=42).value = edp.DevRet
+                        #ws.cell(row=cont,column=43).value = edp.FactEDP
+
+                        #cont = cont + 1
+
+
+
+
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename=Cierre_EDP_OS.xlsm'
+
+            wb.save(response)
+
+
+            return response
+
+
+
 class ReporteFiniquito(TemplateView):
 
     #Usamos el metodo get para generar el archivo excel
@@ -1409,7 +1642,6 @@ class ReporteFiniquito(TemplateView):
 
 
             return response
-
 
 
 
