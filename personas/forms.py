@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import inlineformset_factory
 
-from .models import Persona, Ctto, Edp, Ctta, Odc, ItemOdc, ItemCtto, Ceco, AportesCtto, MultasPerClaveCtto,PersonalProyecto,PersonalCtta
+from .models import Persona, Ctto, Edp, Ctta, Odc, ItemOdc, ItemCtto, Ceco, AportesCtto, MultasPerClaveCtto,PersonalProyecto,PersonalCtta,PersonalAdminProyecto
 
 class PersonaCreateForm(forms.ModelForm):
 
@@ -27,7 +27,7 @@ class CttoUpdateForm(forms.ModelForm):
         fields = ['NumCtto','DescCtto','AlcanceCtto','MonedaCtto','ValorCtto','IdCtta','EstCtto','FechIniCtto','FechTerCtto',
         'IdCecoCtto','CordCtto','IdMandante','TipoServ','AjusteCom', 'AjustNumEDP','AjustValEDP','AdjudicCtto','ObservCtto',
         'LocalCtto','TerrenCtto','SeguroCtto','FechSolCtto','FechAppCtto','LugarCtto','DocOferta','FechOferta','FechCartaAdj',
-        'IvaOferta', 'Anticipo', 'Modalidad', 'Boleta', 'MonedaBoleta', 'FechVigenBoleta', 'RetenCtto','AdminCttoCtta','ProvisCtto','TipoSolicitud'
+        'IvaOferta', 'Anticipo', 'Modalidad', 'Boleta', 'MonedaBoleta', 'FechVigenBoleta', 'RetenCtto','AdminCttoCtta','ProvisCtto','TipoSolicitud','AdminCttoProy'
 
         ]
 
@@ -38,6 +38,7 @@ class CttoUpdateForm(forms.ModelForm):
             'IdCecoCtto': 'Centro de Costo',
             'CordCtto': 'Coord Téc NU',
             'AdminCttoCtta': 'Admin Ctta',
+            'AdminCttoProy': 'Admin Proy',
             'Tipo Prov': 'ProvisCtto',
             'ObservCtto':'Obs'
         }
@@ -69,6 +70,7 @@ class CttoUpdateForm(forms.ModelForm):
         self.fields['IdCtta'].widget.attrs['style'] = "width:550px"
         self.fields['IdCecoCtto'].widget.attrs['style'] = "width:550px"
         self.fields['AdminCttoCtta'].widget.attrs['style'] = "width:550px"
+        self.fields['AdminCttoProy'].widget.attrs['style'] = "width:550px"
 
 
 class EdpUpdateForm(forms.ModelForm):
@@ -365,6 +367,31 @@ class PersonalProyUpdateForm(forms.ModelForm):
 
 
                 }
+
+
+class AdminCttoProyForm(forms.ModelForm):
+
+    class Meta:
+        model = PersonalAdminProyecto
+        exclude = ()
+        fields = ['Nombre','Cargo','Correo','Cel','CI']
+        labels = {
+
+        }
+
+        widgets = {
+            'Nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'Cargo': forms.TextInput(attrs={'class': 'form-control'}),
+            'Correo': forms.TextInput(attrs={'class': 'form-control'}),
+            'Cel': forms.TextInput(attrs={'class': 'form-control'}),
+            'CI': forms.TextInput(attrs={'class': 'form-control'}),
+
+
+                }
+
+
+
+
 
 
 

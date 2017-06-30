@@ -11,7 +11,7 @@ from django.views.generic.detail import DetailView
 
 from django.conf import settings
 from .forms import PersonaCreateForm, CttoUpdateForm, EdpUpdateForm, EdpCreateForm, CttaUpdateForm, OdcUpdateForm, OdcCreateForm,\
-ItemOdcFormSet, ItemCttoFormSet, AportesCttoFormSet, MultasPerClaveCttoFormSet, PersonalProyUpdateForm, PersonalCttaUpdateForm
+ItemOdcFormSet, ItemCttoFormSet, AportesCttoFormSet, MultasPerClaveCttoFormSet, PersonalProyUpdateForm, PersonalCttaUpdateForm,AdminCttoProyForm
 
 #Workbook nos permite crear libros en excel
 
@@ -38,7 +38,7 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django import forms
 from django.template import RequestContext
 import django_excel as excel
-from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, ItemOdc, ItemCtto,AportesCtto,PersonalProyecto,PersonalCtta
+from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, ItemOdc, ItemCtto,AportesCtto,PersonalProyecto,PersonalCtta,PersonalAdminProyecto
 
 # No longer you need the following import statements if you use pyexcel >=0.2.2
 import pyexcel.ext.xls
@@ -474,6 +474,11 @@ class ReportePersonasExcel(TemplateView):
         ws['BK1'] = 'Suma Dev Retención'
         ws['BL1'] = 'Saldo Retención (USD)'
         ws['BM1'] = 'factor (Moneda)'
+        ws['BN1'] = 'Suma Item Ctto 2017 (USD)'
+        ws['BO1'] = 'Suma Item Odc 2017 (USD)'
+        ws['BP1'] = 'Suma Item Total 2017 (USD)'
+        ws['BQ1'] = 'Administrador'
+
 
         cont=2
         valcttoAct = 0
@@ -594,6 +599,15 @@ class ReportePersonasExcel(TemplateView):
             ws.cell(row=cont,column=64).value = saldoRet*factor
             ws.cell(row=cont,column=65).value = factor
 
+            sumaItemCtto2017= ItemCtto.objects.filter(IdCtto__id=ctto.id, PresupuestoItem='2017-01-01').aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            sumaItemOdc2017 = ItemOdc.objects.filter(IdODC__IdCtto__id=ctto.id, PresupuestoItem= '2017-01-01').aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            sumaItemTotal2017 = sumaItemCtto2017+sumaItemOdc2017
+
+            ws.cell(row=cont,column=66).value = sumaItemCtto2017*factor
+            ws.cell(row=cont,column=67).value = sumaItemOdc2017*factor
+            ws.cell(row=cont,column=68).value = sumaItemTotal2017*factor
+            ws.cell(row=cont,column=69).value = ctto.AdminCttoProy.Nombre
+
 
             cont = cont + 1
 
@@ -681,7 +695,7 @@ class ReporteCommitmentItem(TemplateView):
         ws['S1'] = 'Ajuste Commitment (USD)'
         ws['T1'] = 'Valor Item Ajustado'
         ws['U1'] = 'Valor Item Ajustado (USD)'
-
+        ws['V1'] = 'Fecha Aprobación Item'
 
         cont=2
 
@@ -711,6 +725,7 @@ class ReporteCommitmentItem(TemplateView):
             ws.cell(row=cont,column=15).value = Item.IdCtto.MonedaCtto
             ws.cell(row=cont,column=16).value = Item.TotalItem
             ws.cell(row=cont,column=17).value = Item.TotalItem*factor
+            ws.cell(row=cont,column=22).value = Item.IdCtto.FechAppCtto
 
             #auxiliar1 = 0
 
@@ -767,6 +782,8 @@ class ReporteCommitmentItem(TemplateView):
 
             ws.cell(row=cont,column=20).value = ItemAjustado
             ws.cell(row=cont,column=21).value = factor*ItemAjustado
+            ws.cell(row=cont,column=22).value = Item.IdODC.FechAppOdc
+
 
             cont = cont + 1
 
@@ -2625,6 +2642,17 @@ class Crear_Personalproy(CreateView):
     #fields =['dni','nombre','apellido_paterno','apellido_materno']
     template_name = 'crear_personalproy_new.html'
     form_class = PersonalProyUpdateForm
+
+    success_url = reverse_lazy('personas:crear_contrato')
+
+
+
+class Crear_AdminProy(CreateView):
+
+    model = PersonalAdminProyecto
+    #fields =['dni','nombre','apellido_paterno','apellido_materno']
+    template_name = 'crear_AdminCttoProy_new.html'
+    form_class = AdminCttoProyForm
 
     success_url = reverse_lazy('personas:crear_contrato')
 

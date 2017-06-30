@@ -29,6 +29,18 @@ class PersonalProyecto(models.Model):
         return '%s' % (self.Nombre)
 
 
+class PersonalAdminProyecto(models.Model):
+    Nombre = models.CharField(max_length=100, null=True, blank=True)
+    Cargo = models.CharField(max_length=50, null=True, blank=True)
+    Correo = models.CharField(max_length=50, null=True, blank=True)
+    Cel = models.CharField(max_length=20, null=True, blank=True)
+    CI = models.CharField(max_length=20, null=True, blank=True)
+
+    def __str__(self):
+        return '%s' % (self.Nombre)
+
+
+
 
 
 class Duenoceco(models.Model):
@@ -187,6 +199,7 @@ class Ctto(models.Model):
 
     CordCtto = models.ForeignKey(PersonalProyecto,default="1")
     AdminCttoCtta = models.ForeignKey(PersonalCtta,default="1")
+    AdminCttoProy = models.ForeignKey(PersonalAdminProyecto,default="1")
 
     IdMandante = models.ForeignKey(Mdte)
 

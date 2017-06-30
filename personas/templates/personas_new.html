@@ -119,6 +119,7 @@
                                 <th class="text-center">Descripción</th>
                                 <th class="text-center">Ctta</th>
                                 <th class="text-center">Ceco</th>
+                                <th class="text-center">Administrador</th>
                                 <th class="text-center">CordCtto</th>
                                 <th class="text-center">Acción</th>
                             </tr>
@@ -134,6 +135,7 @@
                                 <td>{{ ctto.DescCtto }}</td>
                                 <td>{{ ctto.IdCtta.NomCtta }}</td>
                                 <td>{{ ctto.IdCecoCtto.CodCeco }}</td>
+                                <td>{{ ctto.AdminCttoProy }}</td>
                                 <td>{{ ctto.CordCtto }}</td>
                                  <td class="text-center">
                                    <a class="btn btn-xs" href="{% url 'personas:crear_docCtto' ctto.pk %}">
@@ -224,6 +226,7 @@
                                 <th class="text-center">Descripción</th>
                                 <th class="text-center">Ctta</th>
                                 <th class="text-center">Ceco</th>
+                                <th class="text-center">Administrador</th>
                                 <th class="text-center">CordCtto</th>
                                 <th class="text-center">Acción</th>
                             </tr>
@@ -239,6 +242,7 @@
                                 <td>{{ ctto.DescCtto }}</td>
                                 <td>{{ ctto.IdCtta.NomCtta }}</td>
                                 <td>{{ ctto.IdCecoCtto.CodCeco }}</td>
+                                <td>{{ ctto.AdminCttoProy }}</td>
                                 <td>{{ ctto.CordCtto }}</td>
                                  <td class="text-center">
                                    <a class="btn btn-xs" href="{% url 'personas:crear_docCtto' ctto.pk %}">
@@ -328,6 +332,7 @@
                                       <th class="text-center">Descripción</th>
                                       <th class="text-center">Ctta</th>
                                       <th class="text-center">Ceco</th>
+                                      <th class="text-center">Administrador</th>
                                       <th class="text-center">CordCtto</th>
                                       <th class="text-center">Acción</th>
                                   </tr>
@@ -342,6 +347,7 @@
                                       <td>{{ ctto.DescCtto }}</td>
                                       <td>{{ ctto.IdCtta.NomCtta }}</td>
                                       <td>{{ ctto.IdCecoCtto.CodCeco }}</td>
+                                      <td>{{ ctto.AdminCttoProy }}</td>
                                       <td>{{ ctto.CordCtto }}</td>
                                        <td class="text-center">
                                          <a class="btn btn-xs" href="{% url 'personas:crear_docCtto' ctto.pk %}">
