@@ -474,10 +474,29 @@ class ReportePersonasExcel(TemplateView):
         ws['BK1'] = 'Suma Dev Retención'
         ws['BL1'] = 'Saldo Retención (USD)'
         ws['BM1'] = 'factor (Moneda)'
-        ws['BN1'] = 'Suma Item Ctto 2017 (USD)'
-        ws['BO1'] = 'Suma Item Odc 2017 (USD)'
-        ws['BP1'] = 'Suma Item Total 2017 (USD)'
-        ws['BQ1'] = 'Administrador'
+        ws['BN1'] = 'Administrador'
+        ws['BO1'] = 'Suma Item Ctto 2015 (USD)'
+        ws['BP1'] = 'Suma Item Odc 2015 (USD)'
+        ws['BQ1'] = 'Suma Item Total 2015 (USD)'
+        ws['BR1'] = 'Suma Item Ctto 2016 (USD)'
+        ws['BS1'] = 'Suma Item Odc 2016 (USD)'
+        ws['BT1'] = 'Suma Item Total 2016 (USD)'
+        ws['BU1'] = 'Suma Item Ctto 2017 (USD)'
+        ws['BV1'] = 'Suma Item Odc 2017 (USD)'
+        ws['BW1'] = 'Suma Item Total 2017 (USD)'
+        ws['BX1'] = 'Suma Item Ctto 2018 (USD)'
+        ws['BY1'] = 'Suma Item Odc 2018 (USD)'
+        ws['BZ1'] = 'Suma Item Total 2018 (USD)'
+        ws['CA1'] = 'Suma Item Ctto 2019 (USD)'
+        ws['CB1'] = 'Suma Item Odc 2019 (USD)'
+        ws['CC1'] = 'Suma Item Total 2019 (USD)'
+        ws['CD1'] = 'Suma EDP Total 2015 (USD)'
+        ws['CE1'] = 'Suma EDP Total 2016 (USD)'
+        ws['CF1'] = 'Suma EDP Total 2017 (USD)'
+        ws['CG1'] = 'Suma EDP Total 2018 (USD)'
+        ws['CH1'] = 'Suma EDP Total 2019 (USD)'
+
+
 
 
         cont=2
@@ -599,15 +618,58 @@ class ReportePersonasExcel(TemplateView):
             ws.cell(row=cont,column=64).value = saldoRet*factor
             ws.cell(row=cont,column=65).value = factor
 
+            # donde __lte es igual a <=
+            sumaItemCtto2015= ItemCtto.objects.filter(IdCtto__id=ctto.id, PresupuestoItem__lte='2015-01-01').aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            sumaItemOdc2015 = ItemOdc.objects.filter(IdODC__IdCtto__id=ctto.id, PresupuestoItem__lte= '2015-01-01').aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            sumaItemTotal2015 = sumaItemCtto2015+sumaItemOdc2015
+            sumaEDP2015 = Edp.objects.filter(IdCtto__id=ctto.id, PeriodEDPTer__lte='2015-12-31').aggregate(Sum('ValEDP'))['ValEDP__sum'] or 0
+
+            sumaItemCtto2016= ItemCtto.objects.filter(IdCtto__id=ctto.id, PresupuestoItem='2016-01-01').aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            sumaItemOdc2016 = ItemOdc.objects.filter(IdODC__IdCtto__id=ctto.id, PresupuestoItem= '2016-01-01').aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            sumaItemTotal2016 = sumaItemCtto2016+sumaItemOdc2016
+            sumaEDP2016 = Edp.objects.filter(IdCtto__id=ctto.id, PeriodEDPTer__year=2016).aggregate(Sum('ValEDP'))['ValEDP__sum'] or 0
+
             sumaItemCtto2017= ItemCtto.objects.filter(IdCtto__id=ctto.id, PresupuestoItem='2017-01-01').aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
             sumaItemOdc2017 = ItemOdc.objects.filter(IdODC__IdCtto__id=ctto.id, PresupuestoItem= '2017-01-01').aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
             sumaItemTotal2017 = sumaItemCtto2017+sumaItemOdc2017
+            sumaEDP2017 = Edp.objects.filter(IdCtto__id=ctto.id, PeriodEDPTer__year=2017).aggregate(Sum('ValEDP'))['ValEDP__sum'] or 0
 
-            ws.cell(row=cont,column=66).value = sumaItemCtto2017*factor
-            ws.cell(row=cont,column=67).value = sumaItemOdc2017*factor
-            ws.cell(row=cont,column=68).value = sumaItemTotal2017*factor
-            ws.cell(row=cont,column=69).value = ctto.AdminCttoProy.Nombre
+            sumaItemCtto2018= ItemCtto.objects.filter(IdCtto__id=ctto.id, PresupuestoItem='2018-01-01').aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            sumaItemOdc2018 = ItemOdc.objects.filter(IdODC__IdCtto__id=ctto.id, PresupuestoItem= '2018-01-01').aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            sumaItemTotal2018 = sumaItemCtto2018+sumaItemOdc2018
+            sumaEDP2018 = Edp.objects.filter(IdCtto__id=ctto.id, PeriodEDPTer__year=2018).aggregate(Sum('ValEDP'))['ValEDP__sum'] or 0
 
+            sumaItemCtto2019= ItemCtto.objects.filter(IdCtto__id=ctto.id, PresupuestoItem='2019-01-01').aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            sumaItemOdc2019 = ItemOdc.objects.filter(IdODC__IdCtto__id=ctto.id, PresupuestoItem= '2019-01-01').aggregate(Sum('TotalItem'))['TotalItem__sum'] or 0
+            sumaItemTotal2019 = sumaItemCtto2019+sumaItemOdc2019
+            sumaEDP2019 = Edp.objects.filter(IdCtto__id=ctto.id, PeriodEDPTer__year=2019).aggregate(Sum('ValEDP'))['ValEDP__sum'] or 0
+
+            ws.cell(row=cont,column=66).value = ctto.AdminCttoProy.Nombre
+            ws.cell(row=cont,column=67).value = sumaItemCtto2015*factor
+            ws.cell(row=cont,column=68).value = sumaItemOdc2015*factor
+            ws.cell(row=cont,column=69).value = sumaItemTotal2015*factor
+
+            ws.cell(row=cont,column=70).value = sumaItemCtto2016*factor
+            ws.cell(row=cont,column=71).value = sumaItemOdc2016*factor
+            ws.cell(row=cont,column=72).value = sumaItemTotal2016*factor
+
+            ws.cell(row=cont,column=73).value = sumaItemCtto2017*factor
+            ws.cell(row=cont,column=74).value = sumaItemOdc2017*factor
+            ws.cell(row=cont,column=75).value = sumaItemTotal2017*factor
+
+            ws.cell(row=cont,column=76).value = sumaItemCtto2018*factor
+            ws.cell(row=cont,column=77).value = sumaItemOdc2018*factor
+            ws.cell(row=cont,column=78).value = sumaItemTotal2018*factor
+
+            ws.cell(row=cont,column=79).value = sumaItemCtto2019*factor
+            ws.cell(row=cont,column=80).value = sumaItemOdc2019*factor
+            ws.cell(row=cont,column=81).value = sumaItemTotal2019*factor
+
+            ws.cell(row=cont,column=82).value = sumaEDP2015*factor
+            ws.cell(row=cont,column=83).value = sumaEDP2016*factor
+            ws.cell(row=cont,column=84).value = sumaEDP2017*factor
+            ws.cell(row=cont,column=85).value = sumaEDP2018*factor
+            ws.cell(row=cont,column=86).value = sumaEDP2019*factor
 
             cont = cont + 1
 
@@ -681,21 +743,22 @@ class ReporteCommitmentItem(TemplateView):
         ws['F1'] = 'N° Odc'
         ws['G1'] = 'N° Item'
         ws['H1'] = 'Descripcion Servicio'
-        ws['I1'] = 'Contratista'
+        ws['I1'] = 'Descripcion Item'
+        ws['J1'] = 'Contratista'
 
-        ws['J1'] = 'Estatus'
-        ws['K1'] = 'Area'
-        ws['L1'] = 'Cuenta'
-        ws['M1'] = 'Descrip-Cuenta'
-        ws['N1'] = 'Presupuesto'
-        ws['O1'] = 'Moneda Ctto'
-        ws['P1'] = 'Valor Item'
-        ws['Q1'] = 'Valor Item (USD)'
-        ws['R1'] = 'Ajuste Commitment'
-        ws['S1'] = 'Ajuste Commitment (USD)'
-        ws['T1'] = 'Valor Item Ajustado'
-        ws['U1'] = 'Valor Item Ajustado (USD)'
-        ws['V1'] = 'Fecha Aprobación Item'
+        ws['K1'] = 'Estatus'
+        ws['L1'] = 'Area'
+        ws['M1'] = 'Cuenta'
+        ws['N1'] = 'Descrip-Cuenta'
+        ws['O1'] = 'Presupuesto'
+        ws['P1'] = 'Moneda Ctto'
+        ws['Q1'] = 'Valor Item'
+        ws['R1'] = 'Valor Item (USD)'
+        ws['S1'] = 'Ajuste Commitment'
+        ws['T1'] = 'Ajuste Commitment (USD)'
+        ws['U1'] = 'Valor Item Ajustado'
+        ws['V1'] = 'Valor Item Ajustado (USD)'
+        ws['W1'] = 'Fecha Aprobación Item'
 
         cont=2
 
@@ -714,18 +777,19 @@ class ReporteCommitmentItem(TemplateView):
             ws.cell(row=cont,column=7).value = Item.NumItem
 
             ws.cell(row=cont,column=8).value = Item.IdCtto.DescCtto
-            ws.cell(row=cont,column=9).value = Item.IdCtto.IdCtta.NomCtta
-            ws.cell(row=cont,column=10).value = Item.IdCtto.EstCtto
+            ws.cell(row=cont,column=9).value = Item.DescripItem
+            ws.cell(row=cont,column=10).value = Item.IdCtto.IdCtta.NomCtta
+            ws.cell(row=cont,column=11).value = Item.IdCtto.EstCtto
 
-            ws.cell(row=cont,column=11).value = Item.IdCecoCtto.IdAreas.NomArea
-            ws.cell(row=cont,column=12).value = Item.IdCecoCtto.CodCeco
-            ws.cell(row=cont,column=13).value = Item.IdCecoCtto.NomCeco
+            ws.cell(row=cont,column=12).value = Item.IdCecoCtto.IdAreas.NomArea
+            ws.cell(row=cont,column=13).value = Item.IdCecoCtto.CodCeco
+            ws.cell(row=cont,column=14).value = Item.IdCecoCtto.NomCeco
 
-            ws.cell(row=cont,column=14).value = Item.PresupuestoItem.year
-            ws.cell(row=cont,column=15).value = Item.IdCtto.MonedaCtto
-            ws.cell(row=cont,column=16).value = Item.TotalItem
-            ws.cell(row=cont,column=17).value = Item.TotalItem*factor
-            ws.cell(row=cont,column=22).value = Item.IdCtto.FechAppCtto
+            ws.cell(row=cont,column=15).value = Item.PresupuestoItem.year
+            ws.cell(row=cont,column=16).value = Item.IdCtto.MonedaCtto
+            ws.cell(row=cont,column=17).value = Item.TotalItem
+            ws.cell(row=cont,column=18).value = Item.TotalItem*factor
+            ws.cell(row=cont,column=23).value = Item.IdCtto.FechAppCtto
 
             #auxiliar1 = 0
 
@@ -762,48 +826,31 @@ class ReporteCommitmentItem(TemplateView):
             ws.cell(row=cont,column=7).value = Item.NumItem
 
             ws.cell(row=cont,column=8).value = Item.IdODC.IdCtto.DescCtto
-            ws.cell(row=cont,column=9).value = Item.IdODC.IdCtto.IdCtta.NomCtta
-            ws.cell(row=cont,column=10).value = Item.IdODC.IdCtto.EstCtto
+            ws.cell(row=cont,column=9).value = Item.DescripItem
+            ws.cell(row=cont,column=10).value = Item.IdODC.IdCtto.IdCtta.NomCtta
+            ws.cell(row=cont,column=11).value = Item.IdODC.IdCtto.EstCtto
 
-            ws.cell(row=cont,column=11).value = Item.IdCecoODC.IdAreas.NomArea
-            ws.cell(row=cont,column=12).value = Item.IdCecoODC.CodCeco
-            ws.cell(row=cont,column=13).value = Item.IdCecoODC.NomCeco
+            ws.cell(row=cont,column=12).value = Item.IdCecoODC.IdAreas.NomArea
+            ws.cell(row=cont,column=13).value = Item.IdCecoODC.CodCeco
+            ws.cell(row=cont,column=14).value = Item.IdCecoODC.NomCeco
 
-            ws.cell(row=cont,column=14).value = Item.PresupuestoItem.year
-            ws.cell(row=cont,column=15).value = Item.IdODC.IdCtto.MonedaCtto
-            ws.cell(row=cont,column=16).value = Item.TotalItem
-            ws.cell(row=cont,column=17).value = Item.TotalItem*factor
+            ws.cell(row=cont,column=15).value = Item.PresupuestoItem.year
+            ws.cell(row=cont,column=16).value = Item.IdODC.IdCtto.MonedaCtto
+            ws.cell(row=cont,column=17).value = Item.TotalItem
+            ws.cell(row=cont,column=18).value = Item.TotalItem*factor
 
-            ws.cell(row=cont,column=18).value = 0
             ws.cell(row=cont,column=19).value = 0
+            ws.cell(row=cont,column=20).value = 0
 
 
             ItemAjustado = Item.TotalItem
 
-            ws.cell(row=cont,column=20).value = ItemAjustado
-            ws.cell(row=cont,column=21).value = factor*ItemAjustado
-            ws.cell(row=cont,column=22).value = Item.IdODC.FechAppOdc
+            ws.cell(row=cont,column=21).value = ItemAjustado
+            ws.cell(row=cont,column=22).value = factor*ItemAjustado
+            ws.cell(row=cont,column=23).value = Item.IdODC.FechAppOdc
 
 
             cont = cont + 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         nombre_archivo ="ReportePersonasExcel.xlsx"
 
@@ -813,15 +860,6 @@ class ReporteCommitmentItem(TemplateView):
 
         wb.save(response)
         return response
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1553,7 +1591,13 @@ class ReporteFiniquito(TemplateView):
             ws['B63'] = s_cordCtta
             ws['B64'] = s_cargCordCtta
             ws['B78'] = s_factor
-            ws['B85'] = NumUltimoEDP
+
+            #Valor cero si no requiere EDP Retención
+            if s_saldoReten == 0 :
+                            ws['B85'] = 0
+            else:
+                            ws['B85'] = NumUltimoEDP
+
             ws['B86'] = s_saldoReten
             ws['B87'] = s_saldoAnticipo
             ws['B88'] = sumaEDP
