@@ -415,6 +415,57 @@ class Persona(models.Model):
     apellido_materno = models.CharField(max_length=100)
 
 
+
+class PlanCtto(models.Model):
+    IdCodePlan = models.CharField( max_length=20, null=False)
+    CecoPlan = models.CharField(max_length=50, null=True, blank=True)
+    AreaPlan = models.CharField(max_length=50, null=True, blank=True)
+    CarpetAplan = models.CharField(max_length=30, null=True, blank=True)
+    CodCttoPlan = models.CharField(max_length=20, null=True, blank=True)
+    TipoDocPlan = models.CharField(max_length=30, null=True, blank=True)
+    NombCttoPlan = models.CharField(max_length=100, null=True, blank=True)
+    DescCttoPlan = models.CharField(max_length=100, null=True, blank=True)
+    CategoriCttoPlan = models.CharField(max_length=10, null=True, blank=True)
+    ModalidadCttoPlan = models.CharField(max_length=10, null=True, blank=True)
+    FechIniFlujCttoplan = models.DateField(null=True, blank=True)
+    FechTerFlujCttoplan  = models.DateField(null=True, blank=True)
+    AsignaCttoPlan = models.CharField(max_length=30, null=True, blank=True)
+    OrigenCttoPlan = models.CharField(max_length=20, null=True, blank=True)
+    MOLocalCttoPlan = models.CharField(max_length=10, null=True, blank=True)
+    TerrenoCttoPlan = models.CharField(max_length=10, null=True, blank=True)
+    TitleCttoPlan = models.CharField(max_length=100, null=True, blank=True)
+    DetailCttoPlan = models.CharField(max_length=150, null=True, blank=True)
+    BidProcessCttoPlan = models.CharField(max_length=50, null=True, blank=True)
+    BiderCttoPlan = models.CharField(max_length=100, null=True, blank=True)
+    FechEspTecCttoPlan = models.DateField(null=True, blank=True)
+    FechIniLictCttoPlan = models.DateField(null=True, blank=True)
+    FechLoaCttoPlan = models.DateField(null=True, blank=True)
+    FechIniSerCttoPlan  = models.DateField(null=True, blank=True)
+    DuraCttoPlan = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    MHHCttoPlan = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    MontEstCttoPlan = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    FJM01 = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    FJM02 = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    FJM03 = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    FJM04 = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    FJM05 = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    FJM06 = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    FJM07 = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    FJM08 = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    FJM09 = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    FJM10 = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    FJM11 = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+    FJM12 = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
+
+    TipoCttoPlan = models.CharField(max_length=50, null=True, blank=True)
+    CoordTeccPlan = models.CharField(max_length=20, null=True, blank=True)
+    ReqSoleSCttoPlan = models.CharField(max_length=10, null=True, blank=True)
+
+
+
+
+
+
 #class Author(models.Model):
 #    name = models.CharField(max_length=100)
 

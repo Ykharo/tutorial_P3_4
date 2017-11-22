@@ -38,7 +38,7 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django import forms
 from django.template import RequestContext
 import django_excel as excel
-from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, ItemOdc, ItemCtto,AportesCtto,PersonalProyecto,PersonalCtta,PersonalAdminProyecto
+from .models import Question, Choice, Area, Ceco, Mdte, Ctta, Ctto, Edp, Odc, Monedas, ItemOdc, ItemCtto,AportesCtto,PersonalProyecto,PersonalCtta,PersonalAdminProyecto,PlanCtto
 
 # No longer you need the following import statements if you use pyexcel >=0.2.2
 import pyexcel.ext.xls
@@ -1439,6 +1439,106 @@ class ReporteCttoWSheet(TemplateView):
 
 
             return response
+
+
+
+class ReportePlanSoleSource(TemplateView):
+
+    #Usamos el metodo get para generar el archivo excel
+    def get(self, request, *args, **kwargs):
+            #Obtenemos todas las personas de nuestra base de datos
+
+            PLANCTTO = PlanCtto.objects.all()
+
+            #Creamos el libro de trabajo
+            wb = Workbook()
+            #Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
+            ws = wb.active
+
+
+            wb = load_workbook(filename = 'Base_SoleSource.xlsm', keep_vba=True)
+
+            cont=2
+            valcttoAct = 0
+            #Recorremos el conjunto de Requerimientos y vamos escribiendo cada uno de los datos en las celdas
+
+            for plan in PLANCTTO:
+
+                if plan.ReqSoleSCttoPlan == 'Si':
+
+
+                    nomhoja = plan.IdCodePlan
+
+                    template_worksheet = wb.get_sheet_by_name('Hoja1')
+                    new_worksheet = wb.create_sheet(nomhoja)
+                    instance = WorksheetCopy(template_worksheet, new_worksheet)
+                    WorksheetCopy.copy_worksheet(instance)
+
+                    #wb.create_sheet('682-3306-18001')
+                    ws = wb.get_sheet_by_name(nomhoja)
+
+
+
+                    id_plan = plan.id
+
+                    s_fecha = date.today()
+                    s_nombserv = PlanCtto.objects.get(id=id_plan).NombCttoPlan
+                    s_descctto = PlanCtto.objects.get(id=id_plan).DescCttoPlan
+                    s_tipoctto = PlanCtto.objects.get(id=id_plan).AsignaCttoPlan
+                    s_fechaini = PlanCtto.objects.get(id=id_plan).FechIniFlujCttoplan
+                    s_fechater = PlanCtto.objects.get(id=id_plan).FechTerFlujCttoplan
+                    s_valorcttoUSD = PlanCtto.objects.get(id=id_plan).MontEstCttoPlan
+
+                    s_modalidadctto = PlanCtto.objects.get(id=id_plan).ModalidadCttoPlan
+
+                    s_nomctta = PlanCtto.objects.get(id=id_plan).BiderCttoPlan
+
+                    s_numccosto = PlanCtto.objects.get(id=id_plan).IdCodePlan[:-6]
+                    s_nomceco = PlanCtto.objects.get(id=id_plan).CecoPlan
+                    s_area = PlanCtto.objects.get(id=id_plan).AreaPlan
+                    s_numccosto =s_numccosto+" ("+s_nomceco+" - "+s_area+")"
+
+                    s_numreqplan = PlanCtto.objects.get(id=id_plan).IdCodePlan
+                    s_terreno = PlanCtto.objects.get(id=id_plan).TerrenoCttoPlan
+                    s_local = PlanCtto.objects.get(id=id_plan).OrigenCttoPlan
+                    s_defctto_os = PlanCtto.objects.get(id=id_plan).TipoCttoPlan
+
+                    ws['J7'] = s_fecha
+
+
+                    ws['H15'] = s_nombserv
+                    ws['H16'] = s_defctto_os+" ("+s_tipoctto+")"
+                    ws['H17'] = s_nomctta
+                    ws['H19'] = s_valorcttoUSD
+
+                    ws['H21'] = s_fechaini
+                    ws['H22'] = s_fechater
+                    ws['H23'] = s_modalidadctto
+                    ws['H24'] = s_numccosto
+                    ws['H25'] = s_numreqplan
+                    ws['H26'] = s_terreno
+                    ws['H27'] = s_local
+
+                    ws['C38'] = s_descctto
+
+                    if s_local == "Local" :
+                            ws['E72'] = "Si"
+                    else:
+                            ws['E72'] = "No, porque?"
+
+
+
+
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename=SoleSource_Plan.xlsm'
+
+            wb.save(response)
+
+
+            return response
+
+
+
 
 
 
