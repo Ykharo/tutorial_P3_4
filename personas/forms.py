@@ -251,11 +251,13 @@ class CttaUpdateForm(forms.ModelForm):
 class ItemOdcForm(forms.ModelForm):
     class Meta:
         model = ItemOdc
+        fields = ['NumItem','IdCecoODC','PresupuestoItem','ItemCodBudget','DescripItem','UnidItem','CantItem','PuItem','TotalItem']
         exclude = ('ObservItem',)
         labels = {
             'NumItem': 'Item',
             'IdCecoODC': 'Cuenta',
             'PresupuestoItem': 'Presupuesto',
+            'ItemCodBudget': 'CodigoBudget',
             'DescripItem': 'Descripción',
             'UnidItem': 'Unidad',
             'CantItem': 'Cantidad',
@@ -282,11 +284,13 @@ ItemOdcFormSet = inlineformset_factory(Odc, ItemOdc,
 class ItemCttoForm(forms.ModelForm):
     class Meta:
         model = ItemCtto
+        fields = ['NumItem','IdCecoCtto','PresupuestoItem','ItemCodBudget','DescripItem','UnidItem','CantItem','PuItem','TotalItem','ObservItem']
         exclude = ()
         labels = {
             'NumItem': 'Item',
             'IdCecoCtto': 'Cuenta',
             'PresupuestoItem': 'Presupuesto',
+            'ItemCodBudget': 'CodigoBudget',
             'DescripItem': 'Descripción',
             'UnidItem': 'Unidad',
             'CantItem': 'Cantidad',

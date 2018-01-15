@@ -693,26 +693,79 @@ class ReportePersonasExcel(TemplateView):
         return response
 
 
+class ReporteListaCttos(TemplateView):
+
+    #Usamos el metodo get para generar el archivo excel
+    def get(self, request, *args, **kwargs):
+        #Obtenemos todas las personas de nuestra base de datos
+        CTTOS = Ctto.objects.all()
+        ODC = Odc.objects.all()
+        EDP = Edp.objects.all()
+        Estatustxt = [ 'Solicitados en la semana','No iniciados','En preparación','En licitación','En evaluación','En negociación / Adjudicación','Adjudicado','En emisión','En firmas','En ejecución','Servicio terminado','En cierre','Cerrado','Servicio suspendido','Solicitud anulada','Solicitud diferida o postergada']
+
+
+        #Creamos el libro de trabajo
+        wb = Workbook()
+        #Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
+        ws = wb.active
+        #En la celda B1 ponemos el texto 'REPORTE DE PERSONAS'
+        #ws['B1'] = 'REPORTE DE PERSONAS'
+        #Juntamos las celdas desde la B1 hasta la E1, formando una sola celda
+        #ws.merge_cells('B1:E1')
+        #Creamos los encabezados desde la celda B3 hasta la E3
+
+        ws['A1'] = 'N° Ctto.'
+        ws['B1'] = 'Tipo'
+        ws['C1'] = 'Mandante'
+        ws['D1'] = 'Descripcion Servicio'
+        ws['E1'] = 'Contratista'
+        ws['F1'] = 'Rut Contratista'
+        ws['G1'] = 'Fecha Ini Ctto'
+        ws['H1'] = 'Fecha Term Ctto'
+        ws['I1'] = 'Estatus'
+        ws['J1'] = 'Terreno'
+        ws['K1'] = 'Area'
+        ws['L1'] = 'Termino Actualizado'
+        ws['M1'] = 'Administrador'
 
 
 
+        cont=2
+        valcttoAct = 0
+        #Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
+        for ctto in CTTOS:
+
+            ws.cell(row=cont,column=1).value = ctto.NumCtto
+            ws.cell(row=cont,column=2).value = ctto.TipoServ
+            ws.cell(row=cont,column=3).value = ctto.IdMandante.NomMandte
+            ws.cell(row=cont,column=4).value = ctto.DescCtto
+            ws.cell(row=cont,column=5).value = ctto.IdCtta.NomCtta
+            ws.cell(row=cont,column=6).value = ctto.IdCtta.RutCtta
+            ws.cell(row=cont,column=7).value = ctto.FechIniCtto
+            ws.cell(row=cont,column=8).value = ctto.FechTerCtto
+            ws.cell(row=cont,column=9).value = ctto.EstCtto
+            ws.cell(row=cont,column=10).value = ctto.TerrenCtto
+            ws.cell(row=cont,column=11).value = ctto.IdCecoCtto.IdAreas.NomArea
+            ws.cell(row=cont,column=13).value = ctto.AdminCttoProy.Nombre
+
+            TerActualizado = (Odc.objects.filter(IdCtto__id=ctto.id).aggregate(Max('FechT_ODC'))['FechT_ODC__max']) or datetime(2009, 1, 1)
+            #TerActualizado = datetime.strptime(TerActualizado, "%Y-%m-%d %H:%M:%S")
 
 
+            if ctto.FechTerCtto.strftime('%F%H%M%S') > TerActualizado.strftime('%F%H%M%S'):
+                TerActualizado = ctto.FechTerCtto
 
+            ws.cell(row=cont,column=12).value = TerActualizado
 
+            cont = cont + 1
 
+        nombre_archivo ="ReportePersonasExcel.xlsx"
 
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=mydata.xlsx'
 
-
-
-
-
-
-
-
-
-
-
+        wb.save(response)
+        return response
 
 
 
@@ -741,24 +794,25 @@ class ReporteCommitmentItem(TemplateView):
         ws['D1'] = 'Tipo'
         ws['E1'] = 'N° Ctto'
         ws['F1'] = 'N° Odc'
-        ws['G1'] = 'N° Item'
-        ws['H1'] = 'Descripcion Servicio'
-        ws['I1'] = 'Descripcion Item'
-        ws['J1'] = 'Contratista'
+        ws['G1'] = 'CodBudget'
+        ws['H1'] = 'N° Item'
+        ws['I1'] = 'Descripcion Servicio'
+        ws['J1'] = 'Descripcion Item'
+        ws['K1'] = 'Contratista'
 
-        ws['K1'] = 'Estatus'
-        ws['L1'] = 'Area'
-        ws['M1'] = 'Cuenta'
-        ws['N1'] = 'Descrip-Cuenta'
-        ws['O1'] = 'Presupuesto'
-        ws['P1'] = 'Moneda Ctto'
-        ws['Q1'] = 'Valor Item'
-        ws['R1'] = 'Valor Item (USD)'
-        ws['S1'] = 'Ajuste Commitment'
-        ws['T1'] = 'Ajuste Commitment (USD)'
-        ws['U1'] = 'Valor Item Ajustado'
-        ws['V1'] = 'Valor Item Ajustado (USD)'
-        ws['W1'] = 'Fecha Aprobación Item'
+        ws['L1'] = 'Estatus'
+        ws['M1'] = 'Area'
+        ws['N1'] = 'Cuenta'
+        ws['O1'] = 'Descrip-Cuenta'
+        ws['P1'] = 'Presupuesto'
+        ws['Q1'] = 'Moneda Ctto'
+        ws['R1'] = 'Valor Item'
+        ws['S1'] = 'Valor Item (USD)'
+        ws['T1'] = 'Ajuste Commitment'
+        ws['U1'] = 'Ajuste Commitment (USD)'
+        ws['V1'] = 'Valor Item Ajustado'
+        ws['W1'] = 'Valor Item Ajustado (USD)'
+        ws['X1'] = 'Fecha Aprobación Item'
 
         cont=2
 
@@ -774,22 +828,23 @@ class ReporteCommitmentItem(TemplateView):
             ws.cell(row=cont,column=5).value = Item.IdCtto.NumCtto
 
             ws.cell(row=cont,column=6).value = 'ODC 0'
-            ws.cell(row=cont,column=7).value = Item.NumItem
+            ws.cell(row=cont,column=7).value = Item.ItemCodBudget
+            ws.cell(row=cont,column=8).value = Item.NumItem
 
-            ws.cell(row=cont,column=8).value = Item.IdCtto.DescCtto
-            ws.cell(row=cont,column=9).value = Item.DescripItem
-            ws.cell(row=cont,column=10).value = Item.IdCtto.IdCtta.NomCtta
-            ws.cell(row=cont,column=11).value = Item.IdCtto.EstCtto
+            ws.cell(row=cont,column=9).value = Item.IdCtto.DescCtto
+            ws.cell(row=cont,column=10).value = Item.DescripItem
+            ws.cell(row=cont,column=11).value = Item.IdCtto.IdCtta.NomCtta
+            ws.cell(row=cont,column=12).value = Item.IdCtto.EstCtto
 
-            ws.cell(row=cont,column=12).value = Item.IdCecoCtto.IdAreas.NomArea
-            ws.cell(row=cont,column=13).value = Item.IdCecoCtto.CodCeco
-            ws.cell(row=cont,column=14).value = Item.IdCecoCtto.NomCeco
+            ws.cell(row=cont,column=13).value = Item.IdCecoCtto.IdAreas.NomArea
+            ws.cell(row=cont,column=14).value = Item.IdCecoCtto.CodCeco
+            ws.cell(row=cont,column=15).value = Item.IdCecoCtto.NomCeco
 
-            ws.cell(row=cont,column=15).value = Item.PresupuestoItem.year
-            ws.cell(row=cont,column=16).value = Item.IdCtto.MonedaCtto
-            ws.cell(row=cont,column=17).value = Item.TotalItem
-            ws.cell(row=cont,column=18).value = Item.TotalItem*factor
-            ws.cell(row=cont,column=23).value = Item.IdCtto.FechAppCtto
+            ws.cell(row=cont,column=16).value = Item.PresupuestoItem.year
+            ws.cell(row=cont,column=17).value = Item.IdCtto.MonedaCtto
+            ws.cell(row=cont,column=18).value = Item.TotalItem
+            ws.cell(row=cont,column=19).value = Item.TotalItem*factor
+            ws.cell(row=cont,column=24).value = Item.IdCtto.FechAppCtto
 
             #auxiliar1 = 0
 
@@ -823,31 +878,32 @@ class ReporteCommitmentItem(TemplateView):
             ws.cell(row=cont,column=5).value = Item.IdODC.IdCtto.NumCtto
             ws.cell(row=cont,column=6).value = Item.IdODC.NumODC
 
-            ws.cell(row=cont,column=7).value = Item.NumItem
+            ws.cell(row=cont,column=7).value = Item.ItemCodBudget
+            ws.cell(row=cont,column=8).value = Item.NumItem
 
-            ws.cell(row=cont,column=8).value = Item.IdODC.IdCtto.DescCtto
-            ws.cell(row=cont,column=9).value = Item.DescripItem
-            ws.cell(row=cont,column=10).value = Item.IdODC.IdCtto.IdCtta.NomCtta
-            ws.cell(row=cont,column=11).value = Item.IdODC.IdCtto.EstCtto
+            ws.cell(row=cont,column=9).value = Item.IdODC.IdCtto.DescCtto
+            ws.cell(row=cont,column=10).value = Item.DescripItem
+            ws.cell(row=cont,column=11).value = Item.IdODC.IdCtto.IdCtta.NomCtta
+            ws.cell(row=cont,column=12).value = Item.IdODC.IdCtto.EstCtto
 
-            ws.cell(row=cont,column=12).value = Item.IdCecoODC.IdAreas.NomArea
-            ws.cell(row=cont,column=13).value = Item.IdCecoODC.CodCeco
-            ws.cell(row=cont,column=14).value = Item.IdCecoODC.NomCeco
+            ws.cell(row=cont,column=13).value = Item.IdCecoODC.IdAreas.NomArea
+            ws.cell(row=cont,column=14).value = Item.IdCecoODC.CodCeco
+            ws.cell(row=cont,column=15).value = Item.IdCecoODC.NomCeco
 
-            ws.cell(row=cont,column=15).value = Item.PresupuestoItem.year
-            ws.cell(row=cont,column=16).value = Item.IdODC.IdCtto.MonedaCtto
-            ws.cell(row=cont,column=17).value = Item.TotalItem
-            ws.cell(row=cont,column=18).value = Item.TotalItem*factor
+            ws.cell(row=cont,column=16).value = Item.PresupuestoItem.year
+            ws.cell(row=cont,column=17).value = Item.IdODC.IdCtto.MonedaCtto
+            ws.cell(row=cont,column=18).value = Item.TotalItem
+            ws.cell(row=cont,column=19).value = Item.TotalItem*factor
 
-            ws.cell(row=cont,column=19).value = 0
             ws.cell(row=cont,column=20).value = 0
+            ws.cell(row=cont,column=21).value = 0
 
 
             ItemAjustado = Item.TotalItem
 
-            ws.cell(row=cont,column=21).value = ItemAjustado
-            ws.cell(row=cont,column=22).value = factor*ItemAjustado
-            ws.cell(row=cont,column=23).value = Item.IdODC.FechAppOdc
+            ws.cell(row=cont,column=22).value = ItemAjustado
+            ws.cell(row=cont,column=23).value = factor*ItemAjustado
+            ws.cell(row=cont,column=24).value = Item.IdODC.FechAppOdc
 
 
             cont = cont + 1
@@ -896,17 +952,17 @@ class ReporteEDPExcel(TemplateView):
         ws['J3'] = 'Dev Ret EDP'
 
         ws['K3'] = 'Valor EDP [USD]'
+        ws['L3']=  'factor Moneda'
 
-
-        ws['L3'] = 'P inicio'
-        ws['M3'] = 'P Termino'
-        ws['N3'] = 'Fecha Present EDP'
-        ws['O3'] = 'Fecha Aprob EDP'
-        ws['P3'] = 'Obs EDP'
-        ws['Q3'] = 'EstCtto'
-        ws['R3'] = 'Ccosto'
-        ws['S3'] = 'NomCeco'
-        ws['T3'] = 'Mandante'
+        ws['M3'] = 'P inicio'
+        ws['N3'] = 'P Termino'
+        ws['O3'] = 'Fecha Present EDP'
+        ws['P3'] = 'Fecha Aprob EDP'
+        ws['Q3'] = 'Obs EDP'
+        ws['R3'] = 'EstCtto'
+        ws['S3'] = 'Ccosto'
+        ws['T3'] = 'NomCeco'
+        ws['U3'] = 'Mandante'
 
         cont=4
         valcttoAct = 0
@@ -928,15 +984,17 @@ class ReporteEDPExcel(TemplateView):
 
                 ws.cell(row=cont,column=11).value = factor*edp.ValEDP
 
-                ws.cell(row=cont,column=12).value = edp.PeriodEDP
-                ws.cell(row=cont,column=13).value = edp.PeriodEDPTer
-                ws.cell(row=cont,column=14).value = edp.PresenEDP
-                ws.cell(row=cont,column=15).value = edp.AprobEDP
-                ws.cell(row=cont,column=16).value = edp.ObservEDP
-                ws.cell(row=cont,column=17).value = ctto.EstCtto
-                ws.cell(row=cont,column=18).value = ctto.IdCecoCtto.CodCeco
-                ws.cell(row=cont,column=19).value = ctto.IdCecoCtto.NomCeco
-                ws.cell(row=cont,column=20).value = ctto.IdMandante.NomMandte
+                ws.cell(row=cont,column=12).value = factor
+
+                ws.cell(row=cont,column=13).value = edp.PeriodEDP
+                ws.cell(row=cont,column=14).value = edp.PeriodEDPTer
+                ws.cell(row=cont,column=15).value = edp.PresenEDP
+                ws.cell(row=cont,column=16).value = edp.AprobEDP
+                ws.cell(row=cont,column=17).value = edp.ObservEDP
+                ws.cell(row=cont,column=18).value = ctto.EstCtto
+                ws.cell(row=cont,column=19).value = ctto.IdCecoCtto.CodCeco
+                ws.cell(row=cont,column=20).value = ctto.IdCecoCtto.NomCeco
+                ws.cell(row=cont,column=21).value = ctto.IdMandante.NomMandte
 
 
                 cont = cont + 1

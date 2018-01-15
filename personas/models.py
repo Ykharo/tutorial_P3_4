@@ -309,6 +309,8 @@ class ItemOdc(models.Model):
     PuItem = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True)
     TotalItem = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
     ObservItem = models.CharField(max_length=100, null=True, blank=True)
+    CodigoBudgetItem = models.DateField( null=True, blank=True)
+    ItemCodBudget = models.CharField( max_length=50, null=True, blank=True)
 
     def __str__(self):
         return self.NumItem
@@ -328,6 +330,8 @@ class ItemCtto(models.Model):
     PuItem = models.DecimalField( decimal_places=2, max_digits=21,null=True, blank=True)
     TotalItem = models.DecimalField(decimal_places=2, max_digits=21,null=True, blank=True)
     ObservItem = models.CharField(max_length=100, null=True, blank=True)
+    CodigoBudgetItem = models.DateField( null=True, blank=True)
+    ItemCodBudget = models.CharField( max_length=50, null=True, blank=True)
 
     def __str__(self):
         return self.NumItem
