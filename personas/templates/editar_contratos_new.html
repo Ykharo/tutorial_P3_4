@@ -3,6 +3,14 @@
 
 {% block cuerpo %}
 
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <div class="right_col" role="main">
   <div class="">
     <div class="page-title">
@@ -409,13 +417,16 @@
                           <div class="col-lg-7">
 
                           </div>
-
+                          <p class="text-muted font-13 m-b-30">
+                            <p><label>Para Realizar cierre se debe saldar Anticipo, Saldo Anticipo :&nbsp;</label>{{ Ctto.MonedaCtto }}<td style="mso-number-format:'#,##0.000';">&nbsp;{{ saldoAnticipo}}</td></p>
+                          </p>
+                          {% if saldoAnticipo == 0 %}
                           <div class="col-lg-1">
                               <a id="crear_finiquito" href="{% url 'personas:reporte_finiquito' id_ctto %}" class="btn btn-info btn-block">
                                 <span class="glyphicon glyphicon-file"></span>
                               </a>
                           </div>
-
+                        {% endif %}
                       </div>
                   </div>
                   <div class="row">

@@ -30,6 +30,14 @@ from datetime import timedelta, datetime, date, timedelta
 
 import date_converter
 
+# Usuarios
+
+
+
+
+
+
+
 #-------------------------------------------------------------------------
 
 #from django.shortcuts import render_to_response
@@ -1602,6 +1610,8 @@ class ReportePlanSoleSource(TemplateView):
 
 class ReporteFiniquito(TemplateView):
 
+
+
     #Usamos el metodo get para generar el archivo excel
     def get(self, request, *args, **kwargs):
             #Obtenemos todas las personas de nuestra base de datos
@@ -1711,6 +1721,33 @@ class ReporteFiniquito(TemplateView):
 
 
             s_valcttoAct = s_valorctto + sumaODC
+            s_saldoContrato =s_valcttoAct-sumaEDP
+
+            if s_saldoContrato > 0:
+                # crear ODC de Ajuste final del Contrato
+                OA_IdCecoODC = Ctto.objects.get(id=id_ctto).IdCecoCtto.id
+                OA_IdCtto =  ctto.id #Agregar ForeignKey
+                ValorAjuste =-1*s_saldoContrato
+
+                cont = 1
+                NumOdcAjuste = 1
+                for odc in Odc.objects.filter(IdCtto__id=ctto.id):
+                    NumOdcAjuste = cont + 1
+                    cont = cont + 1
+
+                if NumOdcAjuste <10 :
+                    l_numOdcAjuste ="ODC 0"+str(NumOdcAjuste)
+                else:
+                    l_numOdcAjuste ="ODC "+str(NumOdcAjuste)
+
+                print ("IdCeco : " + str(OA_IdCecoODC))
+                print ("IdCtto : " + str(OA_IdCtto))
+                print ("Num ODC Ajuste : " + l_numOdcAjuste)
+
+
+                u = Odc.objects.create(NumODC=l_numOdcAjuste,IdCecoODC=OA_IdCecoODC,IdCtto=OA_IdCtto,ValorODC=ValorAjuste,DescripODC='Ajuste Final Contrato (Automatico)')
+                u.save()
+
             s_valcttoActpalabras = number_to_letter.to_word(s_valcttoAct)
             s_saldoReten = sumaReten-sumaDevRet
             s_saldoAnticipo = sumaAnticipo-sumaDevAnticipo
@@ -2554,6 +2591,7 @@ def EditarContrato(request,id_ctto):
     ValActCtto = ctto.ValorCtto + sumaODC
     ValActFechTermCtto = TerActualizado
     Saldocontrato =ValActCtto-sumaEDP
+    s_saldoAnticipo =sumaAnt-sumaDevAnt
 
     # Fecha ingresada
     #fecha_ingresada = '09/04/2008'
@@ -2580,7 +2618,7 @@ def EditarContrato(request,id_ctto):
     return render_to_response('editar_contratos_new.html',{'Ctto':ctto,'Odc':ODC,'Edp':EDP,'id_ctto':valor,\
     'ValActCtto':ValActCtto,'TerActualizado':TerActualizado,'sumaODC':sumaODC,'sumaEDP':sumaEDP,'sumaAnt':sumaAnt,\
     'sumaDevAnt':sumaDevAnt,'sumaRet':sumaRet,'sumaDevRet': sumaDevRet,'sumaDesc':sumaDesc,'Vigencia':VigenciaCtto,\
-    'porvigencia':porvigencia*100,'poravance':poravance*100,'saldocontrato': Saldocontrato
+    'porvigencia':porvigencia*100,'poravance':poravance*100,'saldocontrato': Saldocontrato,'saldoAnticipo':s_saldoAnticipo
      })
 
 
